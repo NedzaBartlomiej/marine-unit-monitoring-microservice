@@ -1,0 +1,48 @@
+spring:
+  data:
+    mongodb:
+      database: marine_unit_monitoring
+      uri: mongodb://mongodb-primary,mongodb2,mongodb3/${spring.data.mongodb.database}?replicaSet=marine-unit-monitoring-db-rs
+    redis:
+      host: redis
+      port: 6379
+
+
+project-properties:
+  app:
+    frontend-integration:
+      base-url: http://localhost:3306
+      endpoint-paths:
+        email-verification: /verify-email
+        reset-password: /reset-password
+        untrusted-authentication: /untrusted-authentication
+  oauth2:
+    resource-server:
+      multi-providers-jws-key-selector:
+        providers:
+          - issuer-uri: https://accounts.google.com
+            jwks-uri: https://www.googleapis.com/oauth2/v3/certs
+          - issuer-uri: https://www.facebook.com
+            jwks-uri: https://limited.facebook.com/.well-known/oauth/openid/jwks/
+  external-apis:
+    ais-api:
+      result-limit: 5
+  scheduling-delays:
+    in-ms:
+      ship-tracking:
+        saving: 300000 # 5min
+      verification-tokens:
+        clearing: 86400000 # 24h
+  expiration-times:
+    verification:
+      email-token: 86400000 # 24h
+      reset-password: 86400000 # 24h
+      ip-address-token: 86400000 # 24h
+      two-fa-token: 300000 # 5min
+
+jwt:
+  issuer: marine-unit-monitoring
+  expiration:
+    refresh-token: 86400000 # ms - 24h
+    access-token: 3600000 # ms - 1h
+  store-clearing: 86400000 # 24h

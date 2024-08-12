@@ -1,0 +1,13 @@
+server:
+  port: 8761
+spring:
+  application:
+    name: eureka-discovery
+eureka:
+  instance:
+    ip-address: 127.0.0.1
+    hostname: localhost
+    instance-id: ${eureka.instance.hostname}:${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    fetch-registry: false
+    register-with-eureka: false

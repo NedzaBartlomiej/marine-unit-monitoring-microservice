@@ -1,0 +1,21 @@
+server:
+  port: 8011
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      enabled: true
+
+eureka:
+  instance:
+    ip-address: 127.0.0.1
+    hostname: localhost
+    instance-id: ${eureka.instance.hostname}:${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka/
