@@ -1,0 +1,5 @@
+spring:
+  data:
+    mongodb:
+      database: adminServiceDB
+      uri: mongodb://admin-service-mongodb/${spring.data.mongodb.database}

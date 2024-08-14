@@ -4,7 +4,7 @@ echo "#### RS.INIT.SH ####"
 mongosh <<BLOCK
 print("-- Initializing replica set. --");
 rs.initiate({
-    "_id": "marine-unit-monitoring-db-rs",
+    "_id": "apiServiceDBRS",
     "members": [
         {
           "_id": 0,

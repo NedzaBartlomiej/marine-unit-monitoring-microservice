@@ -7,6 +7,6 @@ WORKDIR /usr/src/admin-service
 
 COPY ./target/admin-service.jar /usr/src/admin-service
 
-EXPOSE 8081
+EXPOSE 8082
 
 ENTRYPOINT ["java", "-jar", "/usr/src/admin-service/admin-service.jar"]

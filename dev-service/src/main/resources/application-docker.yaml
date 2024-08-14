@@ -1,0 +1,5 @@
+spring:
+  data:
+    mongodb:
+      database: devServiceDB
+      uri: mongodb://dev-service-mongodb/${spring.data.mongodb.database}

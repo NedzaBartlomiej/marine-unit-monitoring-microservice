@@ -1,5 +1,5 @@
 server:
-  port: 8011
+  port: 80
 spring:
   application:
     name: gateway
@@ -13,9 +13,7 @@ spring:
 
 eureka:
   instance:
-    ip-address: 127.0.0.1
-    hostname: localhost
-    instance-id: ${eureka.instance.hostname}:${spring.application.name}:${spring.application.instance_id:${random.value}}
+    instance-id: ${eureka.instance.hostname}:${spring.application.name}:${random.value}}
   client:
     service-url:
       default-zone: http://localhost:8761/eureka/

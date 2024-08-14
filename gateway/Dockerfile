@@ -7,6 +7,6 @@ WORKDIR /usr/src/gateway
 
 COPY ./target/gateway.jar /usr/src/gateway
 
-EXPOSE 8761
+EXPOSE 80
 
 ENTRYPOINT ["java", "-jar", "/usr/src/gateway/gateway.jar"]

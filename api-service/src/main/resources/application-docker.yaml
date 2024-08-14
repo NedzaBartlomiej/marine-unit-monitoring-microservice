@@ -1,8 +1,8 @@
 spring:
   data:
     mongodb:
-      database: marine_unit_monitoring
-      uri: mongodb://mongodb-primary,mongodb2,mongodb3/${spring.data.mongodb.database}?replicaSet=marine-unit-monitoring-db-rs
+      database: apiServiceDB
+      uri: mongodb://api-service-mongodb-primary,api-service-mongodb2,api-service-mongodb3/${spring.data.mongodb.database}?replicaSet=apiServiceDBRS
     redis:
       host: redis
       port: 6379
@@ -41,6 +41,7 @@ project-properties:
       two-fa-token: 300000 # 5min
 
 jwt:
+  secret-key: ${jwt.secret}
   issuer: marine-unit-monitoring
   expiration:
     refresh-token: 86400000 # ms - 24h

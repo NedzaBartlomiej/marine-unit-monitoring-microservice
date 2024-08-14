@@ -7,6 +7,6 @@ WORKDIR /usr/src/dev-service
 
 COPY ./target/dev-service.jar /usr/src/dev-service
 
-EXPOSE 8082
+EXPOSE 8083
 
 ENTRYPOINT ["java", "-jar", "/usr/src/dev-service/dev-service.jar"]

@@ -7,9 +7,7 @@ NC='\033[0m'
 
 echo -e "#### ${YELLOW}START.SH${NC} ####"
 
-app_img_name="marine-unit-monitoring"
-app_container_name="marine-unit-monitoring"
-primary_rs_instance="mongodb-primary"
+primary_rs_instance="api-service-mongodb-primary"
 flag_file="./docker-deploy/script/start/initialized.flag"
 
 
@@ -31,16 +29,22 @@ if ! mvn package; then
   exit 1
 fi
 
-
+# todo if, and update only when yes option has been chosen
 echo -e "${YELLOW}STOPPING APPLICATION CONTAINER:${NC}"
-docker stop $app_container_name
+docker stop api-service
+docker stop admin-service
+docker stop dev-service
 
 
-echo -e "${YELLOW}UPDATING APPLICATION IMAGE: '$app_img_name' ####${NC}"
+echo -e "${YELLOW}UPDATING APPLICATION IMAGE:${NC}"
 echo "-- Deleting app container --"
-docker rm $app_container_name
+docker rm api-service
+docker rm admin-service
+docker rm dev-service
 echo "-- Deleting app image --"
-docker rmi $app_img_name
+docker rmi api-service
+docker rmi admin-service
+docker rmi dev-service
 
 echo -e "${YELLOW}DOCKER COMPOSE:${NC}"
 docker-compose up -d

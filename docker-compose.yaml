@@ -1,54 +1,85 @@
-services: # not tested yet
+services: # todo start and test everything
+
+  # KEYCLOAK
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0.6
+    ports:
+      - "8080:8080"
+    networks:
+      - marine-unit-monitoring-network
+      - keycloak-network
+    depends_on:
+      - keycloak-postgres-db
+    command: start
+    environment:
+      KC_HOSTNAME: keycloak
+      KC_HOSTNAME_PORT: 8080
+      KC_HOSTNAME_STRICT_BACKCHANNEL: false
+      KC_HTTP_ENABLED: true
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HEALTH_ENABLED: true
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-postgres-db/${POSTGRES_DB}
+      KC_DB_USERNAME: ${POSTGRES_USER}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+
+  keycloak-postgres-db:
+    image: postgres:latest
+    networks:
+      - keycloak-network
+    volumes:
+      - keycloak-postgres-db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
   # EUREKA DISCOVERY
   eureka-discovery:
     build:
-      context: eureka-discovery
-      dockerfile: eureka-discovery/Dockerfile
-    image: eureka-discovery:latest
-    ports:
-      - "8761:8761"
+      context: ./eureka-discovery
+      dockerfile: Dockerfile
+    #    image: eureka-discovery:latest
     networks:
       - marine-unit-monitoring-network
+    depends_on:
+      - keycloak
 
   #GATEWAY
   gateway:
     build:
-      context: gateway
-      dockerfile: gateway/Dockerfile
-    image: gateway:latest
+      context: ./gateway
+      dockerfile: Dockerfile
+    #    image: gateway:latest
     ports:
-      - "8011:8011"
+      - "80:80"
     networks:
       - marine-unit-monitoring-network
     depends_on:
       - eureka-discovery
+      - keycloak
       - api-service
       - admin-service
       - dev-service
 
-  # KEYCLOAK - todo
-  keycloak:
-
   # API SERVICE
   api-service:
     build:
-      context: api-service
-      dockerfile: api-service/Dockerfile
-    image: api-service:latest
-    ports:
-      - "8080:8080"
+      context: ./api-service
+      dockerfile: Dockerfile
+    #    image: api-service:latest
     networks:
       - marine-unit-monitoring-network
       - api-service-network
     depends_on:
       - eureka-discovery
+      - keycloak
       - api-service-mongodb-primary
 
   api-service-mongodb-primary:
     image: mongo:latest
-    ports:
-      - "27017:27017"
     networks:
       - api-service-network
     depends_on:
@@ -59,15 +90,13 @@ services: # not tested yet
       - -c
       - |
         /db-init/mongo-keyfile-init.sh
-        mongod --replSet marine-unit-monitoring-db-rs --bind_ip_all
+        mongod --replSet apiServiceDBRS --bind_ip_all
     volumes:
-      - api-service/docker-deploy/db-init/:/db-init/
-      - api-service-mongodb-primary-db
+      - ./docker-deploy/db-init/api-service/:/db-init/
+      - api-service-mongodb-primary-db:/usr/db
 
   api-service-mongodb2:
     image: mongo:latest
-    ports:
-      - "27027:27017"
     networks:
       - api-service-network
     command:
@@ -75,14 +104,12 @@ services: # not tested yet
       - -c
       - |
         /db-init/mongo-keyfile-init.sh
-        mongod --replSet marine-unit-monitoring-db-rs --bind_ip_all
+        mongod --replSet apiServiceDBRS --bind_ip_all
     volumes:
-      - api-service-mongodb2-db
+      - api-service-mongodb2-db:/usr/db
 
   api-service-mongodb3:
     image: mongo:latest
-    ports:
-      - "27037:27017"
     networks:
       - api-service-network
     command:
@@ -90,69 +117,62 @@ services: # not tested yet
       - -c
       - |
         /db-init/mongo-keyfile-init.sh
-        mongod --replSet marine-unit-monitoring-db-rs --bind_ip_all
+        mongod --replSet apiServiceDBRS --bind_ip_all
     volumes:
-      - api-service-mongodb3-db
+      - api-service-mongodb3-db:/usr/db
 
   # ADMIN SERVICE
   admin-service:
     build:
-      context: admin-service
-      dockerfile: admin-service/Dockerfile
-    image: admin-service:latest
-    ports:
-      - "8081:8081"
+      context: ./admin-service
+      dockerfile: Dockerfile
+    #    image: admin-service:latest
     networks:
       - marine-unit-monitoring-network
       - admin-service-network
     depends_on:
       - eureka-discovery
+      - keycloak
       - admin-service-mongodb
 
   admin-service-mongodb:
     image: mongo:latest
-    ports:
-      - "27018:27018"
     networks:
       - admin-service-network
     volumes:
-      - admin-service-mongodb-db
+      - admin-service-mongodb-db:/usr/db
 
   # DEV SERVICE
   dev-service:
     build:
-      context: dev-service
-      dockerfile: dev-service/Dockerfile
-    image: dev-service:latest
-    ports:
-      - "8082:8082"
+      context: ./dev-service
+      dockerfile: Dockerfile
+    #    image: dev-service:latest
     networks:
       - marine-unit-monitoring-network
       - dev-service-network
     depends_on:
       - eureka-discovery
+      - keycloak
       - dev-service-mongodb
 
   dev-service-mongodb:
     image: mongo:latest
-    ports:
-      - "27019:27019"
     networks:
       - dev-service-network
     volumes:
-      - dev-service-mongodb-db
+      - dev-service-mongodb-db:/usr/db
 
   # REDIS
   redis:
     image: redis:latest
-    ports:
-      - "6479:6479"
     volumes:
       - cache:/usr/cache
     networks:
       - api-service-network
 
 volumes:
+  keycloak-postgres-db:
   api-service-mongodb-primary-db:
   api-service-mongodb2-db:
   api-service-mongodb3-db:
@@ -161,6 +181,7 @@ volumes:
   cache:
 networks:
   marine-unit-monitoring-network:
+  keycloak-network:
   api-service-network:
   admin-service-network:
   dev-service-network:

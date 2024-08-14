@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(CustomUserRepository customUserRepository, CustomRepository customRepository,
                            MongoUserRepository mongoUserRepository,
                            BCryptPasswordEncoder passwordEncoder,
-                           @Value("${project-properties.security.jwt.issuer}") String tokenIssuer) {
+                           @Value("${jwt.issuer}") String tokenIssuer) {
         this.customUserRepository = customUserRepository;
         this.customRepository = customRepository;
         this.mongoUserRepository = mongoUserRepository;

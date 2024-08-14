@@ -31,7 +31,7 @@ public class MultiProvidersJWSKeySelector implements JWTClaimsSetAwareJWSKeySele
     public MultiProvidersJWSKeySelector(JWSKeySelectorConfig jwsKeySelectorConfig,
                                         MultiProvidersJWSKeySelectorProperties keySelectorProperties,
                                         JWTService jwtService,
-                                        @Value("${project-properties.security.jwt.issuer}") String tokenIssuer) {
+                                        @Value("${jwt.issuer}") String tokenIssuer) {
         this.jwsKeySelectorConfig = jwsKeySelectorConfig;
         this.keySelectorProperties = keySelectorProperties;
         this.jwtService = jwtService;

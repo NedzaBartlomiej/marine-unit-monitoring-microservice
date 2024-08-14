@@ -7,6 +7,6 @@ WORKDIR /usr/src/api-service
 
 COPY ./target/api-service.jar /usr/src/api-service
 
-EXPOSE 8080
+EXPOSE 8081
 
 ENTRYPOINT ["java", "-jar", "/usr/src/api-service/api-service.jar"]
