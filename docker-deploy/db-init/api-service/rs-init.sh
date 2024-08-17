@@ -8,15 +8,15 @@ rs.initiate({
     "members": [
         {
           "_id": 0,
-          "host": "mongodb-primary:27017"
+          "host": "api-service-mongodb-primary:27017"
         },
         {
           "_id": 1,
-          "host": "mongodb2:27017"
+          "host": "api-service-mongodb2:27017"
         },
         {
           "_id": 2,
-          "host": "mongodb3:27017"
+          "host": "api-service-mongodb3:27017"
         }
     ]
 });

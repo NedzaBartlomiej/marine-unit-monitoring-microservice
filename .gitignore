@@ -1,1 +1,2 @@
 .env
+/docker-deploy/script/start/initialized.flag

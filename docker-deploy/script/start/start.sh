@@ -1,4 +1,5 @@
 #!/bin/bash
+# todo - refactor for more readability and microservices
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -18,15 +19,25 @@ echo "-- Removing not used images --"
 docker image prune -f
 
 
-echo -e "${YELLOW}UPDATING APPLICATION TARGET:${NC}"
-if ! mvn clean; then
-  echo -e "${RED}Error: Something went wrong on mvn clean, exiting.${NC}"
-  exit 1
-fi
+echo -e "${YELLOW}Do you want to update the application target? (y/n)${NC}"
+read -r choice
 
-if ! mvn package; then
-  echo -e "${RED}Error: Something went wrong on mvn package, exiting.${NC}"
-  exit 1
+if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
+  echo -e "${YELLOW}UPDATING APPLICATION TARGET:${NC}"
+
+  if ! mvn clean; then
+    echo -e "${RED}Error: Something went wrong on mvn clean, exiting.${NC}"
+    exit 1
+  fi
+
+  if ! mvn package; then
+    echo -e "${RED}Error: Something went wrong on mvn package, exiting.${NC}"
+    exit 1
+  fi
+
+  echo -e "${GREEN}Application target updated successfully.${NC}"
+else
+  echo -e "${YELLOW}Skipping application target update.${NC}"
 fi
 
 # todo if, and update only when yes option has been chosen

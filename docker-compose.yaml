@@ -1,7 +1,8 @@
-services: # todo start and test everything
+services: # todo text are everything works
 
   # KEYCLOAK
   keycloak:
+    container_name: keycloak
     image: quay.io/keycloak/keycloak:23.0.6
     ports:
       - "8080:8080"
@@ -26,7 +27,10 @@ services: # todo start and test everything
       KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
 
   keycloak-postgres-db:
+    container_name: keycloak-postgres-db
     image: postgres:latest
+    ports:
+      - "8761:8761"
     networks:
       - keycloak-network
     volumes:
@@ -38,6 +42,7 @@ services: # todo start and test everything
 
   # EUREKA DISCOVERY
   eureka-discovery:
+    container_name: eureka-discovery
     build:
       context: ./eureka-discovery
       dockerfile: Dockerfile
@@ -49,6 +54,7 @@ services: # todo start and test everything
 
   #GATEWAY
   gateway:
+    container_name: gateway
     build:
       context: ./gateway
       dockerfile: Dockerfile
@@ -66,6 +72,7 @@ services: # todo start and test everything
 
   # API SERVICE
   api-service:
+    container_name: api-service
     build:
       context: ./api-service
       dockerfile: Dockerfile
@@ -79,7 +86,10 @@ services: # todo start and test everything
       - api-service-mongodb-primary
 
   api-service-mongodb-primary:
+    container_name: api-service-mongodb-primary
     image: mongo:latest
+    expose:
+      - "27017"
     networks:
       - api-service-network
     depends_on:
@@ -92,11 +102,15 @@ services: # todo start and test everything
         /db-init/mongo-keyfile-init.sh
         mongod --replSet apiServiceDBRS --bind_ip_all
     volumes:
+      - ./docker-deploy/db-init/mongo-init.js:/db-init/mongo-init.js
       - ./docker-deploy/db-init/api-service/:/db-init/
       - api-service-mongodb-primary-db:/usr/db
 
   api-service-mongodb2:
+    container_name: api-service-mongodb2
     image: mongo:latest
+    expose:
+      - "27017"
     networks:
       - api-service-network
     command:
@@ -109,7 +123,10 @@ services: # todo start and test everything
       - api-service-mongodb2-db:/usr/db
 
   api-service-mongodb3:
+    container_name: api-service-mongodb3
     image: mongo:latest
+    expose:
+      - "27017"
     networks:
       - api-service-network
     command:
@@ -123,6 +140,7 @@ services: # todo start and test everything
 
   # ADMIN SERVICE
   admin-service:
+    container_name: admin-service
     build:
       context: ./admin-service
       dockerfile: Dockerfile
@@ -136,6 +154,7 @@ services: # todo start and test everything
       - admin-service-mongodb
 
   admin-service-mongodb:
+    container_name: admin-service-mongodb
     image: mongo:latest
     networks:
       - admin-service-network
@@ -144,6 +163,7 @@ services: # todo start and test everything
 
   # DEV SERVICE
   dev-service:
+    container_name: dev-service
     build:
       context: ./dev-service
       dockerfile: Dockerfile
@@ -157,6 +177,7 @@ services: # todo start and test everything
       - dev-service-mongodb
 
   dev-service-mongodb:
+    container_name: dev-service-mongodb
     image: mongo:latest
     networks:
       - dev-service-network
@@ -165,6 +186,7 @@ services: # todo start and test everything
 
   # REDIS
   redis:
+    container_name: redis
     image: redis:latest
     volumes:
       - cache:/usr/cache
