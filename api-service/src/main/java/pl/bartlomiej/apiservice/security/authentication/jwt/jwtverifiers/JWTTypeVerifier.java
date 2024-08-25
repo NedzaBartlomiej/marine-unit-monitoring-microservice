@@ -25,7 +25,7 @@ import java.util.List;
 public class JWTTypeVerifier extends AbstractJWTVerifier implements WebFilter {
 
     private static final Logger log = LoggerFactory.getLogger(JWTTypeVerifier.class);
-    private final ServerAuthenticationFailureHandler serverAuthenticationFailureHandler; // todo maybe some refactor this list
+    private final ServerAuthenticationFailureHandler serverAuthenticationFailureHandler;
     private final List<String> refreshTokenPaths;
 
     public JWTTypeVerifier(JWTService jwtService,
