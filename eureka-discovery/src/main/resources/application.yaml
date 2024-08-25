@@ -6,9 +6,6 @@ spring:
 eureka:
   instance:
     instance-id: ${spring.application.name}:${random.value}}
-    hostname: eureka-discovery
   client:
     fetch-registry: false
     register-with-eureka: false
-    service-url:
-      defaultZone: http://eureka-discovery:8761/eureka/

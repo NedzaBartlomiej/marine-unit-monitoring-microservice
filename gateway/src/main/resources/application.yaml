@@ -10,11 +10,3 @@ spring:
           enabled: true
           lower-case-service-id: true
       enabled: true
-
-eureka:
-  instance:
-    instance-id: ${spring.application.name}:${random.value}}
-    hostname: gateway
-  client:
-    service-url:
-      defaultZone: http://eureka-discovery:8761/eureka/

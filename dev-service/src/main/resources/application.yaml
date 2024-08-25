@@ -5,10 +5,3 @@ spring:
     name: dev-service
   profiles:
     active: docker
-eureka:
-  instance:
-    instance-id: ${spring.application.name}:${random.value}}
-    hostname: dev-service
-  client:
-    service-url:
-      defaultZone: http://eureka-discovery:8761/eureka/
