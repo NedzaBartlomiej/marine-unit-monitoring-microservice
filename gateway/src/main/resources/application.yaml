@@ -13,7 +13,8 @@ spring:
 
 eureka:
   instance:
-    instance-id: ${eureka.instance.hostname}:${spring.application.name}:${random.value}}
+    instance-id: ${spring.application.name}:${random.value}}
+    hostname: gateway
   client:
     service-url:
-      default-zone: http://eureka-discovery:8761/eureka/
+      defaultZone: http://eureka-discovery:8761/eureka/

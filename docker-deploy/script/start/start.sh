@@ -116,6 +116,16 @@ while [ "$file_check" = "not_exists" ]; do
   fi
 done
 
+echo -e "${YELLOW}CHECKING IF MONGODB INSTANCE IS PRIMARY:${NC}"
+primary_check="not_primary"
+while [ "$primary_check" = "not_primary" ]; do
+  primary_check=$(docker exec $primary_rs_instance mongosh --quiet --eval "db.isMaster().ismaster ? 'primary' : 'not_primary'")
+  if [ "$primary_check" = "not_primary" ]; then
+    echo "Instance is not yet primary. Checking again in 5 seconds..."
+    sleep 5
+  fi
+done
+
 echo -e "${GREEN}File mongo-init.js exists. Executing docker exec...${NC}"
 docker exec $primary_rs_instance mongosh db-init/mongo-init.js
 

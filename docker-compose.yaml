@@ -1,7 +1,7 @@
-services: # todo text are everything works
+services:
 
   # KEYCLOAK
-  keycloak:
+  keycloak: # todo - keycloak admin console not working
     container_name: keycloak
     image: quay.io/keycloak/keycloak:23.0.6
     ports:
@@ -19,6 +19,7 @@ services: # todo text are everything works
       KC_HTTP_ENABLED: true
       KC_HOSTNAME_STRICT_HTTPS: false
       KC_HEALTH_ENABLED: true
+      KC_PROXY_HEADERS: forwarded # added - not tested
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KC_DB: postgres
@@ -29,8 +30,6 @@ services: # todo text are everything works
   keycloak-postgres-db:
     container_name: keycloak-postgres-db
     image: postgres:latest
-    ports:
-      - "8761:8761"
     networks:
       - keycloak-network
     volumes:
@@ -41,12 +40,16 @@ services: # todo text are everything works
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
   # EUREKA DISCOVERY
+  # todo - smth go wrong, cause clients cannot connect to server (server works)
+  # -> Not enough variable values available to expand 'eureka.instance.hostname'
   eureka-discovery:
     container_name: eureka-discovery
     build:
       context: ./eureka-discovery
       dockerfile: Dockerfile
     #    image: eureka-discovery:latest
+    ports:
+      - "8761:8761"
     networks:
       - marine-unit-monitoring-network
     depends_on:
@@ -102,7 +105,6 @@ services: # todo text are everything works
         /db-init/mongo-keyfile-init.sh
         mongod --replSet apiServiceDBRS --bind_ip_all
     volumes:
-      - ./docker-deploy/db-init/mongo-init.js:/db-init/mongo-init.js
       - ./docker-deploy/db-init/api-service/:/db-init/
       - api-service-mongodb-primary-db:/usr/db
 

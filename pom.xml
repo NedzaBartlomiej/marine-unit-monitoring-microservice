@@ -11,10 +11,10 @@
     </parent>
 
     <groupId>pl.bartlomiej</groupId>
-    <artifactId>marine-unit-monitoring</artifactId>
+    <artifactId>marine-unit-monitoring-microservice</artifactId>
     <packaging>pom</packaging>
     <version>1.0-BETA</version>
-    <name>marine-unit-monitoring</name>
+    <name>marine-unit-monitoring-microservice</name>
     <description>Marine Unit Monitoring microservices Super POM.</description>
     <properties>
         <java.version>21</java.version>
