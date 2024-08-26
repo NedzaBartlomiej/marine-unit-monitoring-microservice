@@ -40,7 +40,6 @@ else
   echo -e "${YELLOW}Skipping application target update.${NC}"
 fi
 
-# todo if, and update only when yes option has been chosen
 echo -e "${YELLOW}STOPPING APPLICATION CONTAINER:${NC}"
 docker stop api-service
 docker stop admin-service
