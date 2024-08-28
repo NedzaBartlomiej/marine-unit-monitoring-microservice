@@ -103,7 +103,7 @@ services:
         /db-init/mongo-keyfile-init.sh
         mongod --replSet apiServiceDBRS --bind_ip_all
     volumes:
-      - ./docker-deploy/db-init/api-service/:/db-init/
+      - ./api-service/db-init:/db-init
       - api-service-mongodb-primary-db:/usr/db
 
   api-service-mongodb2:
@@ -161,6 +161,7 @@ services:
     networks:
       - admin-service-network
     volumes:
+      - ./admin-service/db-init:/db-init
       - admin-service-mongodb-db:/usr/db
 
   # DEV SERVICE
@@ -186,6 +187,7 @@ services:
     networks:
       - dev-service-network
     volumes:
+      - ./dev-service/db-init:/db-init
       - dev-service-mongodb-db:/usr/db
 
   # REDIS

@@ -1,4 +1,4 @@
-print("#### MONGO-INIT.JS ####"); // todo separated files for every service and execute here as main init file
+print("#### MONGO-INIT.JS ####");
 
 print("Creating new database: apiServiceDB.");
 db = new Mongo().getDB("apiServiceDB");
