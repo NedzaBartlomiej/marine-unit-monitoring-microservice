@@ -6,7 +6,7 @@ RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-flag_file="./docker-deploy/script/start/initialized.flag"
+flag_file="./docker-deploy/script/run/initialized.flag"
 # // VARS
 
 # // FUNCTIONS
@@ -97,9 +97,9 @@ if [ -f "$flag_file" ]; then
 fi
 
 if db_init; then
-    echo "Creating initialized.flag file."
+    echo "${GREEN}Creating initialized.flag file.${NC}"
     touch "$flag_file"
 else
-    echo "Initialization failed. Flag file not created."
+    echo "${RED}Initialization failed. Flag file not created.${NC}"
     exit 1
 fi
