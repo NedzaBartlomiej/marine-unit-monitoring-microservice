@@ -66,7 +66,7 @@ services:
       - admin-service
       - dev-service
     environment:
-      - eureka.client.service-url.defaultZone=http://eureka-discovery:8761/eureka/
+      - eureka.client.service-url.defaultZone=${EUREKA_DEFAULT_ZONE}
       - eureka.instance.hostname=gateway
 
   # API SERVICE
@@ -83,7 +83,7 @@ services:
       - eureka-discovery
       - api-service-mongodb-primary
     environment:
-      - eureka.client.service-url.defaultZone=http://eureka-discovery:8761/eureka/
+      - eureka.client.service-url.defaultZone=${EUREKA_DEFAULT_ZONE}
       - eureka.instance.hostname=api-service
 
   api-service-mongodb-primary:
@@ -152,7 +152,7 @@ services:
       - eureka-discovery
       - admin-service-mongodb
     environment:
-      - eureka.client.service-url.defaultZone=http://eureka-discovery:8761/eureka/
+      - eureka.client.service-url.defaultZone=${EUREKA_DEFAULT_ZONE}
       - eureka.instance.hostname=admin-service
 
   admin-service-mongodb:
@@ -178,7 +178,7 @@ services:
       - eureka-discovery
       - dev-service-mongodb
     environment:
-      - eureka.client.service-url.defaultZone=http://eureka-discovery:8761/eureka/
+      - eureka.client.service-url.defaultZone=${EUREKA_DEFAULT_ZONE}
       - eureka.instance.hostname=dev-service
 
   dev-service-mongodb:

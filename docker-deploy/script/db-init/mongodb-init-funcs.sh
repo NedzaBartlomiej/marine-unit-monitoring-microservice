@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # shellcheck disable=SC2034
 readonly RUNNING_STATUS="running"
 check_container_running() {

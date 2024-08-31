@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo "INITIALIZING MONGODB FOR API-SERVICE"
 
 source ./docker-deploy/script/db-init/mongodb-init-funcs.sh

@@ -50,8 +50,8 @@ db_init() {
 # // FUNCTIONS
 
 
-# EXECUTION
-echo -e "#### ${YELLOW}START.SH${NC} ####"
+# RUNNING
+echo -e "#### ${YELLOW}RUN.SH${NC} ####"
 
 # CLEARING SECTION
 echo -e "${YELLOW}PRUNING:${NC}"
