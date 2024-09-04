@@ -1,6 +1,7 @@
 HELP.md
 /docker-deploy/script/run/initialized.flag
-.env
+/docker-deploy/envs/**/*
+!/docker-deploy/envs/**/
 
 ### STS ###
 .apt_generated

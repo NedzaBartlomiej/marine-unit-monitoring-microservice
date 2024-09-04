@@ -12,17 +12,8 @@ services:
     depends_on:
       - keycloak-postgres-db
     command: start-dev
-    environment:
-      - KC_HOSTNAME_PORT=8080
-      - KC_HTTP_ENABLED=true
-      - KC_HOSTNAME_STRICT_HTTPS=false
-      - KC_HEALTH_ENABLED=true
-      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
-      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
-      - KC_DB=postgres
-      - KC_DB_URL=jdbc:postgresql://keycloak-postgres-db/${POSTGRES_DB}
-      - KC_DB_USERNAME=${POSTGRES_USER}
-      - KC_DB_PASSWORD=${POSTGRES_PASSWORD}
+    env_file:
+      - ./docker-deploy/envs/keycloak.env
 
   keycloak-postgres-db:
     container_name: keycloak-postgres-db
@@ -31,10 +22,8 @@ services:
       - keycloak-network
     volumes:
       - keycloak-postgres-db:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    env_file:
+      - ./docker-deploy/envs/keycloak.env
 
   # EUREKA DISCOVERY
   eureka-discovery:
@@ -65,9 +54,9 @@ services:
       - api-service
       - admin-service
       - dev-service
-    environment:
-      - eureka.client.service-url.defaultZone=${EUREKA_DEFAULT_ZONE}
-      - eureka.instance.hostname=gateway
+    env_file:
+      - ./docker-deploy/envs/.env
+      - ./docker-deploy/envs/gateway.env
 
   # API SERVICE
   api-service:
@@ -82,9 +71,9 @@ services:
     depends_on:
       - eureka-discovery
       - api-service-mongodb-primary
-    environment:
-      - eureka.client.service-url.defaultZone=${EUREKA_DEFAULT_ZONE}
-      - eureka.instance.hostname=api-service
+    env_file:
+      - ./docker-deploy/envs/.env
+      - ./docker-deploy/envs/api-service.env
 
   api-service-mongodb-primary:
     container_name: api-service-mongodb-primary
@@ -151,9 +140,9 @@ services:
     depends_on:
       - eureka-discovery
       - admin-service-mongodb
-    environment:
-      - eureka.client.service-url.defaultZone=${EUREKA_DEFAULT_ZONE}
-      - eureka.instance.hostname=admin-service
+    env_file:
+      - ./docker-deploy/envs/.env
+      - ./docker-deploy/envs/admin-service.env
 
   admin-service-mongodb:
     container_name: admin-service-mongodb
@@ -177,9 +166,9 @@ services:
     depends_on:
       - eureka-discovery
       - dev-service-mongodb
-    environment:
-      - eureka.client.service-url.defaultZone=${EUREKA_DEFAULT_ZONE}
-      - eureka.instance.hostname=dev-service
+    env_file:
+      - ./docker-deploy/envs/.env
+      - ./docker-deploy/envs/dev-service.env
 
   dev-service-mongodb:
     container_name: dev-service-mongodb
