@@ -1,6 +1,6 @@
 ---
 
-## ENV Files Documentation
+## ENV Files Documentation (from main path -> ./docker-deploy/envs)
 
 ### `.env` - Main Common Environment File
 This file contains common environment variables used across multiple services.
