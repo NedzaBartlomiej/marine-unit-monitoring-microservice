@@ -24,11 +24,14 @@ public class HereGeocodeServiceImpl implements GeocodeService {
     private static final Logger log = LoggerFactory.getLogger(HereGeocodeServiceImpl.class);
     private final WebClient webClient;
     private final String geocodeApiKey;
+    private final String geocodeApiBaseUrl;
 
     public HereGeocodeServiceImpl(WebClient webClient,
-                                  @Value("${geocode-api.api-key}") String geocodeApiKey) {
+                                  @Value("${geocode-api.api-key}") String geocodeApiKey,
+                                  @Value("${geocode-api.api-base-url}") String geocodeApiBaseUrl) {
         this.webClient = webClient;
         this.geocodeApiKey = geocodeApiKey;
+        this.geocodeApiBaseUrl = geocodeApiBaseUrl;
     }
 
     @Cacheable(cacheNames = ADDRESS_COORDS_CACHE_NAME)
@@ -62,8 +65,8 @@ public class HereGeocodeServiceImpl implements GeocodeService {
     }
 
     private String buildGeocodeApiUrl(String address) {
-        return "https://geocode.search.hereapi.com/v1/geocode?q=" +
-                address +
+        return this.geocodeApiBaseUrl +
+                "?q=" + address +
                 "&apiKey=" + geocodeApiKey;
     }
 
