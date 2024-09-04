@@ -67,7 +67,6 @@ KC_DB_PASSWORD=${POSTGRES_PASSWORD}
 
 ---
 
----
 
 ### Secrets file for api-service (default location from api-service catalog -> ./src/main/resources/secrets.yaml)
 This file contains secrets and API-related configurations for the api-service.
