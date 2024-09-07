@@ -1,5 +1,8 @@
 spring:
   data:
+    redis:
+      host: redis
+      port: 6379
     mongodb:
       database: adminServiceDB
       uri: mongodb://admin-service-mongodb/${spring.data.mongodb.database}

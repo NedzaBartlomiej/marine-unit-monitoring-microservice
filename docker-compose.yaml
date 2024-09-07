@@ -187,6 +187,8 @@ services:
       - cache:/usr/cache
     networks:
       - api-service-network
+      - dev-service-network
+      - admin-service-network
 
 volumes:
   keycloak-postgres-db:

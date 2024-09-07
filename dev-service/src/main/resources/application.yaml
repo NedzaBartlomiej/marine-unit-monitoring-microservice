@@ -1,7 +1,13 @@
 server:
   port: 8083
 spring:
+  cache:
+    type: redis
   application:
     name: dev-service
   profiles:
     active: docker
+  data:
+    redis:
+      repositories:
+        enabled: false
