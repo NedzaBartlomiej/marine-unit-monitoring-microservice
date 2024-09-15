@@ -1,0 +1,3 @@
+[submodule "common/jwt-granted-authority-converter"]
+	path = common/jwt-granted-authority-converter
+	url = git@github.com:NedzaBartlomiej/jwt-granted-authority-converter.git
