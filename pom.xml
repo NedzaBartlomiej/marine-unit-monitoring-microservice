@@ -27,7 +27,6 @@
         <module>api-service</module>
         <module>admin-service</module>
         <module>dev-service</module>
-        <module>common/jwt-granted-authority-converter</module>
     </modules>
 
     <dependencyManagement>
@@ -43,11 +42,11 @@
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>pl.bartlomiej</groupId>
-            <artifactId>jwt-granted-authority-converter</artifactId>
-            <version>1.0</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>pl.bartlomiej</groupId>-->
+<!--            <artifactId>jwt-granted-authority-converter</artifactId>-->
+<!--            <version>1.0</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>

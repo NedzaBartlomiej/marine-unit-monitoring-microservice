@@ -15,10 +15,14 @@ import pl.bartlomiej.adminservice.domain.Admin;
 import pl.bartlomiej.adminservice.domain.AdminRegisterDto;
 import pl.bartlomiej.adminservice.domain.AdminRole;
 import pl.bartlomiej.adminservice.exception.ErrorResponseException;
+import pl.bartlomiej.adminservice.exception.OffsetTransactionOperator;
 import pl.bartlomiej.adminservice.service.ops.KeycloakOpsAdminService;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +41,7 @@ public class KeycloakIDMAdminService implements IDMAdminService {
 
     @Override
     public Admin create(final AdminRegisterDto adminRegisterDto) {
+        log.info("Started keycloak user creation process.");
         UserRepresentation userRepresentation = buildUserRepresentation(adminRegisterDto);
 
         UsersResource usersResource = this.realmResource.users();
@@ -44,22 +49,30 @@ public class KeycloakIDMAdminService implements IDMAdminService {
         Response response = usersResource.create(userRepresentation);
         try (response) {
             if (response.getStatus() == HttpStatus.CREATED.value()) {
-                Admin admin = new Admin(
+                List<Consumer<Admin>> creationFunctions = new ArrayList<>();
+                List<Consumer<Admin>> creationCompensationFunctions = new ArrayList<>();
+
+                Admin createdAdmin = new Admin(
                         extractIdFromKeycloakLocationHeader(
                                 response.getHeaders().getFirst(HttpHeaders.LOCATION)
                         ),
                         adminRegisterDto.login()
                 );
-                // todo
-                // user creates, when smth go wrong here ->
-                // resolve with some transaction or smth (idk for now, need to read about it)
-                keycloakOpsAdminService.assignRole(admin.getId(), AdminRole.ADMIN);
-                return admin;
+
+                creationFunctions.add(a -> keycloakOpsAdminService.assignRole(createdAdmin.getId(), AdminRole.ADMIN));
+                creationCompensationFunctions.add(a -> keycloakOpsAdminService.deleteUser(createdAdmin.getId()));
+
+                OffsetTransactionOperator.performOffsetTransaction(
+                        createdAdmin,
+                        creationFunctions,
+                        creationCompensationFunctions
+                );
+                return createdAdmin;
             } else {
                 throw new ErrorResponseException(HttpStatus.valueOf(response.getStatus()));
             }
         } catch (ErrorResponseException e) {
-            log.error("Some error status occurred in create keycloak user response: {}, " +
+            log.error("Some error status occurred in keycloak user creation process response: {}, " +
                     "forwarding exception to the RestControllerAdvice", e.getMessage());
             throw new ErrorResponseException(e.getHttpStatus());
         } catch (RuntimeException e) {
@@ -91,7 +104,7 @@ public class KeycloakIDMAdminService implements IDMAdminService {
         }
     }
 
-    private static UserRepresentation buildUserRepresentation(AdminRegisterDto adminRegisterDto) {
+    private static UserRepresentation buildUserRepresentation(final AdminRegisterDto adminRegisterDto) {
         log.debug("Building UserRepresentation for the user being created.");
         UserRepresentation userRepresentation = new UserRepresentation();
         userRepresentation.setEnabled(true);
@@ -104,7 +117,7 @@ public class KeycloakIDMAdminService implements IDMAdminService {
         return userRepresentation;
     }
 
-    private static CredentialRepresentation buildCredentialRepresentation(AdminRegisterDto adminRegisterDto) {
+    private static CredentialRepresentation buildCredentialRepresentation(final AdminRegisterDto adminRegisterDto) {
         log.debug("Building CredentialRepresentation for the user being created.");
         CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
         credentialRepresentation.setType(CredentialRepresentation.PASSWORD);

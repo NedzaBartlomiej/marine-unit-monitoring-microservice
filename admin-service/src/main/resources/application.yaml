@@ -1,5 +1,8 @@
 server:
   port: 8082
+  error:
+    whitelabel:
+      enabled: off
 spring:
   cache:
     type: redis

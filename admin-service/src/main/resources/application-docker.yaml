@@ -1,6 +1,6 @@
 logging:
   level:
-    org.springframework.security: debug
+    root: debug
 spring:
   data:
     redis:

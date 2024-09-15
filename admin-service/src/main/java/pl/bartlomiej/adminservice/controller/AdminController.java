@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.bartlomiej.adminservice.domain.Admin;
 import pl.bartlomiej.adminservice.domain.AdminRegisterDto;
-import pl.bartlomiej.adminservice.exception.ErrorResponseException;
 import pl.bartlomiej.adminservice.service.idm.IDMAdminService;
 
 @RestController
@@ -23,9 +22,8 @@ public class AdminController {
     }
 
     @PostMapping
-    public ResponseEntity<Admin> create(@RequestBody AdminRegisterDto adminRegisterDto) {
-        throw new ErrorResponseException(HttpStatus.NOT_FOUND);
-//        return ResponseEntity.status(HttpStatus.CREATED)
-//                .body(IDMAdminService.create(adminRegisterDto));
+    public ResponseEntity<Admin> create(@RequestBody final AdminRegisterDto adminRegisterDto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(IDMAdminService.create(adminRegisterDto));
     }
 }

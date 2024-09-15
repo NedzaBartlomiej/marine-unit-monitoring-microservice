@@ -1,10 +1,12 @@
 package pl.bartlomiej.adminservice.service.idm;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.bartlomiej.adminservice.domain.Admin;
 import pl.bartlomiej.adminservice.domain.AdminRegisterDto;
 import pl.bartlomiej.adminservice.repository.AdminMongoRepository;
 
+@Slf4j
 @Service
 public class IDMAdminServiceImpl implements IDMAdminService {
 
@@ -18,6 +20,7 @@ public class IDMAdminServiceImpl implements IDMAdminService {
 
     @Override
     public Admin create(final AdminRegisterDto adminRegisterDto) {
+        log.info("Started user creation process.");
         Admin admin = keycloakAdminService.create(adminRegisterDto);
 //        if (adminMongoRepository.existsByLogin(admin.getLogin())) {
 //            throw new RuntimeException("Admin is already registered.");
