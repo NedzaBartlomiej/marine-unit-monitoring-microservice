@@ -1,27 +1,28 @@
-package pl.bartlomiej.adminservice.service.idm;
+package pl.bartlomiej.adminservice.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.bartlomiej.adminservice.domain.Admin;
 import pl.bartlomiej.adminservice.domain.AdminRegisterDto;
 import pl.bartlomiej.adminservice.repository.AdminMongoRepository;
+import pl.bartlomiej.adminservice.service.keycloak.DefaultKeycloakService;
 
 @Slf4j
 @Service
-public class IDMAdminServiceImpl implements IDMAdminService {
+public class DefaultAdminService implements AdminService {
 
-    private final KeycloakIDMAdminService keycloakAdminService;
+    private final DefaultKeycloakService defaultKeycloakService;
 //    private final AdminMongoRepository adminMongoRepository;
 
-    public IDMAdminServiceImpl(KeycloakIDMAdminService keycloakAdminService, AdminMongoRepository adminMongoRepository) {
-        this.keycloakAdminService = keycloakAdminService;
+    public DefaultAdminService(DefaultKeycloakService defaultKeycloakService, AdminMongoRepository adminMongoRepository) {
+        this.defaultKeycloakService = defaultKeycloakService;
 //        this.adminMongoRepository = adminMongoRepository;
     }
 
     @Override
     public Admin create(final AdminRegisterDto adminRegisterDto) {
         log.info("Started user creation process.");
-        Admin admin = keycloakAdminService.create(adminRegisterDto);
+        Admin admin = defaultKeycloakService.create(adminRegisterDto);
 //        if (adminMongoRepository.existsByLogin(admin.getLogin())) {
 //            throw new RuntimeException("Admin is already registered.");
 //        }

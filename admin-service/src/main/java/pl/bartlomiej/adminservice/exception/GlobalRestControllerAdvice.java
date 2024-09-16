@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalRestControllerAdvice {
 
-    @ExceptionHandler(ErrorResponseException.class)
-    public ResponseEntity<ErrorResponseModel> handleErrorResponseException(ErrorResponseException e) {
+    @ExceptionHandler(KeycloakResponseException.class)
+    public ResponseEntity<ErrorResponseModel> handleErrorResponseException(KeycloakResponseException e) {
         return ResponseEntity.status(e.getHttpStatus())
                 .body(new ErrorResponseModel(
                         e.getHttpStatus(),

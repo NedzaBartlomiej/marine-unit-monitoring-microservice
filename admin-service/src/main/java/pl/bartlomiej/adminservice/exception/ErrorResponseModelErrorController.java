@@ -15,7 +15,7 @@ public class ErrorResponseModelErrorController implements ErrorController {
                 .body(new ErrorResponseModel(
                         HttpStatus.INTERNAL_SERVER_ERROR,
                         HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                        "An unhandled internal server error occurred, try again and please report it to technical support."
+                        "An internal server error occurred, try again and please report it to technical support."
                 ));
     }
 }
