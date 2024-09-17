@@ -1,5 +1,6 @@
 package pl.bartlomiej.adminservice.service.keycloak;
 
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
@@ -20,11 +21,9 @@ import pl.bartlomiej.adminservice.domain.AdminRegisterDto;
 import pl.bartlomiej.adminservice.exception.KeycloakResponseException;
 import pl.bartlomiej.adminservice.exception.OffsetTransactionOperator;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +34,7 @@ public class DefaultKeycloakService implements KeycloakService {
     private final RealmResource realmResource;
 
     public DefaultKeycloakService(@Qualifier("keycloakSuperadminClient") Keycloak keycloak) {
+        // todo - create config somehow for lib with properties like this
         this.realmResource = keycloak.realm("mum-api-envelope-system-master");
     }
 
@@ -45,37 +45,30 @@ public class DefaultKeycloakService implements KeycloakService {
 
         UsersResource usersResource = this.realmResource.users();
 
-        final List<Consumer<Admin>> creationFunctions;
-        final List<Consumer<Admin>> creationCompensationFunctions;
         Admin createdAdmin;
         try (Response response = usersResource.create(userRepresentation)) {
             handleResponseStatus(response, HttpStatus.CREATED);
 
-            creationFunctions = new ArrayList<>();
-            creationCompensationFunctions = new ArrayList<>();
-
-            // todo - surround with offset transaction
-            //  (there is needed to delete user too -
-            //  - so creationCompensationFunctions will be used in the comp func)
-            String extractedUid = extractIdFromKeycloakLocationHeader(
-                    response.getHeaders().getFirst(HttpHeaders.LOCATION)
+            String extractedId = OffsetTransactionOperator.performOffsetFunctionTransaction(
+                    response.getHeaders().getFirst(HttpHeaders.LOCATION),
+                    this.getByUsername(adminRegisterDto.login()),
+                    DefaultKeycloakService::extractIdFromKeycloakLocationHeader,
+                    ur -> this.delete(ur.getId())
             );
 
             createdAdmin = new Admin(
-                    extractedUid,
+                    extractedId,
                     adminRegisterDto.login()
             );
         }
 
-        creationFunctions.add(a -> this.assignRole(createdAdmin.getId(), AdminKeycloakRole.ADMIN));
-        creationCompensationFunctions.add(a -> this.delete(createdAdmin.getId()));
-
-        OffsetTransactionOperator.performOffsetTransaction(
+        OffsetTransactionOperator.performOffsetConsumerTransaction(
                 createdAdmin,
-                createdAdmin,
-                creationFunctions,
-                creationCompensationFunctions
+                createdAdmin.getId(),
+                a -> this.assignRole(a.getId(), AdminKeycloakRole.ADMIN),
+                this::delete
         );
+
         return createdAdmin;
     }
 
@@ -103,6 +96,21 @@ public class DefaultKeycloakService implements KeycloakService {
         userResource.roles().realmLevel().add(Collections.singletonList(roleRepresentation));
     }
 
+    private UserRepresentation getByUsername(final String username) {
+        log.info("Starting getting keycloak user by username process.");
+        List<UserRepresentation> searched = realmResource.users().search(username);
+        if (searched.isEmpty()) {
+            log.warn("Keycloak user not found by username.");
+            throw new NotFoundException();
+        } else if (searched.size() > 1) {
+            log.error("Searching keycloak users by username method returned more than one user.");
+            throw new IllegalStateException();
+        } else {
+            log.info("Successfully searched unique user by username, returning.");
+            return searched.getFirst();
+        }
+    }
+
     private static void handleResponseStatus(final Response response, final HttpStatus successStatus) {
         if (response.getStatus() != successStatus.value()) {
             log.error("Some error status occurred in keycloak user creation process response: {}" +
@@ -123,7 +131,7 @@ public class DefaultKeycloakService implements KeycloakService {
         log.debug("Extracting keycloak user id from Location header -> {}", headerValue);
 
         Matcher matcher = idPattern.matcher(headerValue);
-        if (!matcher.find()) {
+        if (matcher.find()) {
             String foundId = matcher.group(1);
             log.debug("Id found in pattern matching - {}", foundId);
             return foundId;
