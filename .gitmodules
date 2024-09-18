@@ -1,9 +1,9 @@
 [submodule "common/jwt-granted-authority-converter"]
 	path = common/jwt-granted-authority-converter
 	url = git@github.com:NedzaBartlomiej/jwt-granted-authority-converter.git
-[submodule "common/keycloak-idm-service"]
-	path = common/keycloak-idm-service
-	url = git@github.com:NedzaBartlomiej/keycloak-idm-service.git
 [submodule "common/offset-transaction"]
 	path = common/offset-transaction
 	url = git@github.com:NedzaBartlomiej/offset-transaction.git
+[submodule "common/keycloak-idm-service"]
+	path = common/keycloak-idm-service
+	url = git@github.com:NedzaBartlomiej/keycloak-idm-service
