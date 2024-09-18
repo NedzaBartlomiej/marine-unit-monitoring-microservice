@@ -1,8 +1,7 @@
-package pl.bartlomiej.adminservice.service.keycloak;
+package pl.bartlomiej.keycloakidmservice.internal.implementation;
 
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
-import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RolesResource;
@@ -11,15 +10,17 @@ import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import pl.bartlomiej.adminservice.domain.Admin;
-import pl.bartlomiej.adminservice.domain.AdminKeycloakRole;
-import pl.bartlomiej.adminservice.domain.AdminRegisterDto;
-import pl.bartlomiej.adminservice.exception.KeycloakResponseException;
-import pl.bartlomiej.adminservice.exception.OffsetTransactionOperator;
+import pl.bartlomiej.keycloakidmservice.external.KeycloakService;
+import pl.bartlomiej.keycloakidmservice.external.exception.KeycloakResponseException;
+import pl.bartlomiej.keycloakidmservice.external.model.KeycloakRole;
+import pl.bartlomiej.keycloakidmservice.external.model.KeycloakUserRegistration;
+import pl.bartlomiej.keycloakidmservice.external.model.KeycloakUserRepresentation;
+import pl.bartlomiej.keycloakidmservice.internal.config.KeycloakIDMServiceProperties;
+import pl.bartlomiej.offsettransaction.servlet.OffsetTransactionOperator;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,49 +28,47 @@ import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Slf4j
-@Service
 public class DefaultKeycloakService implements KeycloakService {
 
+    private static final Logger log = LoggerFactory.getLogger(DefaultKeycloakService.class);
     private final RealmResource realmResource;
 
-    public DefaultKeycloakService(@Qualifier("keycloakSuperadminClient") Keycloak keycloak) {
-        // todo - create config somehow for lib with properties like this
-        this.realmResource = keycloak.realm("mum-api-envelope-system-master");
+    public DefaultKeycloakService(KeycloakIDMServiceProperties properties, Keycloak keycloak) {
+        this.realmResource = keycloak.realm(properties.realmName());
     }
 
     @Override
-    public Admin create(final AdminRegisterDto adminRegisterDto) {
+    public KeycloakUserRepresentation create(final KeycloakUserRegistration keycloakUserRegistration) {
         log.info("Started keycloak user creation process.");
-        UserRepresentation userRepresentation = buildUserRepresentation(adminRegisterDto);
+        UserRepresentation userRepresentation = buildUserRepresentation(keycloakUserRegistration);
 
         UsersResource usersResource = this.realmResource.users();
 
-        Admin createdAdmin;
+        KeycloakUserRepresentation createdUser;
         try (Response response = usersResource.create(userRepresentation)) {
             handleResponseStatus(response, HttpStatus.CREATED);
 
             String extractedId = OffsetTransactionOperator.performOffsetFunctionTransaction(
                     response.getHeaders().getFirst(HttpHeaders.LOCATION),
-                    this.getByUsername(adminRegisterDto.login()),
+                    this.getByUsername(keycloakUserRegistration.getUsername()),
                     DefaultKeycloakService::extractIdFromKeycloakLocationHeader,
                     ur -> this.delete(ur.getId())
             );
 
-            createdAdmin = new Admin(
+            createdUser = new KeycloakUserRepresentation(
                     extractedId,
-                    adminRegisterDto.login()
+                    keycloakUserRegistration.getUsername()
             );
         }
 
         OffsetTransactionOperator.performOffsetConsumerTransaction(
-                createdAdmin,
-                createdAdmin.getId(),
-                a -> this.assignRole(a.getId(), AdminKeycloakRole.ADMIN),
+                createdUser,
+                createdUser.id(),
+                u -> this.assignRole(u.id(), keycloakUserRegistration.getDefaultRole()),
                 this::delete
         );
 
-        return createdAdmin;
+        return createdUser;
     }
 
     @Override
@@ -140,25 +139,25 @@ public class DefaultKeycloakService implements KeycloakService {
         }
     }
 
-    private static UserRepresentation buildUserRepresentation(final AdminRegisterDto adminRegisterDto) {
+    private static UserRepresentation buildUserRepresentation(final KeycloakUserRegistration keycloakUserRegistration) {
         log.debug("Building UserRepresentation for the user being created.");
         UserRepresentation userRepresentation = new UserRepresentation();
         userRepresentation.setEnabled(true);
-        userRepresentation.setUsername(adminRegisterDto.login());
+        userRepresentation.setUsername(keycloakUserRegistration.getUsername());
         userRepresentation.setEmailVerified(true);
 
-        CredentialRepresentation credentialRepresentation = buildCredentialRepresentation(adminRegisterDto);
+        CredentialRepresentation credentialRepresentation = buildCredentialRepresentation(keycloakUserRegistration);
 
         userRepresentation.setCredentials(Collections.singletonList(credentialRepresentation));
         return userRepresentation;
     }
 
-    private static CredentialRepresentation buildCredentialRepresentation(final AdminRegisterDto adminRegisterDto) {
+    private static CredentialRepresentation buildCredentialRepresentation(final KeycloakUserRegistration keycloakUserRegistration) {
         log.debug("Building CredentialRepresentation for the user being created.");
         CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
         credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
         credentialRepresentation.setTemporary(false);
-        credentialRepresentation.setValue(adminRegisterDto.password());
+        credentialRepresentation.setValue(keycloakUserRegistration.getPassword());
         return credentialRepresentation;
     }
 }

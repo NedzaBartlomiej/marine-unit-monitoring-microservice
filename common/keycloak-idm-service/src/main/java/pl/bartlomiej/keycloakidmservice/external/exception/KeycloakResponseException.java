@@ -1,9 +1,7 @@
-package pl.bartlomiej.adminservice.exception;
+package pl.bartlomiej.keycloakidmservice.external.exception;
 
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-@Getter
 public class KeycloakResponseException extends RuntimeException {
     private final HttpStatus httpStatus;
 
@@ -12,4 +10,7 @@ public class KeycloakResponseException extends RuntimeException {
         this.httpStatus = httpStatus;
     }
 
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
+    }
 }

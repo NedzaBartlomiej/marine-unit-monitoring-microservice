@@ -1,3 +1,8 @@
+keycloak-idm-service:
+  server-url: http://localhost:8080
+  realm-name: mum-api-envelope-system-master
+  client-id: admin-service-server-superadmin
+  client-secret: BkaBljk9xOEBD6k4ZsoLLCYinERVSJJI
 logging:
   level:
     root: debug

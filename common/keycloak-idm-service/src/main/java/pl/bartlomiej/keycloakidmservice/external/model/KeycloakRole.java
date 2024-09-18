@@ -1,4 +1,4 @@
-package pl.bartlomiej.adminservice.service.keycloak;
+package pl.bartlomiej.keycloakidmservice.external.model;
 
 public interface KeycloakRole {
     String getRole();

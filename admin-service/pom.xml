@@ -51,6 +51,11 @@
             <artifactId>keycloak-admin-client</artifactId>
             <version>24.0.2</version>
         </dependency>
+        <dependency>
+            <groupId>pl.bartlomiej</groupId>
+            <artifactId>keycloak-idm-service</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 
     <build>

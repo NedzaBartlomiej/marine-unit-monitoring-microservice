@@ -5,28 +5,27 @@ import org.springframework.stereotype.Service;
 import pl.bartlomiej.adminservice.domain.Admin;
 import pl.bartlomiej.adminservice.domain.AdminRegisterDto;
 import pl.bartlomiej.adminservice.repository.AdminMongoRepository;
-import pl.bartlomiej.adminservice.service.keycloak.DefaultKeycloakService;
+import pl.bartlomiej.keycloakidmservice.external.KeycloakService;
 
 @Slf4j
 @Service
 public class DefaultAdminService implements AdminService {
 
-    private final DefaultKeycloakService defaultKeycloakService;
-//    private final AdminMongoRepository adminMongoRepository;
+    private final KeycloakService keycloakService;
+    private final AdminMongoRepository adminMongoRepository;
 
-    public DefaultAdminService(DefaultKeycloakService defaultKeycloakService, AdminMongoRepository adminMongoRepository) {
-        this.defaultKeycloakService = defaultKeycloakService;
-//        this.adminMongoRepository = adminMongoRepository;
+    public DefaultAdminService(KeycloakService keycloakService, AdminMongoRepository adminMongoRepository) {
+        this.keycloakService = keycloakService;
+        this.adminMongoRepository = adminMongoRepository;
     }
 
     @Override
     public Admin create(final AdminRegisterDto adminRegisterDto) {
         log.info("Started user creation process.");
-        Admin admin = defaultKeycloakService.create(adminRegisterDto);
-//        if (adminMongoRepository.existsByLogin(admin.getLogin())) {
-//            throw new RuntimeException("Admin is already registered.");
-//        }
-//        adminMongoRepository.save(admin);
-        return admin;
+        var keycloakUserRepresentation = keycloakService.create(adminRegisterDto);
+        return new Admin(
+                keycloakUserRepresentation.id(),
+                keycloakUserRepresentation.username()
+        );
     }
 }

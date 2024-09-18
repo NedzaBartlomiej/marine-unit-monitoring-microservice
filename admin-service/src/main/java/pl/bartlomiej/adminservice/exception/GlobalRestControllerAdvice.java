@@ -3,6 +3,7 @@ package pl.bartlomiej.adminservice.exception;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import pl.bartlomiej.keycloakidmservice.external.exception.KeycloakResponseException;
 
 @RestControllerAdvice
 public class GlobalRestControllerAdvice {
