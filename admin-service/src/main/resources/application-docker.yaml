@@ -14,3 +14,9 @@ spring:
     mongodb:
       database: adminServiceDB
       uri: mongodb://admin-service-mongodb/${spring.data.mongodb.database}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/mum-api-envelope-system-master
+          jwk-set-uri: http://localhost:8080/realms/mum-api-envelope-system-master/protocol/openid-connect/certs
