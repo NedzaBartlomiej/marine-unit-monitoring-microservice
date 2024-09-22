@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import pl.bartlomiej.adminservice.domain.Admin;
 import pl.bartlomiej.adminservice.domain.AdminRegisterDto;
 import pl.bartlomiej.adminservice.repository.AdminMongoRepository;
-import pl.bartlomiej.keycloakidmservice.external.KeycloakService;
+import pl.bartlomiej.keycloakidmservice.external.servlet.KeycloakService;
 
 @Slf4j
 @Service
