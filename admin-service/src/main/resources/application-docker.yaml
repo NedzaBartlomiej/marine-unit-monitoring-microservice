@@ -1,6 +1,6 @@
 keycloak-idm-service:
   server-url: http://localhost:8080
-  realm-name: mum-api-envelope-system-master
+  realm-name: mum-master
   client-id: admin-service-server-superadmin
   client-secret: BkaBljk9xOEBD6k4ZsoLLCYinERVSJJI
 logging:
@@ -18,5 +18,5 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/mum-api-envelope-system-master
-          jwk-set-uri: http://localhost:8080/realms/mum-api-envelope-system-master/protocol/openid-connect/certs
+          issuer-uri: http://localhost:8080/realms/mum-master
+          jwk-set-uri: http://localhost:8080/realms/mum-master/protocol/openid-connect/certs
