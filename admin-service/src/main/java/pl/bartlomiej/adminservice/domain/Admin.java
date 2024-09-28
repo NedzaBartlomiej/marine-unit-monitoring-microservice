@@ -12,10 +12,12 @@ import java.time.LocalDateTime;
 public class Admin {
     private String id;
     private String login;
+    private String email;
     private final LocalDateTime created = LocalDateTime.now();
 
-    public Admin(String id, String login) {
+    public Admin(String id, String login, String email) {
         this.id = id;
         this.login = login;
+        this.email = email;
     }
 }

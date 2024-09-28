@@ -25,7 +25,8 @@ public class DefaultAdminService implements AdminService {
         var keycloakUserRepresentation = keycloakService.create(adminRegisterDto);
         return new Admin(
                 keycloakUserRepresentation.id(),
-                keycloakUserRepresentation.username()
+                keycloakUserRepresentation.username(),
+                keycloakUserRepresentation.email()
         );
     }
 }
