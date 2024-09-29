@@ -7,3 +7,6 @@
 [submodule "common/keycloak-idm-service"]
 	path = common/keycloak-idm-service
 	url = git@github.com:NedzaBartlomiej/keycloak-idm-service
+[submodule "common/spring-exception-handling-bundle"]
+	path = common/spring-exception-handling-bundle
+	url = git@github.com:NedzaBartlomiej/spring-exception-handling-bundle.git

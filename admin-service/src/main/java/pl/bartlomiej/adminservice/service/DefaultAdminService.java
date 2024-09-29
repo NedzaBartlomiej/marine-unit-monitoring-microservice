@@ -9,7 +9,7 @@ import pl.bartlomiej.keycloakidmservice.external.servlet.KeycloakService;
 
 @Slf4j
 @Service
-public class DefaultAdminService implements AdminService {
+class DefaultAdminService implements AdminService {
 
     private final KeycloakService keycloakService;
     private final AdminMongoRepository adminMongoRepository;

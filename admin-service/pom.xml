@@ -53,6 +53,11 @@
             <version>1.0</version>
         </dependency>
         <dependency>
+            <groupId>pl.bartlomiej</groupId>
+            <artifactId>spring-exception-handling-bundle</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>

@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import pl.bartlomiej.keycloakidmservice.external.exception.KeycloakResponseException;
+import pl.bartlomiej.springexceptionhandlingbundle.external.ErrorResponseModel;
 
 @RestControllerAdvice
 public class GlobalRestControllerAdvice {
