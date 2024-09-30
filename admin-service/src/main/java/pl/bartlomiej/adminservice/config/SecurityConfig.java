@@ -12,7 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import pl.bartlomiej.adminservice.exception.ErrorResponseModelAccessDeniedHandler;
 import pl.bartlomiej.adminservice.exception.ErrorResponseModelAuthEntryPoint;
 import pl.bartlomiej.jwtgrantedauthorityconverter.external.servlet.KeycloakJwtGrantedAuthoritiesConverter;
-import pl.bartlomiej.springexceptionhandlingbundle.external.HttpStatusResolver;
+import pl.bartlomiej.springexceptionhandlingbundle.external.GlobalHttpStatusResolver;
 import pl.bartlomiej.springexceptionhandlingbundle.external.servlet.ErrorResponseModelExceptionHandler;
 
 @Configuration
@@ -60,7 +60,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    ErrorResponseModelExceptionHandler errorResponseModelExceptionHandler(ObjectMapper objectMapper, HttpStatusResolver httpStatusResolver) {
+    ErrorResponseModelExceptionHandler errorResponseModelExceptionHandler(ObjectMapper objectMapper, GlobalHttpStatusResolver httpStatusResolver) {
         return new ErrorResponseModelExceptionHandler(objectMapper, httpStatusResolver);
     }
 }
