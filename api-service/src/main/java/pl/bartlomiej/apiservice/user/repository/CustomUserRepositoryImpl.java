@@ -2,7 +2,6 @@ package pl.bartlomiej.apiservice.user.repository;
 
 import com.mongodb.client.result.UpdateResult;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
@@ -66,25 +65,6 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
         return reactiveMongoTemplate.findAll(User.class)
                 .flatMapIterable(User::getTrackedShips)
                 .onErrorResume(NullPointerException.class, ex -> Flux.empty());
-    }
-
-    @Override
-    public Mono<User> findByOpenId(String openId) {
-        return reactiveMongoTemplate.findOne(
-                new Query().addCriteria(
-                        Criteria.where(UserConstants.OPEN_IDS).is(openId)
-                ),
-                User.class
-        );
-    }
-
-    @Override
-    public Flux<String> findAllEmails() {
-        return reactiveMongoTemplate.findDistinct(
-                UserConstants.EMAIL,
-                User.class,
-                String.class
-        );
     }
 
     @Override

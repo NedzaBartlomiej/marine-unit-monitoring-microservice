@@ -1,12 +1,12 @@
 package pl.bartlomiej.apiservice.point.service;
 
+import jakarta.ws.rs.core.NoContentException;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import pl.bartlomiej.apiservice.ais.service.AisService;
 import pl.bartlomiej.apiservice.ais.AisShip;
-import pl.bartlomiej.apiservice.common.error.apiexceptions.NoContentException;
-import pl.bartlomiej.apiservice.geocoding.service.GeocodeService;
+import pl.bartlomiej.apiservice.ais.service.AisService;
 import pl.bartlomiej.apiservice.geocoding.Position;
+import pl.bartlomiej.apiservice.geocoding.service.GeocodeService;
 import pl.bartlomiej.apiservice.point.Point;
 import reactor.core.publisher.Flux;
 
@@ -33,7 +33,7 @@ public class PointServiceImpl implements PointService {
     @Override
     public Flux<Point> getPoints() {
         return aisService.fetchLatestShips()
-                .switchIfEmpty(error(NoContentException::new))
+                .switchIfEmpty(error(new NoContentException("Empty PointServiceImpl::fetchLatestShips result.")))
                 .flatMap(this::mapToPoint)
                 .cache();
     }

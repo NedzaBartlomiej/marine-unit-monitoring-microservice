@@ -1,10 +1,10 @@
 package pl.bartlomiej.apiservice.shiptracking.repository;
 
+import jakarta.ws.rs.NotFoundException;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
-import pl.bartlomiej.apiservice.common.error.apiexceptions.NotFoundException;
 import pl.bartlomiej.apiservice.shiptracking.ShipTrack;
 import pl.bartlomiej.apiservice.shiptracking.ShipTrackConstants;
 import reactor.core.publisher.Flux;

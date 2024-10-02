@@ -1,8 +1,8 @@
 server:
+  port: 8081
   error:
     whitelabel:
-      enabled: false
-  port: 8081
+      enabled: off
 spring:
   profiles:
     active: docker

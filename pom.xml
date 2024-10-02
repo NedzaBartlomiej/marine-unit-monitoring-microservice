@@ -41,14 +41,6 @@
         </dependencies>
     </dependencyManagement>
 
-    <dependencies>
-        <!--        <dependency>-->
-        <!--            <groupId>pl.bartlomiej</groupId>-->
-        <!--            <artifactId>jwt-granted-authority-converter</artifactId>-->
-        <!--            <version>1.0</version>-->
-        <!--        </dependency>-->
-    </dependencies>
-
     <build>
         <plugins>
             <plugin>

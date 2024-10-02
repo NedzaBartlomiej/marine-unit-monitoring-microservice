@@ -30,8 +30,9 @@ public class ShipTrackController {
     }
 
     @PreAuthorize("hasAnyRole(" +
-            "T(pl.bartlomiej.apiservice.user.nested.Role).PREMIUM.name()," +
-            "T(pl.bartlomiej.apiservice.user.nested.Role).ADMIN.name()" +
+            "T(pl.bartlomiej.apiservice.user.UserKeycloakRole).API_PREMIUM_USER.name()," +
+            "'ADMIN'," +
+            "'SUPERADMIN'" +
             ")"
     )
     @GetMapping
@@ -40,8 +41,8 @@ public class ShipTrackController {
             @RequestParam(required = false) LocalDateTime from,
             @RequestParam(required = false) LocalDateTime to) {
 
-        return userService.identifyUser(principal.getName())
-                .flatMapMany(id -> shipTrackService.getShipTrackHistory(id, from, to)
+        return userService.getUser(principal.getName())
+                .flatMapMany(user -> shipTrackService.getShipTrackHistory(user.getId(), from, to)
                         .map(response ->
                                 ServerSentEvent.<ResponseModel<ShipTrack>>builder()
                                         .id(response.getMmsi())

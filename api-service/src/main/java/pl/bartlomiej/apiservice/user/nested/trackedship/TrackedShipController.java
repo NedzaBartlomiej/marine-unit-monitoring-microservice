@@ -31,14 +31,15 @@ public class TrackedShipController {
     }
 
     @PreAuthorize("hasAnyRole(" +
-            "T(pl.bartlomiej.apiservice.user.nested.Role).PREMIUM.name()," +
-            "T(pl.bartlomiej.apiservice.user.nested.Role).ADMIN.name()" +
+            "T(pl.bartlomiej.apiservice.user.UserKeycloakRole).API_PREMIUM_USER.name())," +
+            "'ADMIN'," +
+            "'SUPERADMIN'" +
             ")"
     )
     @GetMapping // todo pageable
     public ResponseEntity<Flux<ResponseModel<TrackedShip>>> getTrackedShips(Principal principal) {
-        return ok(userService.identifyUser(principal.getName())
-                .flatMapMany(id -> trackedShipService.getTrackedShips(id)
+        return ok(userService.getUser(principal.getName())
+                .flatMapMany(user -> trackedShipService.getTrackedShips(user.getId())
                         .map(trackedShip ->
                                 buildResponseModel(
                                         null,
@@ -52,14 +53,15 @@ public class TrackedShipController {
     }
 
     @PreAuthorize("hasAnyRole(" +
-            "T(pl.bartlomiej.apiservice.user.nested.Role).PREMIUM.name()," +
-            "T(pl.bartlomiej.apiservice.user.nested.Role).ADMIN.name()" +
+            "T(pl.bartlomiej.apiservice.user.UserKeycloakRole).API_PREMIUM_USER.name())," +
+            "'ADMIN'," +
+            "'SUPERADMIN'" +
             ")"
     )
     @PostMapping("/{mmsi}")
     public Mono<ResponseEntity<ResponseModel<TrackedShip>>> addTrackedShip(Principal principal, @PathVariable String mmsi) {
-        return userService.identifyUser(principal.getName())
-                .flatMap(id -> trackedShipService.addTrackedShip(id, mmsi)
+        return userService.getUser(principal.getName())
+                .flatMap(user -> trackedShipService.addTrackedShip(user.getId(), mmsi)
                         .map(trackedShip ->
                                 buildResponse(
                                         CREATED,
@@ -75,15 +77,16 @@ public class TrackedShipController {
     }
 
     @PreAuthorize("hasAnyRole(" +
-            "T(pl.bartlomiej.apiservice.user.nested.Role).PREMIUM.name()," +
-            "T(pl.bartlomiej.apiservice.user.nested.Role).ADMIN.name()" +
+            "T(pl.bartlomiej.apiservice.user.UserKeycloakRole).API_PREMIUM_USER.name())," +
+            "'ADMIN'," +
+            "'SUPERADMIN'" +
             ")"
     )
     @DeleteMapping("/{mmsi}")
     public Mono<ResponseEntity<ResponseModel<Void>>> removeTrackedShip(Principal principal, @PathVariable String mmsi) {
 
-        return userService.identifyUser(principal.getName())
-                .flatMap(id -> trackedShipService.removeTrackedShip(id, mmsi)
+        return userService.getUser(principal.getName())
+                .flatMap(user -> trackedShipService.removeTrackedShip(user.getId(), mmsi)
                         .then(just(
                                 buildResponse(
                                         OK,

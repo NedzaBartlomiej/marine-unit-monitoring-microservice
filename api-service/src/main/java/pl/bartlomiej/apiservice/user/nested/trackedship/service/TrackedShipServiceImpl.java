@@ -1,10 +1,10 @@
 package pl.bartlomiej.apiservice.user.nested.trackedship.service;
 
+import jakarta.ws.rs.core.NoContentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pl.bartlomiej.apiservice.common.error.apiexceptions.MmsiConflictException;
-import pl.bartlomiej.apiservice.common.error.apiexceptions.NoContentException;
 import pl.bartlomiej.apiservice.point.activepoint.service.ActivePointService;
 import pl.bartlomiej.apiservice.user.nested.trackedship.TrackedShip;
 import pl.bartlomiej.apiservice.user.repository.CustomUserRepository;
@@ -38,7 +38,7 @@ public class TrackedShipServiceImpl implements TrackedShipService {
 
     public Flux<TrackedShip> getTrackedShips(String id) {
         return customUserRepository.getTrackedShips(id)
-                .switchIfEmpty(error(NoContentException::new));
+                .switchIfEmpty(error(new NoContentException("Empty TrackedShipServiceImpl::getTrackedShips result.")));
     }
 
     @Override

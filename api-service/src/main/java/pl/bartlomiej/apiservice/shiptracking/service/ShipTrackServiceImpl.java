@@ -1,6 +1,7 @@
 package pl.bartlomiej.apiservice.shiptracking.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.ws.rs.core.NoContentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.ChangeStreamEvent;
@@ -12,8 +13,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pl.bartlomiej.apiservice.ais.service.AisService;
-import pl.bartlomiej.apiservice.common.error.apiexceptions.NoContentException;
-import pl.bartlomiej.apiservice.common.error.apiexceptions.NotFoundException;
 import pl.bartlomiej.apiservice.point.activepoint.service.ActivePointService;
 import pl.bartlomiej.apiservice.shiptracking.ShipTrack;
 import pl.bartlomiej.apiservice.shiptracking.ShipTrackConstants;
@@ -78,7 +77,7 @@ public class ShipTrackServiceImpl implements ShipTrackService {
                     // DB RESULT STREAM
                     Flux<ShipTrack> dbStream = customShipTrackRepository
                             .findByMmsiInAndReadingTimeBetween(mmsis, dateRangeHelper.from(), dateRangeHelper.to())
-                            .switchIfEmpty(error(NoContentException::new));
+                            .switchIfEmpty(error(new NoContentException("Empty CustomShipTrackRepository::findByMmsiInAndReadingTimeBetween result.")));
 
                     // CHANGE STREAM - used when the client wants to track the future
                     if (dateRangeHelper.to().isAfter(now()) || to == null) {
@@ -144,7 +143,7 @@ public class ShipTrackServiceImpl implements ShipTrackService {
         return mongoShipTrackRepository.existsById(mmsi)
                 .flatMap(exists -> {
                     if (!exists) {
-                        return error(new NotFoundException());
+                        return error(new NoContentException("No ship was found."));
                     }
                     return mongoShipTrackRepository.deleteById(mmsi);
                 });
@@ -156,7 +155,7 @@ public class ShipTrackServiceImpl implements ShipTrackService {
         return this.getShipMmsisToTrack()
                 .flatMapMany(aisService::fetchShipsByIdentifiers)
                 .switchIfEmpty(
-                        error(NoContentException::new)
+                        error(new NoContentException("No ship track found."))
                 )
                 .flatMap(this::mapToShipTrack);
     }

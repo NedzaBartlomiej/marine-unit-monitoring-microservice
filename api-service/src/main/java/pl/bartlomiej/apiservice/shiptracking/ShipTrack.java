@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 import static java.time.LocalDateTime.now;
 
-@Document(collection = "ship_tracks")
+@Document(collection = "shipTracks")
 public class ShipTrack {
 
     private final LocalDateTime readingTime = now();

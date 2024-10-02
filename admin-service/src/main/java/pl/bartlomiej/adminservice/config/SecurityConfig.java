@@ -55,11 +55,6 @@ public class SecurityConfig {
     }
 
     @Bean
-    KeycloakJwtGrantedAuthoritiesConverter keycloakJwtGrantedAuthoritiesConverter() {
-        return new KeycloakJwtGrantedAuthoritiesConverter();
-    }
-
-    @Bean
     ErrorResponseModelExceptionHandler errorResponseModelExceptionHandler(ObjectMapper objectMapper, GlobalHttpStatusResolver httpStatusResolver) {
         return new ErrorResponseModelExceptionHandler(objectMapper, httpStatusResolver);
     }

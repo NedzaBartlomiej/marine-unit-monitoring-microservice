@@ -64,7 +64,7 @@ docker image prune -f
 echo -e "${YELLOW}Do you want to update containers? (when u provided any changes in app code choose 'y') (y/n)${NC}"
 read -r choice
 
-
+# todo make to choose which service want i update
 if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
   echo -e "${YELLOW}UPDATING TARGETS (.jar-s):${NC}"
 

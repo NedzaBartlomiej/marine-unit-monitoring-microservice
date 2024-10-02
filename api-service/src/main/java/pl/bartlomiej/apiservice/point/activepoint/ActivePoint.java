@@ -3,7 +3,7 @@ package pl.bartlomiej.apiservice.point.activepoint;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "active_points")
+@Document(collection = "activePoints")
 public class ActivePoint {
 
     @Id

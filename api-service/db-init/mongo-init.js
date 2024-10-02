@@ -27,20 +27,6 @@ print("Creating shipTracks collection.");
 db.createCollection('shipTracks');
 
 
-// VERIFICATION TOKEN COLLECTION
-print("-- Executing init operations for: verificationTokens collection. --");
-
-print("Creating verificationTokens collection.");
-db.createCollection('verificationTokens');
-
-
-// JWT TOKENS COLLECTION
-print("-- Executing init operations for: jwtTokens collection. --");
-
-print("Creating jwtTokens collection.");
-db.createCollection('jwtTokens');
-
-
 // ACTIVE POINTS COLLECTION
 print("-- Executing init operations for: activePoints collection. --");
 
