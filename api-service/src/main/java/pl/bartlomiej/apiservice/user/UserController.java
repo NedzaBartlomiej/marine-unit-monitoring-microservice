@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 
 import java.security.Principal;
 
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static pl.bartlomiej.apiservice.common.util.ControllerResponseUtil.buildResponse;
 import static pl.bartlomiej.apiservice.common.util.ControllerResponseUtil.buildResponseModel;
@@ -33,7 +34,7 @@ public class UserController {
     }
 
 
-    @PreAuthorize("hasRole(T(pl.bartlomiej.apiservice.user.UserKeycloakRole).API_USER.name())")
+    @PreAuthorize("hasRole(T(pl.bartlomiej.apiservice.user.UserKeycloakRole).API_USER.getRole())")
     @GetMapping("/me")
     public Mono<ResponseEntity<ResponseModel<UserReadDto>>> getAuthenticatedUser(Principal principal) {
         return userService.getUser(principal.getName())
@@ -52,12 +53,19 @@ public class UserController {
 
     @PostMapping
     public Mono<ResponseEntity<ResponseModel<UserReadDto>>> createUser(@RequestBody @Valid UserSaveDto userSaveDto) {
-        // todo
-        return Mono.empty();
+        return userService.createUser(userSaveDto, "127.0.0.1") // todo SIGN - ip test value
+                .map(user -> ControllerResponseUtil.buildResponse(
+                        CREATED,
+                        ControllerResponseUtil.buildResponseModel(
+                                "CREATED",
+                                CREATED,
+                                userDtoMapper.mapToReadDto(user),
+                                "user"
+                        )
+                ));
     }
 
-    // todo ADMIN ROLE FROM THE ADMINSERVICE
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasRole(T(pl.bartlomiej.apiservice.user.UserKeycloakRole).API_ADMIN.getRole())")
     @DeleteMapping("/{id}")
     public Mono<ResponseEntity<ResponseModel<Void>>> deleteUser(@PathVariable String id) {
         return userService.deleteUser(id)

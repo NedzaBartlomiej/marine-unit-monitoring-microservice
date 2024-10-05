@@ -2,43 +2,31 @@ package pl.bartlomiej.apiservice.user.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import pl.bartlomiej.apiservice.user.UserKeycloakRole;
+import pl.bartlomiej.keycloakidmservice.external.model.KeycloakRole;
+import pl.bartlomiej.keycloakidmservice.external.model.KeycloakUserRegistration;
 
-public class UserSaveDto {
+public record UserSaveDto(@NotBlank(message = "EMPTY_USERNAME") String username,
+                          @Email(message = "INVALID_EMAIL") String email,
+                          @NotBlank(message = "EMPTY_PASSWORD") String password) implements KeycloakUserRegistration {
 
-    @NotBlank(message = "EMPTY_USERNAME")
-    private String username;
-
-    @NotBlank(message = "EMPTY_EMAIL")
-    @Email(message = "INVALID_EMAIL")
-    private String email;
-
-    @NotBlank(message = "EMPTY_PASSWORD")
-    private String password;
-
-    public UserSaveDto() {
-    }
-
+    @Override
     public String getUsername() {
-        return username;
+        return this.username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
+    @Override
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    @Override
+    public KeycloakRole getDefaultRole() {
+        return UserKeycloakRole.API_USER;
+    }
+
+    @Override
+    public String getEmail() {
+        return this.email;
     }
 }

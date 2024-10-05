@@ -3,16 +3,16 @@ jwt-granted-authority-converter:
 keycloak-idm-service:
   type: reactor
   server-url: http://keycloak:8080
-  realm-name: mum-master
-  client-id: api-service-server
-  client-secret: Bg9jq0EJzP5P5cCHVFVAflr1rzrd6Hwz
+  realm-name: mum-api-master
+  client-id: api-service-client
+  client-secret: YiDOVheR3t4kdDnzkjoD2Xt4ItdSfJhi
 spring:
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/mum-master
-          jwk-set-uri: http://keycloak:8080/realms/mum-master/protocol/openid-connect/certs
+          issuer-uri: http://localhost:8080/realms/mum-api-master
+          jwk-set-uri: http://keycloak:8080/realms/mum-api-master/protocol/openid-connect/certs
   data:
     redis:
       host: redis
