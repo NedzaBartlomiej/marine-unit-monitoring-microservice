@@ -11,7 +11,7 @@ flag_file="./docker-deploy/script/run/initialized.flag"
 
 # // FUNCTIONS
 update_containers() {
-    services=("api-service" "admin-service" "dev-service")
+    local services=("$@")
 
     echo -e "${YELLOW}STOPPING APPLICATION CONTAINERS:${NC}"
     for service in "${services[@]}"; do
@@ -61,30 +61,32 @@ echo "Removing not used images"
 docker image prune -f
 
 # UPDATING APP CODE SECTION
-echo -e "${YELLOW}Do you want to update containers? (when u provided any changes in app code choose 'y') (y/n)${NC}"
-read -r choice
+echo -e "${YELLOW}Enter the names of the services you want to update (space-separated), or press Enter to skip:${NC}"
+read -r services_input
 
-# todo make to choose which service want i update
-if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
-  echo -e "${YELLOW}UPDATING TARGETS (.jar-s):${NC}"
+IFS=' ' read -r -a services <<< "$services_input"
 
-  if ! mvn clean; then
-    echo -e "${RED}Error: Something went wrong on mvn clean, exiting.${NC}"
-    exit 1
-  fi
-
-  if ! mvn package; then
-    echo -e "${RED}Error: Something went wrong on mvn package, exiting.${NC}"
-    exit 1
-  fi
-
-  echo "PREPARING CONTAINERS FOR AN UPDATE:"
-  update_containers
-
-  echo -e "${GREEN}Application updated successfully. Ready for build.${NC}"
-else
+if [[ ${#services[@]} -eq 0 ]]; then
   echo -e "${YELLOW}Skipping application update.${NC}"
 fi
+
+echo -e "${YELLOW}UPDATING TARGETS (.jar-s):${NC}"
+for service in "${services[@]}"; do
+  if ! mvn clean -pl "$service"; then
+    echo -e "${RED}Error: Something went wrong on mvn clean for $service, exiting.${NC}"
+    exit 1
+  fi
+
+  if ! mvn package -pl "$service"; then
+    echo -e "${RED}Error: Something went wrong on mvn package for $service, exiting.${NC}"
+    exit 1
+  fi
+done
+
+echo "PREPARING CONTAINERS FOR AN UPDATE:"
+update_containers "${services[@]}"
+
+echo -e "${GREEN}Application updated successfully. Ready for build.${NC}"
 
 # COMPOSING SECTION
 echo -e "${YELLOW}DOCKER COMPOSE:${NC}"
