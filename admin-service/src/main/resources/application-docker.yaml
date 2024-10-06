@@ -6,7 +6,7 @@ global-idm-service:
     server-url: http://keycloak:8080
     realm-name: mum-envelope-system-master
     client-id: admin-service-client
-    client-secret: gtWG0uUOA6gixp52kuO2ewCzjZQl7XGy
+    client-secret: ${keycloak.client-secret}
 logging:
   level:
     root: debug

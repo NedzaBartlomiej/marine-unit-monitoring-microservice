@@ -6,7 +6,7 @@ global-idm-service:
     server-url: http://keycloak:8080
     realm-name: mum-api-master
     client-id: api-service-client
-    client-secret: YiDOVheR3t4kdDnzkjoD2Xt4ItdSfJhi
+    client-secret: ${keycloak.client-secret}
 spring:
   security:
     oauth2:
