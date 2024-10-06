@@ -1,4 +1,4 @@
-package pl.bartlomiej.apiservice.user;
+package pl.bartlomiej.apiservice.user.domain;
 
 import pl.bartlomiej.apiservice.common.util.CommonFields;
 

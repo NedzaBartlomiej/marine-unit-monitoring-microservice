@@ -21,7 +21,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -41,6 +41,30 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>pl.bartlomiej</groupId>
+            <artifactId>global-idm-service</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>pl.bartlomiej</groupId>
+            <artifactId>jwt-granted-authority-converter</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>pl.bartlomiej</groupId>
+            <artifactId>spring-exception-handling-bundle</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
         </dependency>
     </dependencies>
 

@@ -4,9 +4,9 @@
 [submodule "common/offset-transaction"]
 	path = common/offset-transaction
 	url = git@github.com:NedzaBartlomiej/offset-transaction.git
-[submodule "common/keycloak-idm-service"]
-	path = common/keycloak-idm-service
-	url = git@github.com:NedzaBartlomiej/keycloak-idm-service
 [submodule "common/spring-exception-handling-bundle"]
 	path = common/spring-exception-handling-bundle
 	url = git@github.com:NedzaBartlomiej/spring-exception-handling-bundle.git
+[submodule "common/global-idm-service"]
+	path = common/global-idm-service
+	url = git@github.com:NedzaBartlomiej/global-idm-service.git

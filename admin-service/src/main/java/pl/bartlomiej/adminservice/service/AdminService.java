@@ -1,8 +1,7 @@
 package pl.bartlomiej.adminservice.service;
 
 import pl.bartlomiej.adminservice.domain.Admin;
-import pl.bartlomiej.adminservice.domain.AdminRegisterDto;
+import pl.bartlomiej.globalidmservice.external.serviceidm.servlet.IDMServiceTemplate;
 
-public interface AdminService {
-    Admin create(AdminRegisterDto adminRegisterDto);
+public interface AdminService extends IDMServiceTemplate<Admin> {
 }

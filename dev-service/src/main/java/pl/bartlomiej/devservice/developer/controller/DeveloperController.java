@@ -1,0 +1,29 @@
+package pl.bartlomiej.devservice.developer.controller;
+
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import pl.bartlomiej.devservice.developer.domain.Developer;
+import pl.bartlomiej.devservice.developer.domain.dto.DeveloperRegisterDto;
+import pl.bartlomiej.devservice.developer.service.DeveloperService;
+
+@RestController
+@RequestMapping("/v1/developers")
+public class DeveloperController {
+
+    private final DeveloperService developerService;
+
+    public DeveloperController(DeveloperService developerService) {
+        this.developerService = developerService;
+    }
+
+    @PostMapping
+    public ResponseEntity<Developer> create(@RequestBody @Valid final DeveloperRegisterDto developerRegisterDto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(developerService.create(developerRegisterDto, "127.0.0.1"));
+    }
+}

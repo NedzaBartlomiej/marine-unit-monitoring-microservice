@@ -1,11 +1,12 @@
 jwt-granted-authority-converter:
   type: reactor
-keycloak-idm-service:
+global-idm-service:
   type: reactor
-  server-url: http://keycloak:8080
-  realm-name: mum-api-master
-  client-id: api-service-client
-  client-secret: YiDOVheR3t4kdDnzkjoD2Xt4ItdSfJhi
+  keycloak:
+    server-url: http://keycloak:8080
+    realm-name: mum-api-master
+    client-id: api-service-client
+    client-secret: YiDOVheR3t4kdDnzkjoD2Xt4ItdSfJhi
 spring:
   security:
     oauth2:

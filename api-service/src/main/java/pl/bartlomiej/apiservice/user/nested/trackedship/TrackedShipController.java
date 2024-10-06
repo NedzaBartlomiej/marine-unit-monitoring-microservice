@@ -31,8 +31,8 @@ public class TrackedShipController {
     }
 
     @PreAuthorize("hasAnyRole(" +
-            "T(pl.bartlomiej.apiservice.user.UserKeycloakRole).API_PREMIUM_USER.getRole())," +
-            "T(pl.bartlomiej.apiservice.user.UserKeycloakRole).API_ADMIN.getRole())" +
+            "T(pl.bartlomiej.apiservice.user.domain.UserKeycloakRole).API_PREMIUM_USER.getRole())," +
+            "T(pl.bartlomiej.apiservice.user.domain.UserKeycloakRole).API_ADMIN.getRole())" +
             ")"
     )
     @GetMapping // todo pageable
@@ -52,8 +52,8 @@ public class TrackedShipController {
     }
 
     @PreAuthorize("hasRole(" +
-            "T(pl.bartlomiej.apiservice.user.UserKeycloakRole).API_PREMIUM_USER.getRole())," +
-            "T(pl.bartlomiej.apiservice.user.UserKeycloakRole).API_ADMIN.getRole())" +
+            "T(pl.bartlomiej.apiservice.user.domain.UserKeycloakRole).API_PREMIUM_USER.getRole())," +
+            "T(pl.bartlomiej.apiservice.user.domain.UserKeycloakRole).API_ADMIN.getRole())" +
             ")"
     )
     @PostMapping("/{mmsi}")
@@ -75,8 +75,8 @@ public class TrackedShipController {
     }
 
     @PreAuthorize("hasAnyRole(" +
-            "T(pl.bartlomiej.apiservice.user.UserKeycloakRole).API_PREMIUM_USER.getRole())," +
-            "T(pl.bartlomiej.apiservice.user.UserKeycloakRole).API_ADMIN.getRole())" +
+            "T(pl.bartlomiej.apiservice.user.domain.UserKeycloakRole).API_PREMIUM_USER.getRole())," +
+            "T(pl.bartlomiej.apiservice.user.domain.UserKeycloakRole).API_ADMIN.getRole())" +
             ")"
     )
     @DeleteMapping("/{mmsi}")

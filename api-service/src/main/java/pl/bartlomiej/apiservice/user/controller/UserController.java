@@ -1,4 +1,4 @@
-package pl.bartlomiej.apiservice.user;
+package pl.bartlomiej.apiservice.user.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +8,7 @@ import pl.bartlomiej.apiservice.common.helper.ResponseModel;
 import pl.bartlomiej.apiservice.common.util.ControllerResponseUtil;
 import pl.bartlomiej.apiservice.user.dto.UserDtoMapper;
 import pl.bartlomiej.apiservice.user.dto.UserReadDto;
-import pl.bartlomiej.apiservice.user.dto.UserSaveDto;
+import pl.bartlomiej.apiservice.user.dto.UserRegisterDto;
 import pl.bartlomiej.apiservice.user.service.UserService;
 import reactor.core.publisher.Mono;
 
@@ -16,9 +16,6 @@ import java.security.Principal;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
-import static pl.bartlomiej.apiservice.common.util.ControllerResponseUtil.buildResponse;
-import static pl.bartlomiej.apiservice.common.util.ControllerResponseUtil.buildResponseModel;
-import static reactor.core.publisher.Mono.just;
 
 @RestController
 @RequestMapping("/v1/users")
@@ -34,7 +31,7 @@ public class UserController {
     }
 
 
-    @PreAuthorize("hasRole(T(pl.bartlomiej.apiservice.user.UserKeycloakRole).API_USER.getRole())")
+    @PreAuthorize("hasRole(T(pl.bartlomiej.apiservice.user.domain.UserKeycloakRole).API_USER.getRole())")
     @GetMapping("/me")
     public Mono<ResponseEntity<ResponseModel<UserReadDto>>> getAuthenticatedUser(Principal principal) {
         return userService.getUser(principal.getName())
@@ -52,8 +49,8 @@ public class UserController {
     }
 
     @PostMapping
-    public Mono<ResponseEntity<ResponseModel<UserReadDto>>> createUser(@RequestBody @Valid UserSaveDto userSaveDto) {
-        return userService.createUser(userSaveDto, "127.0.0.1") // todo SIGN - ip test value
+    public Mono<ResponseEntity<ResponseModel<UserReadDto>>> createUser(@RequestBody @Valid UserRegisterDto userRegisterDto) {
+        return userService.create(userRegisterDto, "127.0.0.1")
                 .map(user -> ControllerResponseUtil.buildResponse(
                         CREATED,
                         ControllerResponseUtil.buildResponseModel(
@@ -61,23 +58,6 @@ public class UserController {
                                 CREATED,
                                 userDtoMapper.mapToReadDto(user),
                                 "user"
-                        )
-                ));
-    }
-
-    @PreAuthorize("hasRole(T(pl.bartlomiej.apiservice.user.UserKeycloakRole).API_ADMIN.getRole())")
-    @DeleteMapping("/{id}")
-    public Mono<ResponseEntity<ResponseModel<Void>>> deleteUser(@PathVariable String id) {
-        return userService.deleteUser(id)
-                .then(just(
-                        buildResponse(
-                                OK,
-                                buildResponseModel(
-                                        "DELETED",
-                                        OK,
-                                        null,
-                                        null
-                                )
                         )
                 ));
     }

@@ -1,32 +1,35 @@
 package pl.bartlomiej.adminservice.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.bartlomiej.adminservice.domain.Admin;
-import pl.bartlomiej.adminservice.domain.AdminRegisterDto;
 import pl.bartlomiej.adminservice.repository.AdminMongoRepository;
-import pl.bartlomiej.keycloakidmservice.external.servlet.KeycloakService;
+import pl.bartlomiej.globalidmservice.external.keycloakidm.model.KeycloakUserRepresentation;
+import pl.bartlomiej.globalidmservice.external.keycloakidm.servlet.KeycloakService;
+import pl.bartlomiej.globalidmservice.internal.serviceidm.servlet.AbstractIDMService;
 
-@Slf4j
+import java.util.Collections;
+
 @Service
-class DefaultAdminService implements AdminService {
-
-    private final KeycloakService keycloakService;
-    private final AdminMongoRepository adminMongoRepository;
+class DefaultAdminService extends AbstractIDMService<Admin> implements AdminService {
 
     public DefaultAdminService(KeycloakService keycloakService, AdminMongoRepository adminMongoRepository) {
-        this.keycloakService = keycloakService;
-        this.adminMongoRepository = adminMongoRepository;
+        super(keycloakService, adminMongoRepository);
     }
 
+
     @Override
-    public Admin create(final AdminRegisterDto adminRegisterDto) {
-        log.info("Started user creation process.");
-        var keycloakUserRepresentation = keycloakService.create(adminRegisterDto);
-        return new Admin(
+    protected Admin createEntity(KeycloakUserRepresentation keycloakUserRepresentation, String ipAddress) {
+        Admin admin = new Admin(
                 keycloakUserRepresentation.id(),
                 keycloakUserRepresentation.username(),
                 keycloakUserRepresentation.email()
         );
+        admin.setTrustedIpAddresses(Collections.singletonList(ipAddress));
+        return admin;
+    }
+
+    @Override
+    protected String getEntityId(Admin entity) {
+        return entity.getId();
     }
 }
