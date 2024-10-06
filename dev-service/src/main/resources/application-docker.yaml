@@ -6,7 +6,7 @@ global-idm-service:
     server-url: http://keycloak:8080
     realm-name: mum-envelope-system-master
     client-id: developer-service-client
-    client-secret: tfwT81RQkLQO95cLIs5K04lRXXafO1lm
+    client-secret: ${keycloak.client-secret}
 spring:
   data:
     redis:
