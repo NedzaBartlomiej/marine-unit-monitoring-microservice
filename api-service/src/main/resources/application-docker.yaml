@@ -1,19 +1,17 @@
-jwt-granted-authority-converter:
-  type: reactor
-global-idm-service:
-  type: reactor
-  keycloak:
-    server-url: http://keycloak:8080
-    realm-name: mum-api-master
-    client-id: api-service-client
-    client-secret: ${keycloak.client-secret}
+mum-microservice-commons:
+  auth-conversion:
+    type: reactor
+  global-idm-service:
+    type: reactor
+    keycloak:
+      server-url: http://keycloak:8080
+      realm-name: mum-api-master
+      client-id: api-service-client
+      client-secret: ${keycloak.client-secret}
+logging:
+  level:
+    root: debug
 spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8080/realms/mum-api-master
-          jwk-set-uri: http://keycloak:8080/realms/mum-api-master/protocol/openid-connect/certs
   data:
     redis:
       host: redis
@@ -21,6 +19,12 @@ spring:
     mongodb:
       database: apiServiceDB
       uri: mongodb://api-service-mongodb-primary,api-service-mongodb2,api-service-mongodb3/${spring.data.mongodb.database}?replicaSet=apiServiceDBRS
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/mum-api-master
+          jwk-set-uri: http://keycloak:8080/realms/mum-api-master/protocol/openid-connect/certs
 
 
 project-properties:

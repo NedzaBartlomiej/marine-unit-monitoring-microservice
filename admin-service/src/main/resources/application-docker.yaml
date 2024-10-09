@@ -1,12 +1,13 @@
-jwt-granted-authority-converter:
-  type: servlet
-global-idm-service:
-  type: servlet
-  keycloak:
-    server-url: http://keycloak:8080
-    realm-name: mum-envelope-system-master
-    client-id: admin-service-client
-    client-secret: ${keycloak.client-secret}
+mum-microservice-commons:
+  auth-conversion:
+    type: servlet
+  global-idm-service:
+    type: servlet
+    keycloak:
+      server-url: http://keycloak:8080
+      realm-name: mum-envelope-system-master
+      client-id: admin-service-client
+      client-secret: ${keycloak.client-secret}
 logging:
   level:
     root: debug
