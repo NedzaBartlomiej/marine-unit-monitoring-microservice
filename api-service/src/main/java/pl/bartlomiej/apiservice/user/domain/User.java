@@ -15,14 +15,10 @@ import java.util.List;
 public class User {
 
     private String id;
-    private String username;
-    private String email;
     private List<TrackedShip> trackedShips;
     private List<String> trustedIpAddresses;
 
-    public User(String id, String username, String email) {
+    public User(String id) {
         this.id = id;
-        this.username = username;
-        this.email = email;
     }
 }

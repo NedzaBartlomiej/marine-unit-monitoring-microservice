@@ -48,9 +48,7 @@ class DefaultUserService extends AbstractReactiveIDMService<User> implements Use
     @Override
     protected User createEntity(KeycloakUserRepresentation keycloakUserRepresentation, String ipAddress) {
         User user = new User(
-                keycloakUserRepresentation.id(),
-                keycloakUserRepresentation.username(),
-                keycloakUserRepresentation.email()
+                keycloakUserRepresentation.id()
         );
         user.setTrustedIpAddresses(Collections.singletonList(ipAddress));
 

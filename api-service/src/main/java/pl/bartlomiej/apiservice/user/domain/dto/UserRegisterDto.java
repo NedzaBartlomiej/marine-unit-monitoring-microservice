@@ -1,4 +1,4 @@
-package pl.bartlomiej.apiservice.user.dto;
+package pl.bartlomiej.apiservice.user.domain.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

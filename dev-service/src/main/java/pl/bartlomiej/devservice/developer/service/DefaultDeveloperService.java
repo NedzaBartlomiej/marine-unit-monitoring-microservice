@@ -1,7 +1,7 @@
 package pl.bartlomiej.devservice.developer.service;
 
 import org.springframework.stereotype.Service;
-import pl.bartlomiej.devservice.developer.domain.Developer;
+import pl.bartlomiej.devservice.developer.domain.AppDeveloperEntity;
 import pl.bartlomiej.devservice.developer.repository.DeveloperMongoRepository;
 import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.model.KeycloakUserRepresentation;
 import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.servlet.KeycloakService;
@@ -10,26 +10,24 @@ import pl.bartlomiej.mummicroservicecommons.globalidmservice.internal.serviceidm
 import java.util.Collections;
 
 @Service
-class DefaultDeveloperService extends AbstractIDMService<Developer> implements DeveloperService {
+class DefaultDeveloperService extends AbstractIDMService<AppDeveloperEntity> implements DeveloperService {
 
     public DefaultDeveloperService(KeycloakService keycloakService, DeveloperMongoRepository developerMongoRepository) {
         super(keycloakService, developerMongoRepository);
     }
 
     @Override
-    protected Developer createEntity(KeycloakUserRepresentation keycloakUserRepresentation, String ipAddress) {
-        Developer developer = new Developer(
-                keycloakUserRepresentation.id(),
-                keycloakUserRepresentation.username(),
-                keycloakUserRepresentation.email()
+    protected AppDeveloperEntity createEntity(KeycloakUserRepresentation keycloakUserRepresentation, String ipAddress) {
+        AppDeveloperEntity appDeveloperEntity = new AppDeveloperEntity(
+                keycloakUserRepresentation.id()
         );
-        developer.setTrustedIpAddresses(Collections.singletonList(ipAddress));
+        appDeveloperEntity.setTrustedIpAddresses(Collections.singletonList(ipAddress));
 
-        return developer;
+        return appDeveloperEntity;
     }
 
     @Override
-    protected String getEntityId(Developer entity) {
+    protected String getEntityId(AppDeveloperEntity entity) {
         return entity.getId();
     }
 }

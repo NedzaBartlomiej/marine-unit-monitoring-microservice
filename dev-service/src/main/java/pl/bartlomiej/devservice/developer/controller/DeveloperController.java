@@ -7,9 +7,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.bartlomiej.devservice.developer.domain.Developer;
+import pl.bartlomiej.devservice.developer.domain.AppDeveloperEntity;
 import pl.bartlomiej.devservice.developer.domain.dto.DeveloperRegisterDto;
 import pl.bartlomiej.devservice.developer.service.DeveloperService;
+import pl.bartlomiej.mummicroservicecommons.model.response.ResponseModel;
 
 @RestController
 @RequestMapping("/v1/developers")
@@ -22,8 +23,11 @@ public class DeveloperController {
     }
 
     @PostMapping
-    public ResponseEntity<Developer> create(@RequestBody @Valid final DeveloperRegisterDto developerRegisterDto) {
+    public ResponseEntity<ResponseModel<AppDeveloperEntity>> create(@RequestBody @Valid final DeveloperRegisterDto developerRegisterDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(developerService.create(developerRegisterDto, "127.0.0.1"));
+                .body(new ResponseModel.Builder<AppDeveloperEntity>(HttpStatus.CREATED, HttpStatus.CREATED.value())
+                        .body(developerService.create(developerRegisterDto, "127.0.0.1"))
+                        .build()
+                );
     }
 }

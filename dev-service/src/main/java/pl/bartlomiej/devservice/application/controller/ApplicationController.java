@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.bartlomiej.devservice.application.domain.Application;
 import pl.bartlomiej.devservice.application.domain.dto.ApplicationRequestDto;
 import pl.bartlomiej.devservice.application.service.ApplicationService;
+import pl.bartlomiej.mummicroservicecommons.model.response.ResponseModel;
 
 import java.security.Principal;
 
@@ -26,9 +27,12 @@ public class ApplicationController {
 
     @PreAuthorize("hasRole(T(pl.bartlomiej.devservice.developer.domain.DeveloperKeycloakRole).DEVELOPER.getRole())")
     @PostMapping
-    public ResponseEntity<Application> createApplication(@RequestBody @Valid final ApplicationRequestDto applicationRequestDto,
-                                                         Principal principal) {
+    public ResponseEntity<ResponseModel<Application>> createApplication(@RequestBody @Valid final ApplicationRequestDto applicationRequestDto,
+                                                                        Principal principal) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(applicationService.create(applicationRequestDto, principal.getName()));
+                .body(new ResponseModel.Builder<Application>(HttpStatus.CREATED, HttpStatus.CREATED.value())
+                        .body(applicationService.create(applicationRequestDto, principal.getName()))
+                        .build()
+                );
     }
 }

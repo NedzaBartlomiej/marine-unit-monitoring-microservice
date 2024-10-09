@@ -6,15 +6,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pl.bartlomiej.apiservice.common.helper.ResponseModel;
 import pl.bartlomiej.apiservice.shiptracking.service.ShipTrackService;
 import pl.bartlomiej.apiservice.user.service.UserService;
+import pl.bartlomiej.mummicroservicecommons.model.response.ResponseModel;
 import reactor.core.publisher.Flux;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
 
-import static java.util.Map.of;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -42,12 +41,9 @@ public class ShipTrackController {
                                 ServerSentEvent.<ResponseModel<ShipTrack>>builder()
                                         .id(response.getMmsi())
                                         .event("NEW_SHIP_TRACK_EVENT")
-                                        .data(
-                                                ResponseModel.<ShipTrack>builder()
-                                                        .httpStatus(OK)
-                                                        .httpStatusCode(OK.value())
-                                                        .body(of("shipTracks", response))
-                                                        .build()
+                                        .data(new ResponseModel.Builder<ShipTrack>(OK, OK.value())
+                                                .body(response)
+                                                .build()
                                         )
                                         .build()
                         )

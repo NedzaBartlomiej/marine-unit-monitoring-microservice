@@ -12,17 +12,13 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Document("developers")
-public class Developer {
+public class AppDeveloperEntity {
 
     private String id;
-    private String username;
-    private String email;
     private final LocalDateTime created = LocalDateTime.now();
     private List<String> trustedIpAddresses;
 
-    public Developer(String id, String username, String email) {
+    public AppDeveloperEntity(String id) {
         this.id = id;
-        this.username = username;
-        this.email = email;
     }
 }

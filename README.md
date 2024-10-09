@@ -100,7 +100,7 @@ jwt:
 
 ### External API References for API Service
 
-- **AIS API**: [AIS API Documentation](https://developer.barentswatch.no/)
-- **HERE Geocode and Search API**: [HERE API Documentation](https://www.here.com/docs/bundle/geocoding-and-search-api-developer-guide/page/topics-api/code-geocode-examples.html)
+- **AIS API**: [AIS API Documentation](https://appDeveloperEntity.barentswatch.no/)
+- **HERE Geocode and Search API**: [HERE API Documentation](https://www.here.com/docs/bundle/geocoding-and-search-api-appDeveloperEntity-guide/page/topics-api/code-geocode-examples.html)
 
 ---

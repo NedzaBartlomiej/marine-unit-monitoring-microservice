@@ -1,7 +1,7 @@
 package pl.bartlomiej.devservice.developer.repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-import pl.bartlomiej.devservice.developer.domain.Developer;
+import pl.bartlomiej.devservice.developer.domain.AppDeveloperEntity;
 
-public interface DeveloperMongoRepository extends MongoRepository<Developer, String> {
+public interface DeveloperMongoRepository extends MongoRepository<AppDeveloperEntity, String> {
 }
