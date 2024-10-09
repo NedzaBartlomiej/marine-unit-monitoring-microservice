@@ -1,6 +1,6 @@
 package pl.bartlomiej.adminservice.domain;
 
-import pl.bartlomiej.globalidmservice.external.keycloakidm.model.KeycloakRole;
+import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.model.KeycloakRole;
 
 public enum AdminKeycloakRole implements KeycloakRole {
     ADMIN("ADMIN"), SUPERADMIN("SUPERADMIN");

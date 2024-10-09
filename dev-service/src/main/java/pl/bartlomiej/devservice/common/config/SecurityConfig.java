@@ -12,9 +12,9 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.web.SecurityFilterChain;
 import pl.bartlomiej.devservice.common.exception.ErrorResponseModelAccessDeniedHandler;
 import pl.bartlomiej.devservice.common.exception.ErrorResponseModelAuthEntryPoint;
-import pl.bartlomiej.jwtgrantedauthorityconverter.external.servlet.KeycloakJwtGrantedAuthoritiesConverter;
-import pl.bartlomiej.springexceptionhandlingbundle.external.GlobalHttpStatusResolver;
-import pl.bartlomiej.springexceptionhandlingbundle.external.servlet.ErrorResponseModelExceptionHandler;
+import pl.bartlomiej.mummicroservicecommons.authconversion.external.servlet.KeycloakJwtGrantedAuthoritiesConverter;
+import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.GlobalHttpStatusResolver;
+import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.servlet.ErrorResponseModelExceptionHandler;
 
 @Configuration
 @EnableMethodSecurity

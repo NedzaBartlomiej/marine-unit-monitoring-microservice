@@ -2,8 +2,8 @@ package pl.bartlomiej.devservice.developer.domain.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import pl.bartlomiej.devservice.developer.domain.DeveloperKeycloakRole;
-import pl.bartlomiej.globalidmservice.external.keycloakidm.model.KeycloakRole;
-import pl.bartlomiej.globalidmservice.external.keycloakidm.model.KeycloakUserRegistration;
+import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.model.KeycloakRole;
+import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.model.KeycloakUserRegistration;
 
 public record DeveloperRegisterDto(@NotBlank(message = "EMPTY_USERNAME") String username,
                                    @NotBlank(message = "EMPTY_EMAIL") String email,

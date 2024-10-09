@@ -2,8 +2,8 @@ package pl.bartlomiej.adminservice.domain.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import pl.bartlomiej.adminservice.domain.AdminKeycloakRole;
-import pl.bartlomiej.globalidmservice.external.keycloakidm.model.KeycloakRole;
-import pl.bartlomiej.globalidmservice.external.keycloakidm.model.KeycloakUserRegistration;
+import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.model.KeycloakRole;
+import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.model.KeycloakUserRegistration;
 
 public record AdminRegisterDto(@NotBlank(message = "EMPTY_LOGIN") String login,
                                @NotBlank(message = "EMPTY_EMAIL") String email,

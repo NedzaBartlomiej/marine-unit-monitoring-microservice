@@ -15,9 +15,9 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 import pl.bartlomiej.apiservice.common.error.ErrorResponseModelServerAccessDeniedHandler;
 import pl.bartlomiej.apiservice.common.error.ErrorResponseModelServerAuthEntryPoint;
-import pl.bartlomiej.jwtgrantedauthorityconverter.external.reactor.KeycloakReactiveJwtGrantedAuthoritiesConverter;
-import pl.bartlomiej.springexceptionhandlingbundle.external.GlobalHttpStatusResolver;
-import pl.bartlomiej.springexceptionhandlingbundle.external.reactor.ErrorResponseModelServerExceptionHandler;
+import pl.bartlomiej.mummicroservicecommons.authconversion.external.reactor.KeycloakReactiveJwtGrantedAuthoritiesConverter;
+import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.GlobalHttpStatusResolver;
+import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.reactor.ErrorResponseModelServerExceptionHandler;
 
 import java.util.List;
 

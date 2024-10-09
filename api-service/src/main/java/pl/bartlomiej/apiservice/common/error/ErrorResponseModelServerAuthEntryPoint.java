@@ -4,7 +4,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
-import pl.bartlomiej.springexceptionhandlingbundle.external.reactor.ErrorResponseModelServerExceptionHandler;
+import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.reactor.ErrorResponseModelServerExceptionHandler;
 import reactor.core.publisher.Mono;
 
 @Component

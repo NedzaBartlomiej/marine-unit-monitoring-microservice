@@ -44,17 +44,7 @@
         </dependency>
         <dependency>
             <groupId>pl.bartlomiej</groupId>
-            <artifactId>global-idm-service</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>pl.bartlomiej</groupId>
-            <artifactId>jwt-granted-authority-converter</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>pl.bartlomiej</groupId>
-            <artifactId>spring-exception-handling-bundle</artifactId>
+            <artifactId>mum-microservice-commons</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>

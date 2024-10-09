@@ -1,12 +1,3 @@
-[submodule "common/jwt-granted-authority-converter"]
-	path = common/jwt-granted-authority-converter
-	url = git@github.com:NedzaBartlomiej/jwt-granted-authority-converter.git
-[submodule "common/offset-transaction"]
-	path = common/offset-transaction
-	url = git@github.com:NedzaBartlomiej/offset-transaction.git
-[submodule "common/spring-exception-handling-bundle"]
-	path = common/spring-exception-handling-bundle
-	url = git@github.com:NedzaBartlomiej/spring-exception-handling-bundle.git
-[submodule "common/global-idm-service"]
-	path = common/global-idm-service
-	url = git@github.com:NedzaBartlomiej/global-idm-service.git
+[submodule "mum-microservice-commons"]
+	path = mum-microservice-commons
+	url = git@github.com:NedzaBartlomiej/mum-microservice-commons.git

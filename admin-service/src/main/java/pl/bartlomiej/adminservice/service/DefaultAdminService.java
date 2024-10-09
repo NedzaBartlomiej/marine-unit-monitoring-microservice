@@ -3,9 +3,9 @@ package pl.bartlomiej.adminservice.service;
 import org.springframework.stereotype.Service;
 import pl.bartlomiej.adminservice.domain.Admin;
 import pl.bartlomiej.adminservice.repository.AdminMongoRepository;
-import pl.bartlomiej.globalidmservice.external.keycloakidm.model.KeycloakUserRepresentation;
-import pl.bartlomiej.globalidmservice.external.keycloakidm.servlet.KeycloakService;
-import pl.bartlomiej.globalidmservice.internal.serviceidm.servlet.AbstractIDMService;
+import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.model.KeycloakUserRepresentation;
+import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.servlet.KeycloakService;
+import pl.bartlomiej.mummicroservicecommons.globalidmservice.internal.serviceidm.servlet.AbstractIDMService;
 
 import java.util.Collections;
 
