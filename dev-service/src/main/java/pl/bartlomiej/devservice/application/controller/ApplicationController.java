@@ -4,13 +4,11 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.bartlomiej.devservice.application.domain.Application;
 import pl.bartlomiej.devservice.application.domain.dto.ApplicationRequestDto;
 import pl.bartlomiej.devservice.application.service.ApplicationService;
+import pl.bartlomiej.devservice.application.service.ApplicationTokenService;
 import pl.bartlomiej.mummicroservicecommons.model.response.ResponseModel;
 
 import java.security.Principal;
@@ -20,9 +18,11 @@ import java.security.Principal;
 public class ApplicationController {
 
     private final ApplicationService applicationService;
+    private final ApplicationTokenService applicationTokenService;
 
-    public ApplicationController(ApplicationService applicationService) {
+    public ApplicationController(ApplicationService applicationService, ApplicationTokenService applicationTokenService) {
         this.applicationService = applicationService;
+        this.applicationTokenService = applicationTokenService;
     }
 
     @PreAuthorize("hasRole(T(pl.bartlomiej.devservice.developer.domain.DeveloperKeycloakRole).DEVELOPER.getRole())")
@@ -34,5 +34,11 @@ public class ApplicationController {
                         .body(applicationService.create(applicationRequestDto, principal.getName()))
                         .build()
                 );
+    }
+
+    @PreAuthorize("hasRole(T(pl.bartlomiej.devservice.application.domain.ApplicationRole).APP_TOKEN_CHECKER.name())")
+    @GetMapping("/app-token/{appToken}")
+    public Boolean checkToken(@PathVariable String appToken) {
+        return applicationTokenService.checkToken(appToken);
     }
 }

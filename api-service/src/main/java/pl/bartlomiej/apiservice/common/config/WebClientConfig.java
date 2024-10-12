@@ -24,12 +24,17 @@ public class WebClientConfig {
 
     @Bean
     public WebClient retryWebClient() {
-        return WebClient
-                .builder()
+        return WebClient.builder()
                 .filter(this.buildRetryExchangeFilterFunction())
                 .build();
     }
 
+    @Bean
+    WebClient devAppHttpServiceWebClient() {
+        return WebClient.builder()
+                .baseUrl("http://dev-service:8083/")
+                .build();
+    }
 
     private ExchangeFilterFunction buildRetryExchangeFilterFunction() {
         return (request, next) -> next.exchange(request)

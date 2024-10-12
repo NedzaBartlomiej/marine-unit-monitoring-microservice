@@ -15,11 +15,11 @@ public class Application {
 
     private String id;
     private String name;
-    private String opaqueToken;
+    private String appToken;
     private String requestDesc;
     private String devId;
     private ApplicationRequestStatus requestStatus = ApplicationRequestStatus.PENDING;
-    private Boolean isBlocked;
+    private Boolean isBlocked = false;
     private LocalDateTime created = LocalDateTime.now();
 
     public Application(String devId, String requestDesc, String name) {

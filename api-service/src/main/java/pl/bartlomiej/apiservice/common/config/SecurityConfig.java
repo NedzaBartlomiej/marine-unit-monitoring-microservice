@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity.CsrfSpec;
 import org.springframework.security.config.web.server.ServerHttpSecurity.FormLoginSpec;
@@ -13,6 +14,7 @@ import org.springframework.security.config.web.server.ServerHttpSecurity.LogoutS
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
+import pl.bartlomiej.apiservice.common.apiaccess.ApiKeyWebFilter;
 import pl.bartlomiej.apiservice.common.error.ErrorResponseModelServerAccessDeniedHandler;
 import pl.bartlomiej.apiservice.common.error.ErrorResponseModelServerAuthEntryPoint;
 import pl.bartlomiej.mummicroservicecommons.authconversion.external.reactor.KeycloakReactiveJwtGrantedAuthoritiesConverter;
@@ -40,7 +42,8 @@ public class SecurityConfig {
     SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http,
                                                   ReactiveJwtAuthenticationConverter authenticationConverter,
                                                   ErrorResponseModelServerAuthEntryPoint authEntryPoint,
-                                                  ErrorResponseModelServerAccessDeniedHandler accessDeniedHandler) {
+                                                  ErrorResponseModelServerAccessDeniedHandler accessDeniedHandler,
+                                                  ApiKeyWebFilter apiKeyWebFilter) {
         return http
                 .httpBasic(HttpBasicSpec::disable)
                 .formLogin(FormLoginSpec::disable)
@@ -63,6 +66,7 @@ public class SecurityConfig {
                                 .authenticationEntryPoint(authEntryPoint)
                                 .accessDeniedHandler(accessDeniedHandler)
                 )
+                .addFilterAfter(apiKeyWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();
     }
 

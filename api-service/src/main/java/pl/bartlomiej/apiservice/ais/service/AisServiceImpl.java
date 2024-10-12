@@ -1,6 +1,7 @@
 package pl.bartlomiej.apiservice.ais.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -25,7 +26,7 @@ public class AisServiceImpl implements AisService {
     private final String apiFetchByMmsiUri;
 
     public AisServiceImpl(AisApiAuthTokenProvider aisApiAuthTokenProvider,
-                          WebClient webClient,
+                          @Qualifier("retryWebClient") WebClient webClient,
                           @Value("${project-properties.external-apis.ais-api.result-limit}") long resultLimit,
                           @Value("${ais-api.latest-ais-url}") String apiFetchLatestUri,
                           @Value("${ais-api.latest-ais-bymmsi-url}") String apiFetchByMmsiUri) {

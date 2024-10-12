@@ -3,6 +3,7 @@ package pl.bartlomiej.apiservice.ais.accesstoken;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class BarentswatchAisApiTokenProvider implements AisApiAuthTokenProvider 
 
     private final String accessTokenApiUrl;
 
-    public BarentswatchAisApiTokenProvider(WebClient webClient,
+    public BarentswatchAisApiTokenProvider(@Qualifier("retryWebClient") WebClient webClient,
                                            @Value("${ais-api.auth.client-id}") String clientId,
                                            @Value("${ais-api.auth.scope}") String scope,
                                            @Value("${ais-api.auth.client-secret}") String clientSecret,

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class HereGeocodeServiceImpl implements GeocodeService {
     private final String geocodeApiKey;
     private final String geocodeApiBaseUrl;
 
-    public HereGeocodeServiceImpl(WebClient webClient,
+    public HereGeocodeServiceImpl(@Qualifier("retryWebClient") WebClient webClient,
                                   @Value("${geocode-api.api-key}") String geocodeApiKey,
                                   @Value("${geocode-api.api-base-url}") String geocodeApiBaseUrl) {
         this.webClient = webClient;

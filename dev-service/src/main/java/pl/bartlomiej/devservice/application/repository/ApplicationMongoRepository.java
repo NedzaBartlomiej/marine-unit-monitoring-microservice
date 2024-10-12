@@ -4,4 +4,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import pl.bartlomiej.devservice.application.domain.Application;
 
 public interface ApplicationMongoRepository extends MongoRepository<Application, String> {
+    Application findByAppToken(String appToken);
 }

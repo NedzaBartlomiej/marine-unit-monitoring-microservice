@@ -48,6 +48,7 @@ services:
     #    image: gateway:latest
     ports:
       - "80:80"
+      - "5008:5008"
     networks:
       - marine-unit-monitoring-network
     depends_on:
@@ -65,6 +66,8 @@ services:
       context: ./api-service
       dockerfile: Dockerfile
     #    image: api-service:latest
+    ports:
+      - "5005:5005"
     networks:
       - marine-unit-monitoring-network
       - api-service-network
@@ -134,6 +137,8 @@ services:
       context: ./admin-service
       dockerfile: Dockerfile
     #    image: admin-service:latest
+    ports:
+      - "5006:5006"
     networks:
       - marine-unit-monitoring-network
       - admin-service-network
@@ -160,6 +165,8 @@ services:
       context: ./dev-service
       dockerfile: Dockerfile
     #    image: dev-service:latest
+    ports:
+      - "5007:5007"
     networks:
       - marine-unit-monitoring-network
       - dev-service-network
