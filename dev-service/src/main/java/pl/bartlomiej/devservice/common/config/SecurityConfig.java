@@ -13,7 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import pl.bartlomiej.devservice.common.exception.ErrorResponseModelAccessDeniedHandler;
 import pl.bartlomiej.devservice.common.exception.ErrorResponseModelAuthEntryPoint;
 import pl.bartlomiej.mummicroservicecommons.authconversion.external.servlet.KeycloakJwtGrantedAuthoritiesConverter;
-import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.GlobalHttpStatusResolver;
+import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.statusresolution.GlobalHttpStatusResolver;
 import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.servlet.ErrorResponseModelExceptionHandler;
 
 @Configuration
