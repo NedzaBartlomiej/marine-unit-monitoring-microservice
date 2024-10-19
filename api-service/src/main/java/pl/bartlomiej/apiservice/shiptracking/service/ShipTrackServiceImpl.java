@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pl.bartlomiej.apiservice.ais.service.AisService;
+import pl.bartlomiej.apiservice.common.util.MongoDBConstants;
 import pl.bartlomiej.apiservice.point.activepoint.service.ActivePointService;
 import pl.bartlomiej.apiservice.shiptracking.ShipTrack;
 import pl.bartlomiej.apiservice.shiptracking.ShipTrackConstants;
@@ -30,8 +31,6 @@ import java.util.NoSuchElementException;
 import static java.time.LocalDateTime.now;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
-import static pl.bartlomiej.apiservice.common.config.MongoConfig.INSERT;
-import static pl.bartlomiej.apiservice.common.config.MongoConfig.OPERATION_TYPE;
 import static reactor.core.publisher.Flux.just;
 import static reactor.core.publisher.Mono.empty;
 import static reactor.core.publisher.Mono.error;
@@ -84,12 +83,12 @@ public class ShipTrackServiceImpl implements ShipTrackService {
                         AggregationOperation match;
                         if (to == null) {
                             match = match(
-                                    Criteria.where(OPERATION_TYPE).is(INSERT)
+                                    Criteria.where(MongoDBConstants.OPERATION_TYPE).is(MongoDBConstants.INSERT)
                                             .and(ShipTrackConstants.MMSI).in(mmsis)
                             );
                         } else {
                             match = match(
-                                    Criteria.where(OPERATION_TYPE).is(INSERT)
+                                    Criteria.where(MongoDBConstants.OPERATION_TYPE).is(MongoDBConstants.INSERT)
                                             .and(ShipTrackConstants.MMSI).in(mmsis)
                                             .and(ShipTrackConstants.READING_TIME).lte(dateRangeHelper.to())
                             );
