@@ -1,7 +1,6 @@
 package pl.bartlomiej.apiservice.shiptracking.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import jakarta.ws.rs.core.NoContentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.ChangeStreamEvent;
@@ -26,6 +25,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static java.time.LocalDateTime.now;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
@@ -76,8 +76,7 @@ public class ShipTrackServiceImpl implements ShipTrackService {
 
                     // DB RESULT STREAM
                     Flux<ShipTrack> dbStream = customShipTrackRepository
-                            .findByMmsiInAndReadingTimeBetween(mmsis, dateRangeHelper.from(), dateRangeHelper.to())
-                            .switchIfEmpty(error(new NoContentException("Empty CustomShipTrackRepository::findByMmsiInAndReadingTimeBetween result.")));
+                            .findByMmsiInAndReadingTimeBetween(mmsis, dateRangeHelper.from(), dateRangeHelper.to());
 
                     // CHANGE STREAM - used when the client wants to track the future
                     if (dateRangeHelper.to().isAfter(now()) || to == null) {
@@ -143,7 +142,7 @@ public class ShipTrackServiceImpl implements ShipTrackService {
         return mongoShipTrackRepository.existsById(mmsi)
                 .flatMap(exists -> {
                     if (!exists) {
-                        return error(new NoContentException("No ship was found."));
+                        return empty();
                     }
                     return mongoShipTrackRepository.deleteById(mmsi);
                 });
@@ -155,7 +154,7 @@ public class ShipTrackServiceImpl implements ShipTrackService {
         return this.getShipMmsisToTrack()
                 .flatMapMany(aisService::fetchShipsByIdentifiers)
                 .switchIfEmpty(
-                        error(new NoContentException("No ship track found."))
+                        error(new NoSuchElementException("No ship track found."))
                 )
                 .flatMap(this::mapToShipTrack);
     }

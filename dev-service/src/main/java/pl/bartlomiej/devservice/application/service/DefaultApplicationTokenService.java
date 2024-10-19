@@ -14,7 +14,7 @@ class DefaultApplicationTokenService implements ApplicationTokenService {
     }
 
     @Override
-    public Boolean checkToken(String appToken) {
+    public Boolean checkToken(final String appToken) {
         Application application = applicationMongoRepository.findByAppToken(appToken);
         return application != null && !application.getIsBlocked();
     }

@@ -25,13 +25,8 @@ eureka.instance.hostname=gateway
 ```api-service.env
 # Eureka Discovery Configuration
 eureka.instance.hostname=api-service
-```
-
-#### `admin-service.env`
-
-```admin-service.env
-# Eureka Discovery Configuration
-eureka.instance.hostname=admin-service
+# Debug Configuration
+_JAVA_OPTIONS:"-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:PORT"
 ```
 
 #### `dev-service.env`
@@ -39,6 +34,8 @@ eureka.instance.hostname=admin-service
 ```dev-service.env
 # Eureka Discovery Configuration
 eureka.instance.hostname=dev-service
+# Debug Configuration
+_JAVA_OPTIONS:"-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:PORT"
 ```
 
 ### `keycloak.env` - Environment File for Keycloak Configuration and Keycloak Database Values
@@ -67,8 +64,8 @@ KC_DB_PASSWORD=${POSTGRES_PASSWORD}
 
 ---
 
-
 ### Secrets file for api-service (default location from api-service catalog -> ./src/main/resources/secrets.yaml)
+
 This file contains secrets and API-related configurations for the api-service.
 
 ```secrets.yaml
@@ -92,15 +89,45 @@ ais-api:
 geocode-api:
   api-base-url=https://geocode.search.hereapi.com/v1/geocode
   api-key=
-
-# JWT Configuration
-jwt:
-  secret=
+  
+# Keycloak Configuration
+keycloak:
+  client-secret:
 ```
 
 ### External API References for API Service
 
 - **AIS API**: [AIS API Documentation](https://appDeveloperEntity.barentswatch.no/)
-- **HERE Geocode and Search API**: [HERE API Documentation](https://www.here.com/docs/bundle/geocoding-and-search-api-appDeveloperEntity-guide/page/topics-api/code-geocode-examples.html)
+- **HERE Geocode and Search API
+  **: [HERE API Documentation](https://www.here.com/docs/bundle/geocoding-and-search-api-appDeveloperEntity-guide/page/topics-api/code-geocode-examples.html)
+
+---
+
+--- 
+
+### Secrets file for dev-service (default location from api-service catalog -> ./src/main/resources/secrets.yaml)
+
+This file contains secrets and API-related configurations for the api-service.
+
+```secrets.yaml
+# Keycloak Configuration
+keycloak:
+  client-secret:
+```
+
+---
+
+--- 
+
+### Secrets file for email-service (default location from api-service catalog -> ./src/main/resources/secrets.yaml)
+
+This file contains secrets and API-related configurations for the api-service.
+
+```secrets.yaml
+# Mail Configuration
+mail:
+  username=
+  password=
+```
 
 ---

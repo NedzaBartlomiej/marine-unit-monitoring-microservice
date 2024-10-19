@@ -25,8 +25,8 @@
         <module>eureka-discovery</module>
         <module>gateway</module>
         <module>api-service</module>
-        <module>admin-service</module>
         <module>dev-service</module>
+        <module>email-service</module>
     </modules>
 
     <dependencyManagement>

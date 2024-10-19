@@ -17,7 +17,7 @@ class DefaultDeveloperService extends AbstractIDMService<AppDeveloperEntity> imp
     }
 
     @Override
-    protected AppDeveloperEntity createEntity(KeycloakUserRepresentation keycloakUserRepresentation, String ipAddress) {
+    protected AppDeveloperEntity createEntity(final KeycloakUserRepresentation keycloakUserRepresentation, final String ipAddress) {
         AppDeveloperEntity appDeveloperEntity = new AppDeveloperEntity(
                 keycloakUserRepresentation.id()
         );

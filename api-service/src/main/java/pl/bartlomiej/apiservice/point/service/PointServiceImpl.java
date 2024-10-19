@@ -1,6 +1,5 @@
 package pl.bartlomiej.apiservice.point.service;
 
-import jakarta.ws.rs.core.NoContentException;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import pl.bartlomiej.apiservice.ais.AisShip;
@@ -15,7 +14,6 @@ import java.util.Objects;
 import static pl.bartlomiej.apiservice.ais.nested.Geometry.X_COORDINATE_INDEX;
 import static pl.bartlomiej.apiservice.ais.nested.Geometry.Y_COORDINATE_INDEX;
 import static pl.bartlomiej.apiservice.common.config.RedisCacheConfig.POINTS_CACHE_NAME;
-import static reactor.core.publisher.Flux.error;
 
 @Service
 public class PointServiceImpl implements PointService {
@@ -33,7 +31,6 @@ public class PointServiceImpl implements PointService {
     @Override
     public Flux<Point> getPoints() {
         return aisService.fetchLatestShips()
-                .switchIfEmpty(error(new NoContentException("Empty PointServiceImpl::fetchLatestShips result.")))
                 .flatMap(this::mapToPoint)
                 .cache();
     }

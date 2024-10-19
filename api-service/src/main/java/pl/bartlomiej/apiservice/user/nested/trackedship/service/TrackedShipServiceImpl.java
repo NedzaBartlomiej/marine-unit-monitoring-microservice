@@ -1,6 +1,5 @@
 package pl.bartlomiej.apiservice.user.nested.trackedship.service;
 
-import jakarta.ws.rs.core.NoContentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,6 @@ import java.util.function.Function;
 
 import static pl.bartlomiej.apiservice.common.error.apiexceptions.MmsiConflictException.Message.INVALID_SHIP;
 import static pl.bartlomiej.apiservice.common.error.apiexceptions.MmsiConflictException.Message.SHIP_IS_ALREADY_TRACKED;
-import static reactor.core.publisher.Flux.error;
 
 @Service
 public class TrackedShipServiceImpl implements TrackedShipService {
@@ -37,8 +35,7 @@ public class TrackedShipServiceImpl implements TrackedShipService {
 
 
     public Flux<TrackedShip> getTrackedShips(String id) {
-        return customUserRepository.getTrackedShips(id)
-                .switchIfEmpty(error(new NoContentException("Empty TrackedShipServiceImpl::getTrackedShips result.")));
+        return customUserRepository.getTrackedShips(id);
     }
 
     @Override

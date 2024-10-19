@@ -53,7 +53,6 @@ services:
       - marine-unit-monitoring-network
     depends_on:
       - api-service
-      - admin-service
       - dev-service
     env_file:
       - ./docker-deploy/envs/.env
@@ -130,34 +129,6 @@ services:
     volumes:
       - api-service-mongodb3-db:/usr/db
 
-  # ADMIN SERVICE
-  admin-service:
-    container_name: admin-service
-    build:
-      context: ./admin-service
-      dockerfile: Dockerfile
-    #    image: admin-service:latest
-    ports:
-      - "5006:5006"
-    networks:
-      - marine-unit-monitoring-network
-      - admin-service-network
-    depends_on:
-      - eureka-discovery
-      - admin-service-mongodb
-    env_file:
-      - ./docker-deploy/envs/.env
-      - ./docker-deploy/envs/admin-service.env
-
-  admin-service-mongodb:
-    container_name: admin-service-mongodb
-    image: mongo:latest
-    networks:
-      - admin-service-network
-    volumes:
-      - ./admin-service/db-init:/db-init
-      - admin-service-mongodb-db:/usr/db
-
   # DEV SERVICE
   dev-service:
     container_name: dev-service
@@ -195,19 +166,16 @@ services:
     networks:
       - api-service-network
       - dev-service-network
-      - admin-service-network
 
 volumes:
   keycloak-postgres-db:
   api-service-mongodb-primary-db:
   api-service-mongodb2-db:
   api-service-mongodb3-db:
-  admin-service-mongodb-db:
   dev-service-mongodb-db:
   cache:
 networks:
   marine-unit-monitoring-network:
   keycloak-network:
   api-service-network:
-  admin-service-network:
   dev-service-network:
