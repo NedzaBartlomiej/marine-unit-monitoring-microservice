@@ -19,4 +19,16 @@ public abstract class Email {
         this.title = title;
         this.message = message;
     }
+
+    public String getReceiverEmail() {
+        return receiverEmail;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }
