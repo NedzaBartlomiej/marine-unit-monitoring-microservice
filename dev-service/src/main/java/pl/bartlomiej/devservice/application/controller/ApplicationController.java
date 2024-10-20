@@ -10,7 +10,6 @@ import pl.bartlomiej.devservice.application.domain.ApplicationRequestStatus;
 import pl.bartlomiej.devservice.application.domain.dto.ApplicationRequestDto;
 import pl.bartlomiej.devservice.application.service.ApplicationService;
 import pl.bartlomiej.devservice.application.service.ApplicationTokenService;
-import pl.bartlomiej.devservice.common.exception.InvalidApplicationRequestStatusException;
 import pl.bartlomiej.mummicroservicecommons.model.response.ResponseModel;
 
 import java.security.Principal;
@@ -39,12 +38,6 @@ public class ApplicationController {
                 );
     }
 
-    @PreAuthorize("hasRole(T(pl.bartlomiej.devservice.application.domain.ApplicationRole).APP_TOKEN_CHECKER.name())")
-    @GetMapping("/app-token/{appToken}")
-    public Boolean checkToken(@PathVariable String appToken) {
-        return applicationTokenService.checkToken(appToken);
-    }
-
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
     @GetMapping
     public ResponseEntity<ResponseModel<List<Application>>> getApplications(@RequestParam(required = false) final ApplicationRequestStatus requestStatus) {
@@ -59,15 +52,28 @@ public class ApplicationController {
     @PatchMapping("/{id}/requestStatus/{requestStatus}")
     public ResponseEntity<ResponseModel<Void>> considerAppRequest(@PathVariable final String id,
                                                                   @PathVariable final ApplicationRequestStatus requestStatus) {
-        if (requestStatus.equals(ApplicationRequestStatus.PENDING)) {
-            throw new InvalidApplicationRequestStatusException();
-        }
-
         return ResponseEntity.ok(
                 new ResponseModel.Builder<Void>(HttpStatus.OK, HttpStatus.OK.value())
                         .message("Updated application request status to: "
                                 + applicationService.considerAppRequest(id, requestStatus)
                         )
+                        .build()
+        );
+    }
+
+    @PreAuthorize("hasRole(T(pl.bartlomiej.devservice.application.domain.ApplicationRole).APP_TOKEN_CHECKER.name())")
+    @GetMapping("/app-token/{appToken}")
+    public Boolean checkToken(@PathVariable String appToken) {
+        return applicationTokenService.checkToken(appToken);
+    }
+
+    @PreAuthorize("hasRole(T(pl.bartlomiej.devservice.application.domain.ApplicationRole).APP_TOKEN_CHECKER.name())")
+    @PatchMapping("/{id}/app-token")
+    public ResponseEntity<ResponseModel<String>> replaceCurrentAppToken(@PathVariable final String id) {
+        return ResponseEntity.ok(
+                new ResponseModel.Builder<String>(HttpStatus.OK, HttpStatus.OK.value())
+                        .message("Successfully replaced the current application token with a new one.")
+                        .body(applicationTokenService.replaceCurrentAppToken(id))
                         .build()
         );
     }

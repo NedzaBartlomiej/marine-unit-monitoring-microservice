@@ -7,6 +7,9 @@ import pl.bartlomiej.devservice.application.domain.ApplicationRequestStatus;
 import java.util.List;
 
 public interface ApplicationMongoRepository extends MongoRepository<Application, String> {
+
+    Boolean existByAppToken(String appToken);
+
     Application findByAppToken(String appToken);
 
     List<Application> findAllByRequestStatus(ApplicationRequestStatus requestStatus);
