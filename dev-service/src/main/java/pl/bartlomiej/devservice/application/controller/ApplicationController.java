@@ -32,7 +32,7 @@ public class ApplicationController {
     public ResponseEntity<ResponseModel<Application>> createApplication(@RequestBody @Valid final ApplicationRequestDto applicationRequestDto,
                                                                         final Principal principal) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ResponseModel.Builder<Application>(HttpStatus.CREATED, HttpStatus.CREATED.value())
+                .body(new ResponseModel.Builder<Application>(HttpStatus.CREATED)
                         .body(applicationService.create(applicationRequestDto, principal.getName()))
                         .build()
                 );
@@ -42,7 +42,7 @@ public class ApplicationController {
     @GetMapping
     public ResponseEntity<ResponseModel<List<Application>>> getApplications(@RequestParam(required = false) final ApplicationRequestStatus requestStatus) {
         return ResponseEntity.ok(
-                new ResponseModel.Builder<List<Application>>(HttpStatus.OK, HttpStatus.OK.value())
+                new ResponseModel.Builder<List<Application>>(HttpStatus.OK)
                         .body(applicationService.getApplications(requestStatus))
                         .build()
         );
@@ -53,7 +53,7 @@ public class ApplicationController {
     public ResponseEntity<ResponseModel<Void>> considerAppRequest(@PathVariable final String id,
                                                                   @PathVariable final ApplicationRequestStatus requestStatus) {
         return ResponseEntity.ok(
-                new ResponseModel.Builder<Void>(HttpStatus.OK, HttpStatus.OK.value())
+                new ResponseModel.Builder<Void>(HttpStatus.OK)
                         .message("Updated application request status to: "
                                 + applicationService.considerAppRequest(id, requestStatus)
                         )
@@ -71,7 +71,7 @@ public class ApplicationController {
     @PatchMapping("/{id}/app-token")
     public ResponseEntity<ResponseModel<String>> replaceCurrentAppToken(@PathVariable final String id) {
         return ResponseEntity.ok(
-                new ResponseModel.Builder<String>(HttpStatus.OK, HttpStatus.OK.value())
+                new ResponseModel.Builder<String>(HttpStatus.OK)
                         .message("Successfully replaced the current application token with a new one.")
                         .body(applicationTokenService.replaceCurrentAppToken(id))
                         .build()

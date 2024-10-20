@@ -52,7 +52,7 @@ public class PointController {
                                 ).thenReturn(point)
                         )
                         .map(point ->
-                                new ResponseModel.Builder<Point>(OK, OK.value())
+                                new ResponseModel.Builder<Point>(OK)
                                         .body(point)
                                         .build()
                         )

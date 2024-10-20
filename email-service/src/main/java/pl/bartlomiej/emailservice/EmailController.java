@@ -17,7 +17,7 @@ public class EmailController {
     @PostMapping("/standard")
     public ResponseEntity<ResponseModel<StandardEmail>> sendStandardEmail(@RequestBody @Valid final StandardEmail standardEmail) {
         return ResponseEntity.ok(
-                new ResponseModel.Builder<StandardEmail>(HttpStatus.OK, HttpStatus.OK.value())
+                new ResponseModel.Builder<StandardEmail>(HttpStatus.OK)
                         .message("A successful email was sent.")
                         .body()
                         .build()
