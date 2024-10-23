@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ApplicationMongoRepository extends MongoRepository<Application, String> {
 
-    Boolean existByAppToken(String appToken);
+    Boolean existsByAppToken(String appToken);
 
     Application findByAppToken(String appToken);
 

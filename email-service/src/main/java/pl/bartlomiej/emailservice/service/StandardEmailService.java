@@ -6,6 +6,6 @@ import pl.bartlomiej.emailservice.domain.StandardEmail;
 public class StandardEmailService implements EmailService<StandardEmail> {
     @Override
     public StandardEmail send(StandardEmail email) {
-
+        return email;
     }
 }

@@ -1,4 +1,11 @@
+server:
+  port: 8084
+  error:
+    whitelabel:
+      enabled: off
 spring:
+  profiles:
+    active: docker
   application:
     name: email-service
   config:

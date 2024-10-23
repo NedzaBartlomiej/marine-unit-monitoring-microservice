@@ -8,6 +8,8 @@ mum-microservice-commons:
       realm-name: marine-unit-monitoring-master
       client-id: api-service-client
       client-secret: ${keycloak.client-secret}
+  exception-handling:
+    type: reactor
 logging:
   level:
     root: debug

@@ -22,7 +22,7 @@ class DefaultApplicationTokenService implements ApplicationTokenService {
         String appToken;
         do {
             appToken = UUID.randomUUID().toString();
-        } while (applicationMongoRepository.existByAppToken(appToken));
+        } while (applicationMongoRepository.existsByAppToken(appToken));
         return appToken;
     }
 

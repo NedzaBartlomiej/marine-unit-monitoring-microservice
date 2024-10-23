@@ -157,6 +157,20 @@ services:
       - ./dev-service/db-init:/db-init
       - dev-service-mongodb-db:/usr/db
 
+  # EMAIL SERVICE
+  email-service:
+    container_name: dev-service
+    build:
+      context: ./email-service
+      dockerfile: Dockerfile
+    #    image: email-service:latest
+    ports:
+      - "5008:5008"
+    networks:
+      - marine-unit-monitoring-network
+    depends_on:
+      - eureka-discovery
+
   # REDIS
   redis:
     container_name: redis
