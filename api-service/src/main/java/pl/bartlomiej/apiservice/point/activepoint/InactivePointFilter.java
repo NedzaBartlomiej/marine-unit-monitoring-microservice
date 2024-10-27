@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import pl.bartlomiej.apiservice.common.error.apiexceptions.MmsiConflictException;
+import pl.bartlomiej.apiservice.common.exception.apiexception.MmsiConflictException;
 import pl.bartlomiej.apiservice.point.activepoint.service.ActivePointService;
 import pl.bartlomiej.apiservice.shiptracking.service.ShipTrackService;
 import pl.bartlomiej.apiservice.user.nested.trackedship.service.TrackedShipService;

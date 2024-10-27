@@ -1,10 +1,10 @@
-package pl.bartlomiej.emailservice.service;
+package pl.bartlomiej.emailservice.common.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import pl.bartlomiej.emailservice.domain.Email;
+import pl.bartlomiej.mummicroservicecommons.emailintegration.external.model.Email;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -12,17 +12,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class EmailServiceProvider {
+public class EmailServiceFactory {
 
-    private static final Logger log = LoggerFactory.getLogger(EmailServiceProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(EmailServiceFactory.class);
     private final Map<Class<? extends Email>, EmailService<? extends Email>> emailServices = new HashMap<>();
 
-    public EmailServiceProvider(final ApplicationContext context) {
+    public EmailServiceFactory(final ApplicationContext context) { // todo - maybe make "singleton" just check if emailServices == null and don't init it again
         log.debug("Initializing an email services map.");
         String[] emailServicesNames = context.getBeanNamesForAnnotation(EmailServiceImpl.class);
         for (String emailServiceName : emailServicesNames) {
             var emailService = (EmailService<? extends Email>) context.getBean(emailServiceName);
-            ParameterizedType emailServiceInterface = this.getImplementedEmailServiceInterface(emailService);
+            ParameterizedType emailServiceInterface = this.getAbstractEmailServiceSuperclassType(emailService);
             Class<? extends Email> emailClassType = this.extractEmailClassType(emailServiceInterface);
 
             this.emailServices.put(emailClassType, emailService);
@@ -39,18 +39,16 @@ public class EmailServiceProvider {
         return (EmailService<T>) emailService;
     }
 
-    private ParameterizedType getImplementedEmailServiceInterface(final EmailService<? extends Email> emailService) {
-        log.debug("Acquisition of implemented interfaces of the email service.");
-        Type[] genericInterfaces = emailService.getClass().getGenericInterfaces();
-        for (Type genericInterface : genericInterfaces) {
-            if (genericInterface instanceof ParameterizedType parameterizedType) {
-                log.warn("Invalid generic interface, couldn't cast to ParametrizedType.class for: {}", genericInterface.getTypeName());
-                if (parameterizedType.getRawType() == EmailService.class) {
-                    return parameterizedType;
-                }
+    private ParameterizedType getAbstractEmailServiceSuperclassType(final EmailService<? extends Email> emailService) {
+        log.debug("Acquisition of extended AbstractEmailService of the email service implementation superclass.");
+        Type genericSuperclass = emailService.getClass().getGenericSuperclass();
+        if (genericSuperclass instanceof ParameterizedType parameterizedType) {
+            log.warn("Invalid superclass found, couldn't cast to ParametrizedType.class for: {}", genericSuperclass.getTypeName());
+            if (parameterizedType.getRawType() == AbstractEmailService.class) {
+                return parameterizedType;
             }
         }
-        throw new IllegalStateException("No EmailService<? extends Email> interface implementation found for: " + emailService.getClass().getName());
+        throw new IllegalStateException("No AbstractEmailService<T extends Email> superclass found for: " + emailService.getClass().getName());
     }
 
     @SuppressWarnings("unchecked")

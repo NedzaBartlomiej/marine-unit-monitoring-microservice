@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-import pl.bartlomiej.apiservice.common.error.apiexceptions.WebClientRequestRetryException;
+import pl.bartlomiej.apiservice.common.exception.apiexception.WebClientRequestRetryException;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 import reactor.util.retry.RetryBackoffSpec;

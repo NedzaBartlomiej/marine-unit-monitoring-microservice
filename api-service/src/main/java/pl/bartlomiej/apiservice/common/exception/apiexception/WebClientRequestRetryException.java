@@ -1,4 +1,4 @@
-package pl.bartlomiej.apiservice.common.error.apiexceptions;
+package pl.bartlomiej.apiservice.common.exception.apiexception;
 
 public class WebClientRequestRetryException extends RuntimeException {
     public WebClientRequestRetryException(String message) {

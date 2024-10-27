@@ -1,6 +1,5 @@
 package pl.bartlomiej.apiservice.common.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
@@ -15,11 +14,9 @@ import org.springframework.security.oauth2.server.resource.authentication.Reacti
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 import pl.bartlomiej.apiservice.common.apiaccess.ApiKeyWebFilter;
-import pl.bartlomiej.apiservice.common.error.ErrorResponseModelServerAccessDeniedHandler;
-import pl.bartlomiej.apiservice.common.error.ErrorResponseModelServerAuthEntryPoint;
+import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.reactor.DefaultErrorResponseModelServerAccessDeniedHandler;
+import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.reactor.DefaultErrorResponseModelServerAuthEntryPoint;
 import pl.bartlomiej.mummicroservicecommons.authconversion.external.reactor.KeycloakReactiveJwtGrantedAuthoritiesConverter;
-import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.reactor.ErrorResponseModelServerExceptionHandler;
-import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.statusresolution.GlobalHttpStatusResolver;
 
 import java.util.List;
 
@@ -41,8 +38,8 @@ public class SecurityConfig {
     @Bean
     SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http,
                                                   ReactiveJwtAuthenticationConverter authenticationConverter,
-                                                  ErrorResponseModelServerAuthEntryPoint authEntryPoint,
-                                                  ErrorResponseModelServerAccessDeniedHandler accessDeniedHandler,
+                                                  DefaultErrorResponseModelServerAuthEntryPoint authEntryPoint,
+                                                  DefaultErrorResponseModelServerAccessDeniedHandler accessDeniedHandler,
                                                   ApiKeyWebFilter apiKeyWebFilter) {
         return http
                 .httpBasic(HttpBasicSpec::disable)
@@ -75,11 +72,5 @@ public class SecurityConfig {
         var authenticationConverter = new ReactiveJwtAuthenticationConverter();
         authenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         return authenticationConverter;
-    }
-
-    @Bean
-    ErrorResponseModelServerExceptionHandler errorResponseModelServerExceptionHandler(ObjectMapper objectMapper,
-                                                                                      GlobalHttpStatusResolver globalHttpStatusResolver) {
-        return new ErrorResponseModelServerExceptionHandler(objectMapper, globalHttpStatusResolver);
     }
 }

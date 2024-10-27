@@ -10,7 +10,8 @@ import pl.bartlomiej.devservice.application.domain.Application;
 import pl.bartlomiej.devservice.application.domain.ApplicationRequestStatus;
 import pl.bartlomiej.devservice.application.domain.dto.ApplicationRequestDto;
 import pl.bartlomiej.devservice.application.repository.ApplicationMongoRepository;
-import pl.bartlomiej.devservice.common.exception.InvalidApplicationRequestStatusException;
+import pl.bartlomiej.devservice.common.exception.apiexception.InvalidApplicationRequestStatusException;
+import pl.bartlomiej.mummicroservicecommons.emailintegration.external.EmailHttpService;
 
 import java.util.List;
 
@@ -20,10 +21,12 @@ class DefaultApplicationService implements ApplicationService {
     private static final Logger log = LoggerFactory.getLogger(DefaultApplicationService.class);
     private final ApplicationMongoRepository applicationMongoRepository;
     private final ApplicationTokenService applicationTokenService;
+    private final EmailHttpService emailHttpService;
 
-    DefaultApplicationService(ApplicationMongoRepository applicationMongoRepository, ApplicationTokenService applicationTokenService) {
+    DefaultApplicationService(ApplicationMongoRepository applicationMongoRepository, ApplicationTokenService applicationTokenService, EmailHttpService emailHttpService) {
         this.applicationMongoRepository = applicationMongoRepository;
         this.applicationTokenService = applicationTokenService;
+        this.emailHttpService = emailHttpService;
     }
 
     @Override
@@ -61,7 +64,7 @@ class DefaultApplicationService implements ApplicationService {
     private Application rejectAppRequest(final String id) {
         Application application = this.updateRequestStatus(id, ApplicationRequestStatus.REJECTED);
 
-        // send email
+        // send email todo
 
         return applicationMongoRepository.save(application);
     }

@@ -1,10 +1,10 @@
-package pl.bartlomiej.apiservice.common.error;
+package pl.bartlomiej.apiservice.common.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import pl.bartlomiej.apiservice.common.error.apiexceptions.MmsiConflictException;
+import pl.bartlomiej.apiservice.common.exception.apiexception.MmsiConflictException;
 import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.ErrorResponseModel;
 
 @RestControllerAdvice

@@ -1,4 +1,4 @@
-package pl.bartlomiej.devservice.common.exception;
+package pl.bartlomiej.devservice.common.exception.apiexception;
 
 public class InvalidApplicationRequestStatusException extends RuntimeException {
     public InvalidApplicationRequestStatusException() {

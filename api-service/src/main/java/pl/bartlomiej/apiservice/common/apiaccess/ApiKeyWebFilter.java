@@ -2,6 +2,7 @@ package pl.bartlomiej.apiservice.common.apiaccess;
 
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -28,9 +29,12 @@ public class ApiKeyWebFilter implements WebFilter {
                 .flatMap(xApiKey -> reactiveKeycloakService.getAccessToken()
                         .flatMap(exchangeToken -> devAppHttpService
                                 .checkToken(JWTConstants.BEARER_PREFIX + exchangeToken, xApiKey))
-                        .flatMap(isTokenValid ->
-                                this.processTokenValidation(isTokenValid, chain, exchange))
+                        .flatMap(responseEntity -> Mono.justOrEmpty(responseEntity.getBody())
+                                .flatMap(body -> this.processTokenValidation(body, chain, exchange))
+                                .switchIfEmpty(Mono.error(new AuthenticationServiceException("Api token validation internal error.")))
+                        )
                 );
+
     }
 
     private Mono<String> extractAccessTokenFromHeader(ServerWebExchange exchange) {

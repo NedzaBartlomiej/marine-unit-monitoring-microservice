@@ -63,8 +63,8 @@ public class ApplicationController {
 
     @PreAuthorize("hasRole(T(pl.bartlomiej.devservice.application.domain.ApplicationRole).APP_TOKEN_CHECKER.name())")
     @GetMapping("/app-token/{appToken}")
-    public Boolean checkToken(@PathVariable String appToken) {
-        return applicationTokenService.checkToken(appToken);
+    public ResponseEntity<Boolean> checkToken(@PathVariable String appToken) {
+        return ResponseEntity.ok(applicationTokenService.checkToken(appToken));
     }
 
     @PreAuthorize("hasRole(T(pl.bartlomiej.devservice.application.domain.ApplicationRole).APP_TOKEN_CHECKER.name())")

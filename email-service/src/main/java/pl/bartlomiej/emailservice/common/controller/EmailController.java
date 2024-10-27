@@ -1,4 +1,4 @@
-package pl.bartlomiej.emailservice;
+package pl.bartlomiej.emailservice.common.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -7,25 +7,25 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.bartlomiej.emailservice.domain.Email;
-import pl.bartlomiej.emailservice.domain.StandardEmail;
-import pl.bartlomiej.emailservice.service.EmailService;
-import pl.bartlomiej.emailservice.service.EmailServiceProvider;
+import pl.bartlomiej.emailservice.common.service.EmailService;
+import pl.bartlomiej.emailservice.common.service.EmailServiceFactory;
+import pl.bartlomiej.mummicroservicecommons.emailintegration.external.model.Email;
+import pl.bartlomiej.mummicroservicecommons.emailintegration.external.model.StandardEmail;
 import pl.bartlomiej.mummicroservicecommons.model.response.ResponseModel;
 
 @RestController
 @RequestMapping("/v1/emails")
 public class EmailController {
 
-    private final EmailServiceProvider emailServiceProvider;
+    private final EmailServiceFactory emailServiceFactory;
 
-    public EmailController(EmailServiceProvider emailServiceProvider) {
-        this.emailServiceProvider = emailServiceProvider;
+    public EmailController(EmailServiceFactory emailServiceFactory) {
+        this.emailServiceFactory = emailServiceFactory;
     }
 
     @PostMapping("/standard")
     public ResponseEntity<ResponseModel<Email>> sendStandardEmail(@RequestBody @Valid final StandardEmail standardEmail) {
-        EmailService<StandardEmail> standardEmailService = emailServiceProvider.resolveEmailService(StandardEmail.class);
+        EmailService<StandardEmail> standardEmailService = emailServiceFactory.resolveEmailService(StandardEmail.class);
         return ResponseEntity.ok(
                 new ResponseModel.Builder<Email>(HttpStatus.OK)
                         .message("A successful email was sent.")

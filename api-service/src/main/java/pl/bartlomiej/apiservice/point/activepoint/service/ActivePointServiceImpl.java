@@ -6,14 +6,14 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import pl.bartlomiej.apiservice.ais.service.AisService;
-import pl.bartlomiej.apiservice.common.error.apiexceptions.MmsiConflictException;
+import pl.bartlomiej.apiservice.common.exception.apiexception.MmsiConflictException;
 import pl.bartlomiej.apiservice.point.activepoint.ActivePoint;
 import pl.bartlomiej.apiservice.point.activepoint.repository.MongoActivePointRepository;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-import static pl.bartlomiej.apiservice.common.error.apiexceptions.MmsiConflictException.Message.INVALID_SHIP;
+import static pl.bartlomiej.apiservice.common.exception.apiexception.MmsiConflictException.Message.INVALID_SHIP;
 import static reactor.core.publisher.Mono.*;
 
 @Service

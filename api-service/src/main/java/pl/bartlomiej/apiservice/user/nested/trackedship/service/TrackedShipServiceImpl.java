@@ -3,7 +3,7 @@ package pl.bartlomiej.apiservice.user.nested.trackedship.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import pl.bartlomiej.apiservice.common.error.apiexceptions.MmsiConflictException;
+import pl.bartlomiej.apiservice.common.exception.apiexception.MmsiConflictException;
 import pl.bartlomiej.apiservice.point.activepoint.service.ActivePointService;
 import pl.bartlomiej.apiservice.user.nested.trackedship.TrackedShip;
 import pl.bartlomiej.apiservice.user.repository.CustomUserRepository;
@@ -13,8 +13,8 @@ import reactor.core.publisher.Mono;
 
 import java.util.function.Function;
 
-import static pl.bartlomiej.apiservice.common.error.apiexceptions.MmsiConflictException.Message.INVALID_SHIP;
-import static pl.bartlomiej.apiservice.common.error.apiexceptions.MmsiConflictException.Message.SHIP_IS_ALREADY_TRACKED;
+import static pl.bartlomiej.apiservice.common.exception.apiexception.MmsiConflictException.Message.INVALID_SHIP;
+import static pl.bartlomiej.apiservice.common.exception.apiexception.MmsiConflictException.Message.SHIP_IS_ALREADY_TRACKED;
 
 @Service
 public class TrackedShipServiceImpl implements TrackedShipService {

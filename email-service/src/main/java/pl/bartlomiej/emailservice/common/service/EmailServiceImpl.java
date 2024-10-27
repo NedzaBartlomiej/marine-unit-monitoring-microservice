@@ -1,4 +1,4 @@
-package pl.bartlomiej.emailservice.service;
+package pl.bartlomiej.emailservice.common.service;
 
 import org.springframework.stereotype.Service;
 
