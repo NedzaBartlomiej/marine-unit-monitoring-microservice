@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.bartlomiej.emailservice.common.service.EmailService;
 import pl.bartlomiej.emailservice.common.service.EmailServiceFactory;
-import pl.bartlomiej.mummicroservicecommons.emailintegration.external.model.Email;
 import pl.bartlomiej.mummicroservicecommons.emailintegration.external.model.StandardEmail;
 import pl.bartlomiej.mummicroservicecommons.model.response.ResponseModel;
 
@@ -24,10 +23,10 @@ public class EmailController {
     }
 
     @PostMapping("/standard")
-    public ResponseEntity<ResponseModel<Email>> sendStandardEmail(@RequestBody @Valid final StandardEmail standardEmail) {
+    public ResponseEntity<ResponseModel<StandardEmail>> sendStandardEmail(@RequestBody @Valid final StandardEmail standardEmail) {
         EmailService<StandardEmail> standardEmailService = emailServiceFactory.resolveEmailService(StandardEmail.class);
         return ResponseEntity.ok(
-                new ResponseModel.Builder<Email>(HttpStatus.OK)
+                new ResponseModel.Builder<StandardEmail>(HttpStatus.OK)
                         .message("A successful email was sent.")
                         .body(standardEmailService.send(standardEmail))
                         .build()

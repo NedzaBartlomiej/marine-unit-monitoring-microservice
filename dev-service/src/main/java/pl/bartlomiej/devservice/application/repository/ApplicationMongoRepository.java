@@ -13,4 +13,6 @@ public interface ApplicationMongoRepository extends MongoRepository<Application,
     Application findByAppToken(String appToken);
 
     List<Application> findAllByRequestStatus(ApplicationRequestStatus requestStatus);
+
+    List<Application> findAllByDevId(String devId);
 }

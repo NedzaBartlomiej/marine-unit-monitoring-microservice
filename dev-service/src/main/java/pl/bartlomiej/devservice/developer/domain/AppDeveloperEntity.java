@@ -5,20 +5,21 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
+
 @Setter
+@Getter
 @NoArgsConstructor
 @Document("developers")
 public class AppDeveloperEntity {
 
     private String id;
-    private final LocalDateTime created = LocalDateTime.now();
+    private String email;
     private List<String> trustedIpAddresses;
 
-    public AppDeveloperEntity(String id) {
+    public AppDeveloperEntity(String id, String email) {
         this.id = id;
+        this.email = email;
     }
 }

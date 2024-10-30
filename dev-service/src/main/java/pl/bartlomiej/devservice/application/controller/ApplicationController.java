@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.bartlomiej.devservice.application.domain.Application;
 import pl.bartlomiej.devservice.application.domain.ApplicationRequestStatus;
 import pl.bartlomiej.devservice.application.domain.dto.ApplicationRequestDto;
+import pl.bartlomiej.devservice.application.domain.dto.ConsiderationDetails;
 import pl.bartlomiej.devservice.application.service.ApplicationService;
 import pl.bartlomiej.devservice.application.service.ApplicationTokenService;
 import pl.bartlomiej.mummicroservicecommons.model.response.ResponseModel;
@@ -38,7 +39,7 @@ public class ApplicationController {
                 );
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'SYSTEM_SUPERADMIN')")
     @GetMapping
     public ResponseEntity<ResponseModel<List<Application>>> getApplications(@RequestParam(required = false) final ApplicationRequestStatus requestStatus) {
         return ResponseEntity.ok(
@@ -48,14 +49,25 @@ public class ApplicationController {
         );
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasRole(T(pl.bartlomiej.devservice.developer.domain.DeveloperKeycloakRole).DEVELOPER.getRole())")
+    @GetMapping("/dev-id")
+    public ResponseEntity<ResponseModel<List<Application>>> getApplications(Principal principal) {
+        return ResponseEntity.ok(
+                new ResponseModel.Builder<List<Application>>(HttpStatus.OK)
+                        .body(applicationService.getApplications(principal.getName()))
+                        .build()
+        );
+    }
+
+    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'SYSTEM_SUPERADMIN')")
     @PatchMapping("/{id}/requestStatus/{requestStatus}")
     public ResponseEntity<ResponseModel<Void>> considerAppRequest(@PathVariable final String id,
-                                                                  @PathVariable final ApplicationRequestStatus requestStatus) {
+                                                                  @PathVariable final ApplicationRequestStatus requestStatus,
+                                                                  @RequestBody final ConsiderationDetails considerationDetails) {
         return ResponseEntity.ok(
                 new ResponseModel.Builder<Void>(HttpStatus.OK)
                         .message("Updated application request status to: "
-                                + applicationService.considerAppRequest(id, requestStatus)
+                                + applicationService.considerAppRequest(id, requestStatus, considerationDetails.details())
                         )
                         .build()
         );

@@ -19,7 +19,8 @@ class DefaultDeveloperService extends AbstractIDMService<AppDeveloperEntity> imp
     @Override
     protected AppDeveloperEntity createEntity(final KeycloakUserRepresentation keycloakUserRepresentation, final String ipAddress) {
         AppDeveloperEntity appDeveloperEntity = new AppDeveloperEntity(
-                keycloakUserRepresentation.id()
+                keycloakUserRepresentation.id(),
+                keycloakUserRepresentation.email()
         );
         appDeveloperEntity.setTrustedIpAddresses(Collections.singletonList(ipAddress));
 

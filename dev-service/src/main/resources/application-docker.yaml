@@ -1,6 +1,7 @@
 mum-microservice-commons:
   email-integration:
     enabled: true
+    email-service-url: http://email-service:8084
   auth-conversion:
     type: servlet
   global-idm-service:

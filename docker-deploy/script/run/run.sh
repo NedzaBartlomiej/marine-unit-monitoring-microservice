@@ -60,7 +60,7 @@ docker volume prune -f
 echo "Removing not used images"
 docker image prune -f
 
-# UPDATING APP CODE SECTION
+# UPDATING APP CODE SECTION todo - add services names validation (like ping to named container and somehow mvn ping)
 echo -e "${YELLOW}Enter the names of the services you want to update (space-separated), or press Enter to skip:${NC}"
 read -r services_input
 

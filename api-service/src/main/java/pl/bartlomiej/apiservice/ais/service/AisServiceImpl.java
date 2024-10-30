@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import pl.bartlomiej.apiservice.ais.AisShip;
 import pl.bartlomiej.apiservice.ais.accesstoken.AisApiAuthTokenProvider;
 import pl.bartlomiej.apiservice.common.util.CommonShipFields;
-import pl.bartlomiej.apiservice.common.util.JWTConstants;
+import pl.bartlomiej.mummicroservicecommons.constants.TokenConstants;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
@@ -43,7 +43,7 @@ public class AisServiceImpl implements AisService {
                 .flatMapMany(token -> webClient
                         .get()
                         .uri(apiFetchLatestUri)
-                        .header(AUTHORIZATION, JWTConstants.BEARER_PREFIX + token)
+                        .header(AUTHORIZATION, TokenConstants.BEARER_PREFIX + token)
                         .retrieve()
                         .bodyToFlux(AisShip.class)
                         .take(resultLimit)
@@ -56,7 +56,7 @@ public class AisServiceImpl implements AisService {
                 .flatMapMany(token -> webClient
                         .post()
                         .uri(apiFetchByMmsiUri)
-                        .header(AUTHORIZATION, JWTConstants.BEARER_PREFIX + token)
+                        .header(AUTHORIZATION, TokenConstants.BEARER_PREFIX + token)
                         .bodyValue(of(CommonShipFields.MMSI, identifiers.toArray()))
                         .retrieve()
                         .bodyToFlux(JsonNode.class)

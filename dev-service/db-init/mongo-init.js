@@ -10,16 +10,13 @@ print("Creating users collection.");
 db.createCollection('developers');
 
 print("Inserting init-temp document.");
-db.users.insertOne({temp: "temp"});
+db.developers.insertOne({temp: "temp"});
 
 print("Creating unique index for an email field.");
-db.users.createIndex({email: 1}, {unique: true})
-
-print("Creating unique index for an username field.");
-db.users.createIndex({username: 1}, {unique: true})
+db.developers.createIndex({email: 1}, {unique: true})
 
 print("Deleting init-temp document.");
-db.users.deleteOne({temp: "temp"});
+db.developers.deleteOne({temp: "temp"});
 
 // APPLICATIONS COLLECTION
 print("-- Executing init operations for: applications collection. --");
@@ -28,13 +25,13 @@ print("Creating users collection.");
 db.createCollection('applications');
 
 print("Inserting init-temp document.");
-db.users.insertOne({temp: "temp"});
+db.applications.insertOne({temp: "temp"});
 
 print("Creating unique index for an name field.");
-db.users.createIndex({name: 1}, {unique: true})
+db.applications.createIndex({name: 1}, {unique: true})
 
 print("Creating unique index for an opaqueToken field.");
-db.users.createIndex({opaqueToken: 1}, {unique: true})
+db.applications.createIndex({opaqueToken: 1}, {unique: true})
 
 print("Deleting init-temp document.");
-db.users.deleteOne({temp: "temp"});
+db.applications.deleteOne({temp: "temp"});

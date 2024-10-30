@@ -28,7 +28,7 @@ public class ShipTrackController {
         this.userService = userService;
     }
 
-    @PreAuthorize("hasRole(T(pl.bartlomiej.apiservice.user.domain.UserKeycloakRole).API_ADMIN.getRole())")
+    @PreAuthorize("hasRole(T(pl.bartlomiej.apiservice.user.domain.UserKeycloakRole).API_PREMIUM_USER.getRole())")
     @GetMapping
     public Flux<ServerSentEvent<ResponseModel<ShipTrack>>> getShipTrackHistory(
             Principal principal,

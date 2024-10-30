@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
-import pl.bartlomiej.apiservice.common.util.JWTConstants;
+import pl.bartlomiej.mummicroservicecommons.constants.TokenConstants;
 import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.reactor.ReactiveKeycloakService;
 import reactor.core.publisher.Mono;
 
@@ -28,7 +28,7 @@ public class ApiKeyWebFilter implements WebFilter {
         return this.extractAccessTokenFromHeader(exchange)
                 .flatMap(xApiKey -> reactiveKeycloakService.getAccessToken()
                         .flatMap(exchangeToken -> devAppHttpService
-                                .checkToken(JWTConstants.BEARER_PREFIX + exchangeToken, xApiKey))
+                                .checkToken(TokenConstants.BEARER_PREFIX + exchangeToken, xApiKey))
                         .flatMap(responseEntity -> Mono.justOrEmpty(responseEntity.getBody())
                                 .flatMap(body -> this.processTokenValidation(body, chain, exchange))
                                 .switchIfEmpty(Mono.error(new AuthenticationServiceException("Api token validation internal error.")))

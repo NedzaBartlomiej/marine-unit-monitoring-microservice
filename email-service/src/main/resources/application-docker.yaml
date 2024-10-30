@@ -4,6 +4,15 @@ mum-microservice-commons:
       enabled: false
   exception-handling:
     type: servlet
+  auth-conversion:
+    type: servlet
 logging:
   level:
     root: debug
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/marine-unit-monitoring-master
+          jwk-set-uri: http://keycloak:8080/realms/marine-unit-monitoring-master/protocol/openid-connect/certs

@@ -14,8 +14,8 @@ import org.springframework.security.oauth2.server.resource.authentication.Reacti
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 import pl.bartlomiej.apiservice.common.apiaccess.ApiKeyWebFilter;
-import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.reactor.DefaultErrorResponseModelServerAccessDeniedHandler;
-import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.reactor.DefaultErrorResponseModelServerAuthEntryPoint;
+import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.reactor.DefaultResponseModelServerAccessDeniedHandler;
+import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.reactor.DefaultResponseModelServerAuthEntryPoint;
 import pl.bartlomiej.mummicroservicecommons.authconversion.external.reactor.KeycloakReactiveJwtGrantedAuthoritiesConverter;
 
 import java.util.List;
@@ -38,8 +38,8 @@ public class SecurityConfig {
     @Bean
     SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http,
                                                   ReactiveJwtAuthenticationConverter authenticationConverter,
-                                                  DefaultErrorResponseModelServerAuthEntryPoint authEntryPoint,
-                                                  DefaultErrorResponseModelServerAccessDeniedHandler accessDeniedHandler,
+                                                  DefaultResponseModelServerAuthEntryPoint authEntryPoint,
+                                                  DefaultResponseModelServerAccessDeniedHandler accessDeniedHandler,
                                                   ApiKeyWebFilter apiKeyWebFilter) {
         return http
                 .httpBasic(HttpBasicSpec::disable)

@@ -17,7 +17,7 @@ public class EmailServiceFactory {
     private static final Logger log = LoggerFactory.getLogger(EmailServiceFactory.class);
     private final Map<Class<? extends Email>, EmailService<? extends Email>> emailServices = new HashMap<>();
 
-    public EmailServiceFactory(final ApplicationContext context) { // todo - maybe make "singleton" just check if emailServices == null and don't init it again
+    public EmailServiceFactory(final ApplicationContext context) {
         log.debug("Initializing an email services map.");
         String[] emailServicesNames = context.getBeanNamesForAnnotation(EmailServiceImpl.class);
         for (String emailServiceName : emailServicesNames) {

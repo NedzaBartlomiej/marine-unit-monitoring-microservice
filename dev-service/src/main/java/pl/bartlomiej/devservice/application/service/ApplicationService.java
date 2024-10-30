@@ -12,5 +12,7 @@ public interface ApplicationService {
 
     List<Application> getApplications(ApplicationRequestStatus requestStatus);
 
-    ApplicationRequestStatus considerAppRequest(String id, ApplicationRequestStatus requestStatus);
+    List<Application> getApplications(String devId);
+
+    ApplicationRequestStatus considerAppRequest(String id, ApplicationRequestStatus requestStatus, String details);
 }

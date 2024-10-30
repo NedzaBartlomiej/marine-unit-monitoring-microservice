@@ -1,9 +1,7 @@
-package pl.bartlomiej.devservice.common.config;
+package pl.bartlomiej.emailservice.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -14,7 +12,6 @@ import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.servlet.D
 import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.servlet.DefaultResponseModelAuthEntryPoint;
 
 @Configuration
-@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -30,8 +27,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers(HttpMethod.POST, "*/developers").permitAll()
-                                .anyRequest().authenticated()
+                                .anyRequest().hasRole("EMAIL_SENDER")
                 )
                 .oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer
                         .jwt(jwtConfigurer ->

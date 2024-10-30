@@ -11,7 +11,12 @@ import pl.bartlomiej.devservice.application.domain.ApplicationRequestStatus;
 import pl.bartlomiej.devservice.application.domain.dto.ApplicationRequestDto;
 import pl.bartlomiej.devservice.application.repository.ApplicationMongoRepository;
 import pl.bartlomiej.devservice.common.exception.apiexception.InvalidApplicationRequestStatusException;
+import pl.bartlomiej.devservice.developer.domain.AppDeveloperEntity;
+import pl.bartlomiej.devservice.developer.service.DeveloperService;
+import pl.bartlomiej.mummicroservicecommons.constants.TokenConstants;
 import pl.bartlomiej.mummicroservicecommons.emailintegration.external.EmailHttpService;
+import pl.bartlomiej.mummicroservicecommons.emailintegration.external.model.StandardEmail;
+import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.servlet.KeycloakService;
 
 import java.util.List;
 
@@ -19,14 +24,19 @@ import java.util.List;
 class DefaultApplicationService implements ApplicationService {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultApplicationService.class);
+    public static final String CONSIDERATION_EMAIL_TITLE = "Application request consideration 📩";
     private final ApplicationMongoRepository applicationMongoRepository;
     private final ApplicationTokenService applicationTokenService;
     private final EmailHttpService emailHttpService;
+    private final DeveloperService developerService;
+    private final KeycloakService keycloakService;
 
-    DefaultApplicationService(ApplicationMongoRepository applicationMongoRepository, ApplicationTokenService applicationTokenService, EmailHttpService emailHttpService) {
+    DefaultApplicationService(ApplicationMongoRepository applicationMongoRepository, ApplicationTokenService applicationTokenService, EmailHttpService emailHttpService, DeveloperService developerService, KeycloakService keycloakService) {
         this.applicationMongoRepository = applicationMongoRepository;
         this.applicationTokenService = applicationTokenService;
         this.emailHttpService = emailHttpService;
+        this.developerService = developerService;
+        this.keycloakService = keycloakService;
     }
 
     @Override
@@ -39,7 +49,7 @@ class DefaultApplicationService implements ApplicationService {
 
         try {
             return applicationMongoRepository.save(application);
-        } catch (DuplicateKeyException e) {
+        } catch (DuplicateKeyException e) { // todo - test is CONFLICT status working
             throw new ErrorResponseException(HttpStatus.CONFLICT, e);
         }
     }
@@ -51,20 +61,28 @@ class DefaultApplicationService implements ApplicationService {
                 : applicationMongoRepository.findAllByRequestStatus(requestStatus);
     }
 
-    //    @Transactional - todo only allowed in the replicaSet approach (create one element replicaSet - maybe do the same in the api-service)
     @Override
-    public ApplicationRequestStatus considerAppRequest(final String id, final ApplicationRequestStatus requestStatus) {
+    public List<Application> getApplications(final String devId) {
+        return applicationMongoRepository.findAllByDevId(devId);
+    }
+
+    //    @Transactional - todo only allowed in the replicaSet approach (create one element replicaSet - maybe do the same in the api-service)
+    @Override // todo - add validation if existing status equals to provided status
+    public ApplicationRequestStatus considerAppRequest(final String id, final ApplicationRequestStatus requestStatus, final String details) {
         return switch (requestStatus) {
             case ACCEPTED -> this.acceptAppRequest(id).getRequestStatus();
-            case REJECTED -> this.rejectAppRequest(id).getRequestStatus();
+            case REJECTED -> this.rejectAppRequest(id, details).getRequestStatus();
             default -> throw new InvalidApplicationRequestStatusException();
         };
     }
 
-    private Application rejectAppRequest(final String id) {
+    private Application rejectAppRequest(final String id, final String details) {
         Application application = this.updateRequestStatus(id, ApplicationRequestStatus.REJECTED);
+        AppDeveloperEntity developer = this.developerService.getEntity(application.getDevId());
 
-        // send email todo
+        this.sendConsiderationEmail("Your application request has been rejected ❌. Details:\n"
+                        + details,
+                developer.getEmail());
 
         return applicationMongoRepository.save(application);
     }
@@ -72,10 +90,22 @@ class DefaultApplicationService implements ApplicationService {
     private Application acceptAppRequest(final String id) {
         Application application = this.updateRequestStatus(id, ApplicationRequestStatus.ACCEPTED);
         application.setAppToken(applicationTokenService.generateToken());
+        AppDeveloperEntity developer = this.developerService.getEntity(application.getDevId());
 
-        // send email
+        this.sendConsiderationEmail("Your application request has been accepted ✅, you can read more info in your developer panel.",
+                developer.getEmail());
 
         return applicationMongoRepository.save(application);
+    }
+
+    private void sendConsiderationEmail(String message, String developerEmail) {
+        log.info("Sending consideration email.");
+        emailHttpService.sendStandardEmail(
+                TokenConstants.BEARER_PREFIX + keycloakService.getAccessToken(),
+                new StandardEmail(developerEmail,
+                        CONSIDERATION_EMAIL_TITLE,
+                        message
+                ));
     }
 
     private Application updateRequestStatus(final String id, final ApplicationRequestStatus requestStatus) {
