@@ -91,10 +91,11 @@ services:
       - bin/sh
       - -c
       - |
-        /db-init/mongo-keyfile-init.sh
+        /db-init/rs-init/mongo-keyfile-init.sh
         mongod --replSet apiServiceDBRS --bind_ip_all
     volumes:
       - ./api-service/db-init:/db-init
+      - ./docker-deploy/script/db-init/rs-init:/db-init/rs-init
       - api-service-mongodb-primary-db:/usr/db
 
   api-service-mongodb2:
@@ -108,7 +109,7 @@ services:
       - bin/sh
       - -c
       - |
-        /db-init/mongo-keyfile-init.sh
+        /db-init/rs-init/mongo-keyfile-init.sh
         mongod --replSet apiServiceDBRS --bind_ip_all
     volumes:
       - api-service-mongodb2-db:/usr/db
@@ -124,7 +125,7 @@ services:
       - bin/sh
       - -c
       - |
-        /db-init/mongo-keyfile-init.sh
+        /db-init/rs-init/mongo-keyfile-init.sh
         mongod --replSet apiServiceDBRS --bind_ip_all
     volumes:
       - api-service-mongodb3-db:/usr/db
@@ -143,19 +144,28 @@ services:
       - dev-service-network
     depends_on:
       - eureka-discovery
-      - dev-service-mongodb
+      - dev-service-mongodb-primary
     env_file:
       - ./docker-deploy/envs/.env
       - ./docker-deploy/envs/dev-service.env
 
-  dev-service-mongodb:
-    container_name: dev-service-mongodb
+  dev-service-mongodb-primary:
+    container_name: dev-service-mongodb-primary
     image: mongo:latest
+    expose:
+      - "27017"
     networks:
       - dev-service-network
+    command:
+      - bin/sh
+      - -c
+      - |
+        /db-init/rs-init/mongo-keyfile-init.sh
+        mongod --replSet devServiceDBRS --bind_ip_all
     volumes:
       - ./dev-service/db-init:/db-init
-      - dev-service-mongodb-db:/usr/db
+      - ./docker-deploy/script/db-init/rs-init:/db-init/rs-init
+      - dev-service-mongodb-primary-db:/usr/db
 
   # EMAIL SERVICE
   email-service:
@@ -186,7 +196,7 @@ volumes:
   api-service-mongodb-primary-db:
   api-service-mongodb2-db:
   api-service-mongodb3-db:
-  dev-service-mongodb-db:
+  dev-service-mongodb-primary-db:
   cache:
 networks:
   marine-unit-monitoring-network:

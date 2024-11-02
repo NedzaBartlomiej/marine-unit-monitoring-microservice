@@ -60,7 +60,7 @@ public class ApplicationController {
     }
 
     @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'SYSTEM_SUPERADMIN')")
-    @PatchMapping("/{id}/requestStatus/{requestStatus}")
+    @PatchMapping("/{id}/request-status/{requestStatus}")
     public ResponseEntity<ResponseModel<Void>> considerAppRequest(@PathVariable final String id,
                                                                   @PathVariable final ApplicationRequestStatus requestStatus,
                                                                   @RequestBody final ConsiderationDetails considerationDetails) {

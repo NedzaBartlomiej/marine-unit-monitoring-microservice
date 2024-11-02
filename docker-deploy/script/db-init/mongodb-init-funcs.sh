@@ -42,9 +42,10 @@ wait_for_status() {
 
 # shellcheck disable=SC2034
 readonly MONGO_INIT_FILE_PATH="/db-init/mongo-init.js"
-process_init_file() {
-  local mongodb_container=$1
+process_mongosh_script_file() {
+  local mongodb_container="$1"
+  local mongosh_script_file_path="$2"
 
-  wait_for_status check_file_exists "$EXISTS_STATUS" "$mongodb_container" "$MONGO_INIT_FILE_PATH"
-  docker exec "$mongodb_container" mongosh "$MONGO_INIT_FILE_PATH"
+  wait_for_status check_file_exists "$EXISTS_STATUS" "$mongodb_container" "$mongosh_script_file_path"
+  docker exec "$mongodb_container" mongosh "$mongosh_script_file_path"
 }

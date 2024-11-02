@@ -1,7 +1,5 @@
-#!/bin/sh
-echo "#### RS.INIT.SH ####"
+print("#### RS.INIT.SH - apiServiceDBRS ####")
 
-mongosh <<BLOCK
 print("-- Initializing replica set. --");
 rs.initiate({
     "_id": "apiServiceDBRS",
@@ -27,4 +25,3 @@ cfg.members[0].priority = 2;
 cfg.members[1].priority = 0;
 cfg.members[2].priority = 0;
 rs.reconfig(cfg, {force: true});
-BLOCK

@@ -25,7 +25,7 @@ spring:
       port: 6379
     mongodb:
       database: devServiceDB
-      uri: mongodb://dev-service-mongodb/${spring.data.mongodb.database}
+      uri: mongodb://dev-service-mongodb-primary/${spring.data.mongodb.database}?replicaSet=devServiceDBRS
   security:
     oauth2:
       resourceserver:

@@ -1,10 +1,11 @@
 package pl.bartlomiej.devservice.application.service;
 
-import com.mongodb.DuplicateKeyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.ErrorResponseException;
 import pl.bartlomiej.devservice.application.domain.Application;
 import pl.bartlomiej.devservice.application.domain.ApplicationRequestStatus;
@@ -49,7 +50,7 @@ class DefaultApplicationService implements ApplicationService {
 
         try {
             return applicationMongoRepository.save(application);
-        } catch (DuplicateKeyException e) { // todo - test is CONFLICT status working
+        } catch (DuplicateKeyException e) {
             throw new ErrorResponseException(HttpStatus.CONFLICT, e);
         }
     }
@@ -66,11 +67,11 @@ class DefaultApplicationService implements ApplicationService {
         return applicationMongoRepository.findAllByDevId(devId);
     }
 
-    //    @Transactional - todo only allowed in the replicaSet approach (create one element replicaSet - maybe do the same in the api-service)
-    @Override // todo - add validation if existing status equals to provided status
+    @Transactional
+    @Override
     public ApplicationRequestStatus considerAppRequest(final String id, final ApplicationRequestStatus requestStatus, final String details) {
         return switch (requestStatus) {
-            case ACCEPTED -> this.acceptAppRequest(id).getRequestStatus();
+            case ACCEPTED -> this.acceptAppRequest(id, details).getRequestStatus();
             case REJECTED -> this.rejectAppRequest(id, details).getRequestStatus();
             default -> throw new InvalidApplicationRequestStatusException();
         };
@@ -80,22 +81,29 @@ class DefaultApplicationService implements ApplicationService {
         Application application = this.updateRequestStatus(id, ApplicationRequestStatus.REJECTED);
         AppDeveloperEntity developer = this.developerService.getEntity(application.getDevId());
 
-        this.sendConsiderationEmail("Your application request has been rejected ❌. Details:\n"
-                        + details,
+        applicationMongoRepository.save(application);
+
+        this.sendConsiderationEmail(this.buildConsiderationEmailMessage("Your application " +
+                        "request has been rejected ❌.", details),
                 developer.getEmail());
 
-        return applicationMongoRepository.save(application);
+        return application;
     }
 
-    private Application acceptAppRequest(final String id) {
+    private Application acceptAppRequest(final String id, final String details) {
         Application application = this.updateRequestStatus(id, ApplicationRequestStatus.ACCEPTED);
         application.setAppToken(applicationTokenService.generateToken());
         AppDeveloperEntity developer = this.developerService.getEntity(application.getDevId());
 
-        this.sendConsiderationEmail("Your application request has been accepted ✅, you can read more info in your developer panel.",
+        applicationMongoRepository.save(application);
+
+        this.sendConsiderationEmail(this.buildConsiderationEmailMessage(
+                        "Your application request " +
+                                "has been accepted ✅, " +
+                                "you can read more info in your developer panel.", details),
                 developer.getEmail());
 
-        return applicationMongoRepository.save(application);
+        return application;
     }
 
     private void sendConsiderationEmail(String message, String developerEmail) {
@@ -111,7 +119,20 @@ class DefaultApplicationService implements ApplicationService {
     private Application updateRequestStatus(final String id, final ApplicationRequestStatus requestStatus) {
         Application application = applicationMongoRepository.findById(id)
                 .orElseThrow(() -> new ErrorResponseException(HttpStatus.NOT_FOUND));
+        if (application.getRequestStatus().equals(requestStatus)) {
+            log.info("The requested status is equal to the current status, cancel the update.");
+            throw new ErrorResponseException(HttpStatus.NOT_MODIFIED);
+        }
+
         application.setRequestStatus(requestStatus);
         return application;
+    }
+
+    private String buildConsiderationEmailMessage(final String message, final String details) {
+        StringBuilder messageBuilder = new StringBuilder(message);
+        if (details != null) {
+            messageBuilder.append(" Details: ").append(details);
+        }
+        return messageBuilder.toString();
     }
 }

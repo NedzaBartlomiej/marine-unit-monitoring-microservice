@@ -7,7 +7,17 @@ YELLOW='\033[1;33m'
 NC='\033[0m'
 
 flag_file="./docker-deploy/script/run/initialized.flag"
+
+base_project_path="marine-unit-monitoring-microservice"
 # // VARS
+
+# RUNNING PATH VERIFICATION
+if [[ "$(basename "$PWD")" != "$base_project_path" ]]; then
+  echo -e "${RED}Error: Script must be called from a base project path: '$base_project_path'.${NC}"
+  exit 1
+fi
+
+echo -e "${GREEN}Directory check passed. Continuing execution...${NC}"
 
 # // FUNCTIONS
 update_containers() {
@@ -60,7 +70,7 @@ docker volume prune -f
 echo "Removing not used images"
 docker image prune -f
 
-# UPDATING APP CODE SECTION todo - add services names validation (like ping to named container and somehow mvn ping)
+# UPDATING APP CODE SECTION
 echo -e "${YELLOW}Enter the names of the services you want to update (space-separated), or press Enter to skip:${NC}"
 read -r services_input
 
@@ -69,6 +79,17 @@ IFS=' ' read -r -a services <<< "$services_input"
 if [[ ${#services[@]} -eq 0 ]]; then
   echo -e "${YELLOW}Skipping application update.${NC}"
 fi
+
+# Verify that the given service names are correct
+for service in "${services[@]}"; do
+  if ! docker ps -a --format "{{.Names}}" | grep -wq "$service"; then
+    echo -e "${RED}Warning: Docker container '$service' does not exist. Check for typos.${NC}"
+  fi
+
+  if ! mvn help:evaluate -pl "$service" -Dexpression=project.artifactId -q -DforceStdout > /dev/null 2>&1; then
+    echo -e "${RED}Warning: Maven module '$service' does not exist. Check for typos.${NC}"
+  fi
+done
 
 echo -e "${YELLOW}UPDATING TARGETS (.jar-s):${NC}"
 for service in "${services[@]}"; do
