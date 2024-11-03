@@ -1,9 +1,11 @@
 mum-microservice-commons:
   auth-conversion:
     type: reactor
+    keycloak-client-id: api-service-client
   global-idm-service:
     type: reactor
     keycloak:
+      enabled: true
       server-url: http://keycloak:8080
       realm-name: marine-unit-monitoring-master
       client-id: api-service-client

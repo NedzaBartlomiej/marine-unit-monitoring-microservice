@@ -4,9 +4,11 @@ mum-microservice-commons:
     email-service-url: http://email-service:8084
   auth-conversion:
     type: servlet
+    keycloak-client-id: developer-service-client
   global-idm-service:
     type: servlet
     keycloak:
+      enabled: true
       server-url: http://keycloak:8080
       realm-name: marine-unit-monitoring-master
       client-id: developer-service-client
