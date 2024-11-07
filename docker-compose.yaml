@@ -48,7 +48,7 @@ services:
     #    image: gateway:latest
     ports:
       - "80:80"
-      - "5008:5008"
+      - "5007:5007"
     networks:
       - marine-unit-monitoring-network
     depends_on:
@@ -138,7 +138,7 @@ services:
       dockerfile: Dockerfile
     #    image: dev-service:latest
     ports:
-      - "5007:5007"
+      - "5006:5006"
     networks:
       - marine-unit-monitoring-network
       - dev-service-network
@@ -175,11 +175,14 @@ services:
       dockerfile: Dockerfile
     #    image: email-service:latest
     ports:
-      - "5009:5009"
+      - "5008:5008"
     networks:
       - marine-unit-monitoring-network
     depends_on:
       - eureka-discovery
+    env_file:
+      - ./docker-deploy/envs/.env
+      - ./docker-deploy/envs/email-service.env
 
   # PROTECTION SERVICE
   protection-service:
@@ -189,12 +192,16 @@ services:
       dockerfile: Dockerfile
     #    image: protection-service:latest
     ports:
-      - "5010:5010"
+      - "5009:5009"
     networks:
       - marine-unit-monitoring-network
+      - protection-service-network
     depends_on:
       - eureka-discovery
       - protection-service-mongodb-primary
+    env_file:
+      - ./docker-deploy/envs/.env
+      - ./docker-deploy/envs/protection-service.env
 
   protection-service-mongodb-primary:
     container_name: protection-service-mongodb-primary
