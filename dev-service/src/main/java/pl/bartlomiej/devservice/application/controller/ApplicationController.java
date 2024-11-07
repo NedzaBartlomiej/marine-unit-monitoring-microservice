@@ -33,7 +33,7 @@ public class ApplicationController {
     public ResponseEntity<ResponseModel<Application>> createApplication(@RequestBody @Valid final ApplicationRequestDto applicationRequestDto,
                                                                         final Principal principal) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ResponseModel.Builder<Application>(HttpStatus.CREATED)
+                .body(new ResponseModel.Builder<Application>(HttpStatus.CREATED, true)
                         .body(applicationService.create(applicationRequestDto, principal.getName()))
                         .build()
                 );
@@ -43,7 +43,7 @@ public class ApplicationController {
     @GetMapping
     public ResponseEntity<ResponseModel<List<Application>>> getApplications(@RequestParam(required = false) final ApplicationRequestStatus requestStatus) {
         return ResponseEntity.ok(
-                new ResponseModel.Builder<List<Application>>(HttpStatus.OK)
+                new ResponseModel.Builder<List<Application>>(HttpStatus.OK, true)
                         .body(applicationService.getApplications(requestStatus))
                         .build()
         );
@@ -53,7 +53,7 @@ public class ApplicationController {
     @GetMapping("/dev-id")
     public ResponseEntity<ResponseModel<List<Application>>> getApplications(Principal principal) {
         return ResponseEntity.ok(
-                new ResponseModel.Builder<List<Application>>(HttpStatus.OK)
+                new ResponseModel.Builder<List<Application>>(HttpStatus.OK, true)
                         .body(applicationService.getApplications(principal.getName()))
                         .build()
         );
@@ -65,7 +65,7 @@ public class ApplicationController {
                                                                   @PathVariable final ApplicationRequestStatus requestStatus,
                                                                   @RequestBody final ConsiderationDetails considerationDetails) {
         return ResponseEntity.ok(
-                new ResponseModel.Builder<Void>(HttpStatus.OK)
+                new ResponseModel.Builder<Void>(HttpStatus.OK, true)
                         .message("Updated application request status to: "
                                 + applicationService.considerAppRequest(id, requestStatus, considerationDetails.details())
                         )
@@ -75,15 +75,19 @@ public class ApplicationController {
 
     @PreAuthorize("hasRole(T(pl.bartlomiej.devservice.application.domain.ApplicationRole).APP_TOKEN_CHECKER.name())")
     @GetMapping("/app-token/{appToken}")
-    public ResponseEntity<Boolean> checkToken(@PathVariable String appToken) {
-        return ResponseEntity.ok(applicationTokenService.checkToken(appToken));
+    public ResponseEntity<ResponseModel<Boolean>> checkToken(@PathVariable String appToken) {
+        return ResponseEntity.ok(
+                new ResponseModel.Builder<Boolean>(HttpStatus.OK, true)
+                        .body(applicationTokenService.checkToken(appToken))
+                        .build()
+        );
     }
 
     @PreAuthorize("hasRole(T(pl.bartlomiej.devservice.application.domain.ApplicationRole).APP_TOKEN_CHECKER.name())")
     @PatchMapping("/{id}/app-token")
     public ResponseEntity<ResponseModel<String>> replaceCurrentAppToken(@PathVariable final String id) {
         return ResponseEntity.ok(
-                new ResponseModel.Builder<String>(HttpStatus.OK)
+                new ResponseModel.Builder<String>(HttpStatus.OK, true)
                         .message("Successfully replaced the current application token with a new one.")
                         .body(applicationTokenService.replaceCurrentAppToken(id))
                         .build()

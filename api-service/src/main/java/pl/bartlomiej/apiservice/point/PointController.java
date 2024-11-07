@@ -52,11 +52,10 @@ public class PointController {
                                 ).thenReturn(point)
                         )
                         .map(point ->
-                                new ResponseModel.Builder<Point>(OK)
+                                new ResponseModel.Builder<Point>(OK, true)
                                         .body(point)
                                         .build()
                         )
         );
     }
-
 }

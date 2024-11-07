@@ -41,7 +41,7 @@ public class ShipTrackController {
                                 ServerSentEvent.<ResponseModel<ShipTrack>>builder()
                                         .id(response.getMmsi())
                                         .event("NEW_SHIP_TRACK_EVENT")
-                                        .data(new ResponseModel.Builder<ShipTrack>(OK)
+                                        .data(new ResponseModel.Builder<ShipTrack>(OK, true)
                                                 .body(response)
                                                 .build()
                                         )

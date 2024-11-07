@@ -26,7 +26,7 @@ public class EmailController {
     public ResponseEntity<ResponseModel<StandardEmail>> sendStandardEmail(@RequestBody @Valid final StandardEmail standardEmail) {
         EmailService<StandardEmail> standardEmailService = emailServiceFactory.resolveEmailService(StandardEmail.class);
         return ResponseEntity.ok(
-                new ResponseModel.Builder<StandardEmail>(HttpStatus.OK)
+                new ResponseModel.Builder<StandardEmail>(HttpStatus.OK, true)
                         .message("A successful email was sent.")
                         .body(standardEmailService.send(standardEmail))
                         .build()

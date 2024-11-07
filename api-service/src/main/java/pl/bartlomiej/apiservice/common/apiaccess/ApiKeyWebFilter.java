@@ -30,7 +30,7 @@ public class ApiKeyWebFilter implements WebFilter {
                         .flatMap(exchangeToken -> devAppHttpService
                                 .checkToken(TokenConstants.BEARER_PREFIX + exchangeToken, xApiKey))
                         .flatMap(responseEntity -> Mono.justOrEmpty(responseEntity.getBody())
-                                .flatMap(body -> this.processTokenValidation(body, chain, exchange))
+                                .flatMap(responseModel -> this.processTokenValidation(responseModel.getBody(), chain, exchange))
                                 .switchIfEmpty(Mono.error(new AuthenticationServiceException("Api token validation internal error.")))
                         )
                 );

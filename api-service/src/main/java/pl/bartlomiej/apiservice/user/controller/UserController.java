@@ -31,7 +31,7 @@ public class UserController {
     public Mono<ResponseEntity<ResponseModel<User>>> getAuthenticatedUser(Principal principal) {
         return userService.getUser(principal.getName())
                 .map(user -> ResponseEntity.ok(
-                        new ResponseModel.Builder<User>(OK)
+                        new ResponseModel.Builder<User>(OK, true)
                                 .body(user)
                                 .build())
                 );
@@ -41,7 +41,7 @@ public class UserController {
     public Mono<ResponseEntity<ResponseModel<User>>> createUser(@RequestBody @Valid UserRegisterDto userRegisterDto) {
         return userService.create(userRegisterDto, "127.0.0.1")
                 .map(user -> ResponseEntity.status(CREATED)
-                        .body(new ResponseModel.Builder<User>(CREATED)
+                        .body(new ResponseModel.Builder<User>(CREATED, true)
                                 .body(user)
                                 .build())
                 );

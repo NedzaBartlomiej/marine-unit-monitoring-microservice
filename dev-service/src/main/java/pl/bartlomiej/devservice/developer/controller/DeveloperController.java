@@ -25,7 +25,7 @@ public class DeveloperController {
     @PostMapping
     public ResponseEntity<ResponseModel<AppDeveloperEntity>> create(@RequestBody @Valid final DeveloperRegisterDto developerRegisterDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ResponseModel.Builder<AppDeveloperEntity>(HttpStatus.CREATED)
+                .body(new ResponseModel.Builder<AppDeveloperEntity>(HttpStatus.CREATED, true)
                         .body(developerService.create(developerRegisterDto, "127.0.0.1"))
                         .build()
                 );
