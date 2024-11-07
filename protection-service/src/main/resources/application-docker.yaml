@@ -1,0 +1,33 @@
+mum-microservice-commons:
+  email-integration:
+    enabled: true
+    email-service-url: http://email-service:8084
+  auth-conversion:
+    type: servlet
+    keycloak-client-id: protection-service-client
+  global-idm-service:
+    type: servlet
+    keycloak:
+      enabled: true
+      server-url: http://keycloak:8080
+      realm-name: marine-unit-monitoring-master
+      client-id: protection-service-client
+      client-secret: ${keycloak.client-secret}
+  exception-handling:
+    type: servlet
+logging:
+  level:
+    root: debug
+spring:
+  config:
+    import: classpath:secrets.yaml
+  data:
+    mongodb:
+      database: protectionServiceDB
+      uri: mongodb://protection-service-mongodb-primary/${spring.data.mongodb.database}?replicaSet=protectionServiceDBRS
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/marine-unit-monitoring-master
+          jwk-set-uri: http://keycloak:8080/realms/marine-unit-monitoring-master/protocol/openid-connect/certs

@@ -1,0 +1,10 @@
+server:
+  port: 8085
+  error:
+    whitelabel:
+      enabled: off
+spring:
+  application:
+    name: protection-service
+  profiles:
+    active: docker

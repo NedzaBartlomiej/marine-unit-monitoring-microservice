@@ -181,6 +181,39 @@ services:
     depends_on:
       - eureka-discovery
 
+  # PROTECTION SERVICE
+  protection-service:
+    container_name: protection-service
+    build:
+      context: ./protection-service
+      dockerfile: Dockerfile
+    #    image: protection-service:latest
+    ports:
+      - "5010:5010"
+    networks:
+      - marine-unit-monitoring-network
+    depends_on:
+      - eureka-discovery
+      - protection-service-mongodb-primary
+
+  protection-service-mongodb-primary:
+    container_name: protection-service-mongodb-primary
+    image: mongo:latest
+    expose:
+      - "27017"
+    networks:
+      - protection-service-network
+    command:
+      - bin/sh
+      - -c
+      - |
+        /db-init/rs-init/mongo-keyfile-init.sh
+        mongod --replSet protectionServiceDBRS --bind_ip_all
+    volumes:
+      - ./protection-service/db-init:/db-init
+      - ./docker-deploy/script/db-init/rs-init:/db-init/rs-init
+      - protection-service-mongodb-primary-db:/usr/db
+
   # REDIS
   redis:
     container_name: redis
@@ -197,9 +230,11 @@ volumes:
   api-service-mongodb2-db:
   api-service-mongodb3-db:
   dev-service-mongodb-primary-db:
+  protection-service-mongodb-primary-db:
   cache:
 networks:
   marine-unit-monitoring-network:
   keycloak-network:
   api-service-network:
   dev-service-network:
+  protection-service-network:

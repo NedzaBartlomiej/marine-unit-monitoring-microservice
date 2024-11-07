@@ -3,10 +3,10 @@ print("#### MONGO-INIT.JS ####");
 print("Creating new database: devServiceDB.");
 db = new Mongo().getDB("devServiceDB");
 
-// DEVELOPERS COLLECTIONS
+// DEVELOPERS COLLECTION
 print("-- Executing init operations for: developers collection. --");
 
-print("Creating users collection.");
+print("Creating developers collection.");
 db.createCollection('developers');
 
 print("Inserting init-temp document.");
@@ -21,7 +21,7 @@ db.developers.deleteOne({temp: "temp"});
 // APPLICATIONS COLLECTION
 print("-- Executing init operations for: applications collection. --");
 
-print("Creating users collection.");
+print("Creating applications collection.");
 db.createCollection('applications');
 
 print("Inserting init-temp document.");
