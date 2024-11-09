@@ -35,7 +35,7 @@ public class ShipTrackController {
             @RequestParam(required = false) LocalDateTime from,
             @RequestParam(required = false) LocalDateTime to) {
 
-        return userService.getUser(principal.getName())
+        return userService.getEntity(principal.getName())
                 .flatMapMany(user -> shipTrackService.getShipTrackHistory(user.getId(), from, to)
                         .map(response ->
                                 ServerSentEvent.<ResponseModel<ShipTrack>>builder()

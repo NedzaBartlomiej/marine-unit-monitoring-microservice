@@ -35,7 +35,7 @@ public class TrackedShipController {
     )
     @GetMapping // todo pageable
     public ResponseEntity<Flux<ResponseModel<TrackedShip>>> getTrackedShips(Principal principal) {
-        return ok(userService.getUser(principal.getName())
+        return ok(userService.getEntity(principal.getName())
                 .flatMapMany(user -> trackedShipService.getTrackedShips(user.getId())
                         .map(trackedShip -> new ResponseModel.Builder<TrackedShip>(OK, true)
                                 .body(trackedShip)
@@ -52,7 +52,7 @@ public class TrackedShipController {
     )
     @PostMapping("/{mmsi}")
     public Mono<ResponseEntity<ResponseModel<TrackedShip>>> addTrackedShip(Principal principal, @PathVariable String mmsi) {
-        return userService.getUser(principal.getName())
+        return userService.getEntity(principal.getName())
                 .flatMap(user -> trackedShipService.addTrackedShip(user.getId(), mmsi)
                         .map(trackedShip -> ResponseEntity.status(CREATED)
                                 .body(new ResponseModel.Builder<TrackedShip>(CREATED, true)
@@ -71,7 +71,7 @@ public class TrackedShipController {
     )
     @DeleteMapping("/{mmsi}")
     public Mono<ResponseEntity<ResponseModel<Void>>> removeTrackedShip(Principal principal, @PathVariable String mmsi) {
-        return userService.getUser(principal.getName())
+        return userService.getEntity(principal.getName())
                 .flatMap(user -> trackedShipService.removeTrackedShip(user.getId(), mmsi)
                         .then(just(ResponseEntity.status(OK)
                                 .body(new ResponseModel.Builder<Void>(OK, true)

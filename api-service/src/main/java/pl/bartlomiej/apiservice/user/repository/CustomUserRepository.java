@@ -16,5 +16,4 @@ public interface CustomUserRepository {
 
     Flux<TrackedShip> getTrackedShips();
 
-    Mono<Void> pushTrustedIpAddress(String id, String ipAddress);
 }

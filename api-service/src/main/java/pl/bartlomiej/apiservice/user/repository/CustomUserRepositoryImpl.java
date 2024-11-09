@@ -67,12 +67,6 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
                 .onErrorResume(NullPointerException.class, ex -> Flux.empty());
     }
 
-    @Override
-    public Mono<Void> pushTrustedIpAddress(String id, String ipAddress) {
-        return this.push(id, UserConstants.TRUSTED_IP_ADDRESSES, ipAddress)
-                .then();
-    }
-
     private Mono<UpdateResult> push(String id, String updatedFieldName, Object pushedValue) {
         return reactiveMongoTemplate
                 .updateFirst(

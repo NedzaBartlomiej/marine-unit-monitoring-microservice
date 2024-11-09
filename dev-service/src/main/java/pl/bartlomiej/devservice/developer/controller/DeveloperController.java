@@ -3,10 +3,7 @@ package pl.bartlomiej.devservice.developer.controller;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.bartlomiej.devservice.developer.domain.AppDeveloperEntity;
 import pl.bartlomiej.devservice.developer.domain.dto.DeveloperRegisterDto;
 import pl.bartlomiej.devservice.developer.service.DeveloperService;
@@ -29,5 +26,25 @@ public class DeveloperController {
                         .body(developerService.create(developerRegisterDto, "127.0.0.1"))
                         .build()
                 );
+    }
+
+    @GetMapping("/{id}/trustedIpAddresses")
+    public ResponseEntity<ResponseModel<Boolean>> verifyIp(@PathVariable String id,
+                                                           @RequestParam String ipAddress) {
+        return ResponseEntity.ok(
+                new ResponseModel.Builder<Boolean>(HttpStatus.OK, true)
+                        .body(developerService.verifyIp(id, ipAddress))
+                        .build()
+        );
+    }
+
+    @PostMapping("/{id}/trustedIpAddresses")
+    public ResponseEntity<ResponseModel<Void>> trustIp(@PathVariable String id,
+                                                       @RequestParam String ipAddress) {
+        developerService.trustIp(id, ipAddress);
+        return ResponseEntity.ok(
+                new ResponseModel.Builder<Void>(HttpStatus.OK, true)
+                        .build()
+        );
     }
 }

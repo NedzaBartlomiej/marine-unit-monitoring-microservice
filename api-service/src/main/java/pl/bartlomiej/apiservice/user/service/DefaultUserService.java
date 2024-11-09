@@ -3,7 +3,6 @@ package pl.bartlomiej.apiservice.user.service;
 import jakarta.ws.rs.NotFoundException;
 import org.springframework.stereotype.Service;
 import pl.bartlomiej.apiservice.user.domain.User;
-import pl.bartlomiej.apiservice.user.repository.CustomUserRepository;
 import pl.bartlomiej.apiservice.user.repository.MongoUserRepository;
 import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.model.KeycloakUserRepresentation;
 import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.reactor.ReactiveKeycloakService;
@@ -18,21 +17,12 @@ import static reactor.core.publisher.Mono.just;
 @Service
 class DefaultUserService extends AbstractReactiveIDMService<User> implements UserService {
 
-    private final CustomUserRepository customUserRepository;
     private final MongoUserRepository mongoUserRepository;
 
-    public DefaultUserService(CustomUserRepository customUserRepository,
-                              MongoUserRepository mongoUserRepository,
+    public DefaultUserService(MongoUserRepository mongoUserRepository,
                               ReactiveKeycloakService reactiveKeycloakService) {
         super(reactiveKeycloakService, mongoUserRepository);
-        this.customUserRepository = customUserRepository;
         this.mongoUserRepository = mongoUserRepository;
-    }
-
-    @Override
-    public Mono<User> getUser(String id) {
-        return mongoUserRepository.findById(id)
-                .switchIfEmpty(error(NotFoundException::new));
     }
 
     public Mono<Boolean> isUserExists(String id) {
@@ -41,8 +31,21 @@ class DefaultUserService extends AbstractReactiveIDMService<User> implements Use
     }
 
     @Override
-    public Mono<Void> trustIpAddress(String id, String ipAddress) {
-        return customUserRepository.pushTrustedIpAddress(id, ipAddress);
+    public Mono<Void> trustIp(String id, String ipAddress) {
+        return super.getEntity(id)
+                .filter(user -> !user.getTrustedIpAddresses().contains(ipAddress))
+                .flatMap(user -> {
+                    user.getTrustedIpAddresses().add(ipAddress);
+                    return mongoUserRepository.save(user);
+                })
+                .then();
+    }
+
+    @Override
+    public Mono<Boolean> verifyIp(String id, String ipAddress) {
+        return super.getEntity(id)
+                .map(User::getTrustedIpAddresses)
+                .map(ips -> ips.contains(ipAddress));
     }
 
     @Override

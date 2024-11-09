@@ -29,7 +29,7 @@ public class UserController {
     @PreAuthorize("hasRole(T(pl.bartlomiej.apiservice.user.domain.UserKeycloakRole).API_USER.getRole())")
     @GetMapping("/me")
     public Mono<ResponseEntity<ResponseModel<User>>> getAuthenticatedUser(Principal principal) {
-        return userService.getUser(principal.getName())
+        return userService.getEntity(principal.getName())
                 .map(user -> ResponseEntity.ok(
                         new ResponseModel.Builder<User>(OK, true)
                                 .body(user)
@@ -43,6 +43,27 @@ public class UserController {
                 .map(user -> ResponseEntity.status(CREATED)
                         .body(new ResponseModel.Builder<User>(CREATED, true)
                                 .body(user)
+                                .build())
+                );
+    }
+
+    @GetMapping("/{id}/trustedIpAddresses")
+    public Mono<ResponseEntity<ResponseModel<Boolean>>> verifyIp(@PathVariable String id,
+                                                                 @RequestParam String ipAddress) {
+        return userService.verifyIp(id, ipAddress)
+                .map(isTrusted -> ResponseEntity.status(OK)
+                        .body(new ResponseModel.Builder<Boolean>(OK, true)
+                                .body(isTrusted)
+                                .build())
+                );
+    }
+
+    @PostMapping("/{id}/trustedIpAddresses")
+    public Mono<ResponseEntity<ResponseModel<Void>>> trustIp(@PathVariable String id,
+                                                             @RequestParam String ipAddress) {
+        return userService.trustIp(id, ipAddress)
+                .map(isTrusted -> ResponseEntity.status(OK)
+                        .body(new ResponseModel.Builder<Void>(OK, true)
                                 .build())
                 );
     }

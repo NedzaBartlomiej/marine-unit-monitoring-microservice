@@ -12,8 +12,11 @@ import java.util.Collections;
 @Service
 class DefaultDeveloperService extends AbstractIDMService<AppDeveloperEntity> implements DeveloperService {
 
+    private final DeveloperMongoRepository developerMongoRepository;
+
     public DefaultDeveloperService(KeycloakService keycloakService, DeveloperMongoRepository developerMongoRepository) {
         super(keycloakService, developerMongoRepository);
+        this.developerMongoRepository = developerMongoRepository;
     }
 
     @Override
@@ -30,5 +33,17 @@ class DefaultDeveloperService extends AbstractIDMService<AppDeveloperEntity> imp
     @Override
     protected String getEntityId(AppDeveloperEntity entity) {
         return entity.getId();
+    }
+
+    @Override
+    public void trustIp(String id, String ipAddress) {
+        AppDeveloperEntity developer = super.getEntity(id);
+        developer.getTrustedIpAddresses().add(ipAddress);
+        developerMongoRepository.save(developer);
+    }
+
+    @Override
+    public boolean verifyIp(String id, String ipAddress) {
+        return super.getEntity(id).getTrustedIpAddresses().contains(ipAddress);
     }
 }
