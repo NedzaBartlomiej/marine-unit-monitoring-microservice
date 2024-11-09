@@ -11,7 +11,7 @@ services:
       - keycloak-network
     depends_on:
       - keycloak-postgres-db
-    command: start-dev
+    command: start-dev --features=declarative-user-profile
     env_file:
       - ./docker-deploy/envs/keycloak.env
 
