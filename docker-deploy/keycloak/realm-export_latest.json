@@ -1,6 +1,8 @@
 {
   "id": "c37c31d3-73a6-4920-8de1-3e8edea2148f",
   "realm": "marine-unit-monitoring-master",
+  "displayName": "",
+  "displayNameHtml": "Marine Unit Monitoring",
   "notBefore": 1730575510,
   "defaultSignatureAlgorithm": "RS256",
   "revokeRefreshToken": false,
@@ -30,7 +32,7 @@
   "registrationAllowed": false,
   "registrationEmailAsUsername": false,
   "rememberMe": false,
-  "verifyEmail": false,
+  "verifyEmail": true,
   "loginWithEmailAllowed": true,
   "duplicateEmailsAllowed": false,
   "resetPasswordAllowed": false,
@@ -89,6 +91,15 @@
             ]
           }
         },
+        "clientRole": false,
+        "containerId": "c37c31d3-73a6-4920-8de1-3e8edea2148f",
+        "attributes": {}
+      },
+      {
+        "id": "3c2e90ac-36f0-4992-bc03-ee79639dc323",
+        "name": "IP_LOGIN_PROTECTOR",
+        "description": "",
+        "composite": false,
         "clientRole": false,
         "containerId": "c37c31d3-73a6-4920-8de1-3e8edea2148f",
         "attributes": {}
@@ -336,8 +347,8 @@
       ],
       "developer-service-client": [
         {
-          "id": "8c94427e-d44b-430a-a954-106734c42050",
-          "name": "DEVELOPER",
+          "id": "74be45b7-80fd-47ae-8db2-42b6b5ad1e7b",
+          "name": "DEF_DEVELOPER",
           "description": "",
           "composite": false,
           "clientRole": true,
@@ -358,8 +369,8 @@
           "attributes": {}
         },
         {
-          "id": "9dd89a68-8747-4809-b5b8-d7c25d82f6f7",
-          "name": "API_USER",
+          "id": "4d9406bd-859d-4f6a-a4c4-49997a7ccddf",
+          "name": "DEF_API_USER",
           "description": "",
           "composite": false,
           "clientRole": true,
@@ -376,6 +387,7 @@
           "attributes": {}
         }
       ],
+      "protection-service-client": [],
       "account-console": [],
       "broker": [
         {
@@ -571,6 +583,29 @@
       "clientRoles": {
         "realm-management": [
           "manage-users",
+          "realm-admin"
+        ]
+      },
+      "notBefore": 0,
+      "groups": []
+    },
+    {
+      "id": "434a8a3d-0f5f-4593-9799-1866d99ef664",
+      "createdTimestamp": 1731000469345,
+      "username": "service-account-protection-service-client",
+      "enabled": true,
+      "totp": false,
+      "emailVerified": false,
+      "serviceAccountClientId": "protection-service-client",
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-marine-unit-monitoring-master",
+        "IP_LOGIN_PROTECTOR",
+        "EMAIL_SENDER"
+      ],
+      "clientRoles": {
+        "realm-management": [
           "realm-admin"
         ]
       },
@@ -944,6 +979,106 @@
             "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "client_id",
+            "jsonType.label": "String"
+          }
+        }
+      ],
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "profile",
+        "roles",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
+      "id": "143105fc-4eee-4fe3-976e-ed68ab8e8bc7",
+      "clientId": "protection-service-client",
+      "name": "",
+      "description": "",
+      "rootUrl": "",
+      "adminUrl": "",
+      "baseUrl": "",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "**********",
+      "redirectUris": [
+        "/*"
+      ],
+      "webOrigins": [
+        "/*"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "oidc.ciba.grant.enabled": "false",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "client.secret.creation.time": "1731000469",
+        "backchannel.logout.session.required": "true",
+        "backchannel.logout.revoke.offline.tokens": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "protocolMappers": [
+        {
+          "id": "99e22a9c-58d7-4799-85cd-429ce7403080",
+          "name": "Client ID",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usersessionmodel-note-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.session.note": "client_id",
+            "introspection.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "client_id",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "id": "3aeb092a-bd00-4603-a7ed-15c57b04d342",
+          "name": "Client IP Address",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usersessionmodel-note-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.session.note": "clientAddress",
+            "introspection.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "clientAddress",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "id": "af0287ea-4550-4df7-be1c-352876c13dc8",
+          "name": "Client Host",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usersessionmodel-note-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.session.note": "clientHost",
+            "introspection.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "clientHost",
             "jsonType.label": "String"
           }
         }
@@ -1639,7 +1774,7 @@
     "host": "smtp.gmail.com",
     "replyTo": "",
     "from": "marineunitmonitoring7@gmail.com",
-    "fromDisplayName": "",
+    "fromDisplayName": "Marine Unit Monitoring",
     "user": "marineunitmonitoring7@gmail.com"
   },
   "eventsEnabled": false,
@@ -1649,7 +1784,31 @@
   "enabledEventTypes": [],
   "adminEventsEnabled": false,
   "adminEventsDetailsEnabled": false,
-  "identityProviders": [],
+  "identityProviders": [
+    {
+      "alias": "google",
+      "internalId": "276e7ace-7383-4f26-835d-1bf882d8c63f",
+      "providerId": "google",
+      "enabled": true,
+      "updateProfileFirstLoginMode": "on",
+      "trustEmail": false,
+      "storeToken": false,
+      "addReadTokenRoleOnCreate": false,
+      "authenticateByDefault": false,
+      "linkOnly": false,
+      "firstBrokerLoginFlowAlias": "first broker login",
+      "config": {
+        "hideOnLoginPage": "true",
+        "offlineAccess": "true",
+        "acceptsPromptNoneForwardFromClient": "false",
+        "clientId": "328813182877-qfauqip9t1vavogldrnovvc6d1lmaqb7.apps.googleusercontent.com",
+        "disableUserInfo": "false",
+        "filteredByClaim": "false",
+        "syncMode": "IMPORT",
+        "clientSecret": "**********"
+      }
+    }
+  ],
   "identityProviderMappers": [],
   "components": {
     "org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy": [
@@ -1757,6 +1916,18 @@
         "subType": "anonymous",
         "subComponents": {},
         "config": {}
+      }
+    ],
+    "org.keycloak.userprofile.UserProfileProvider": [
+      {
+        "id": "7ac66077-290b-4055-92b7-b06795335a0e",
+        "providerId": "declarative-user-profile",
+        "subComponents": {},
+        "config": {
+          "kc.user.profile.config": [
+            "{\"attributes\":[{\"name\":\"username\",\"displayName\":\"${username}\",\"validations\":{\"length\":{\"min\":3,\"max\":255},\"username-prohibited-characters\":{},\"up-username-not-idn-homograph\":{}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]}},{\"name\":\"email\",\"displayName\":\"${email}\",\"validations\":{\"email\":{},\"length\":{\"max\":255}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]}},{\"name\":\"firstName\",\"displayName\":\"${firstName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"permissions\":{\"edit\":[\"admin\",\"user\"],\"view\":[\"admin\",\"user\"]},\"annotations\":{},\"group\":null},{\"name\":\"lastName\",\"displayName\":\"${lastName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"annotations\":{},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]}}],\"groups\":[]}"
+          ]
+        }
       }
     ],
     "org.keycloak.keys.KeyProvider": [
@@ -2434,17 +2605,20 @@
   "dockerAuthenticationFlow": "docker auth",
   "attributes": {
     "cibaBackchannelTokenDeliveryMode": "poll",
-    "cibaExpiresIn": "120",
     "cibaAuthRequestedUserHint": "login_hint",
-    "oauth2DeviceCodeLifespan": "600",
     "oauth2DevicePollingInterval": "5",
     "clientOfflineSessionMaxLifespan": "0",
     "clientSessionIdleTimeout": "0",
-    "parRequestUriLifespan": "60",
-    "clientSessionMaxLifespan": "0",
+    "userProfileEnabled": "true",
     "clientOfflineSessionIdleTimeout": "0",
     "cibaInterval": "5",
-    "realmReusableOtpCode": "false"
+    "realmReusableOtpCode": "false",
+    "cibaExpiresIn": "120",
+    "oauth2DeviceCodeLifespan": "600",
+    "parRequestUriLifespan": "60",
+    "clientSessionMaxLifespan": "0",
+    "frontendUrl": "",
+    "acr.loa.map": "{}"
   },
   "keycloakVersion": "23.0.6",
   "userManagedAccessAllowed": false,
