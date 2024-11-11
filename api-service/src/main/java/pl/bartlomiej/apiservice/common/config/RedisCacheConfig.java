@@ -15,6 +15,8 @@ import reactor.core.publisher.Mono;
 import static java.time.Duration.ofMinutes;
 import static org.springframework.data.redis.cache.RedisCacheConfiguration.defaultCacheConfig;
 
+// todo - 1. refactor and and adapt to microservice architecture all caching system/structure
+//  2. add caching to the keycloak access token -> KeycloakService::getAccessToken
 @Configuration
 @EnableCaching
 public class RedisCacheConfig {
