@@ -30,7 +30,8 @@ public class WebClientConfig {
     }
 
     @Bean
-    WebClient devAppHttpServiceWebClient() {
+    WebClient
+    devAppHttpServiceWebClient() {
         return WebClient.builder()
                 .baseUrl("http://dev-service:8083/")
                 .build();

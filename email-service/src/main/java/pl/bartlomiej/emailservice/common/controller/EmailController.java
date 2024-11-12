@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.bartlomiej.emailservice.common.service.EmailService;
 import pl.bartlomiej.emailservice.common.service.EmailServiceFactory;
+import pl.bartlomiej.mummicroservicecommons.emailintegration.external.model.LinkedEmail;
 import pl.bartlomiej.mummicroservicecommons.emailintegration.external.model.StandardEmail;
 import pl.bartlomiej.mummicroservicecommons.model.response.ResponseModel;
 
@@ -16,6 +17,7 @@ import pl.bartlomiej.mummicroservicecommons.model.response.ResponseModel;
 @RequestMapping("/v1/emails")
 public class EmailController {
 
+    private static final String SUCCESSFUL_EMAIL_WAS_SENT = "A successful email was sent.";
     private final EmailServiceFactory emailServiceFactory;
 
     public EmailController(EmailServiceFactory emailServiceFactory) {
@@ -27,8 +29,19 @@ public class EmailController {
         EmailService<StandardEmail> standardEmailService = emailServiceFactory.resolveEmailService(StandardEmail.class);
         return ResponseEntity.ok(
                 new ResponseModel.Builder<StandardEmail>(HttpStatus.OK, true)
-                        .message("A successful email was sent.")
+                        .message(SUCCESSFUL_EMAIL_WAS_SENT)
                         .body(standardEmailService.send(standardEmail))
+                        .build()
+        );
+    }
+
+    @PostMapping("/linked")
+    public ResponseEntity<ResponseModel<LinkedEmail>> sendLinkedEmail(@RequestBody @Valid final LinkedEmail linkedEmail) {
+        EmailService<LinkedEmail> linkedEmailEmailService = emailServiceFactory.resolveEmailService(LinkedEmail.class);
+        return ResponseEntity.ok(
+                new ResponseModel.Builder<LinkedEmail>(HttpStatus.OK, true)
+                        .message(SUCCESSFUL_EMAIL_WAS_SENT)
+                        .body(linkedEmailEmailService.send(linkedEmail))
                         .build()
         );
     }
