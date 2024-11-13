@@ -41,4 +41,23 @@ public class DefaultSuspectLoginService implements SuspectLoginService {
             throw new ErrorResponseException(HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
     }
+
+    @Override
+    public void delete(final String id) {
+        if (!mongoSuspectLoginRepository.existsById(id)) {
+            throw new ErrorResponseException(HttpStatus.NOT_FOUND);
+        }
+        mongoSuspectLoginRepository.deleteById(id);
+    }
+
+    @Override
+    public SuspectLogin get(final String id, final String uid) {
+        SuspectLogin suspectLogin = mongoSuspectLoginRepository.findById(id)
+                .orElseThrow(() -> new ErrorResponseException(HttpStatus.NOT_FOUND));
+        if (!suspectLogin.getUid().equals(uid)) {
+            log.error("Suspect login does not belong to the requesting subject user.");
+            throw new ErrorResponseException(HttpStatus.FORBIDDEN);
+        }
+        return suspectLogin;
+    }
 }

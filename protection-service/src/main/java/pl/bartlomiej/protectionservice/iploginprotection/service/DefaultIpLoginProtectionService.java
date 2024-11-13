@@ -51,10 +51,22 @@ class DefaultIpLoginProtectionService implements IpLoginProtectionService {
                         request.email(),
                         "Untrusted login activity. 🛑",
                         "We've noticed untrusted log in activity on your account. Please check it.",
-                        "http://protection-service/suspect-logins/" + suspectLogin.getId(), // todo replace link with a frontend developer url
+                        "http://protection-service/suspect-logins/" + suspectLogin.getId(), // todo replace link with a frontend developer url (implement that)
                         "Check activity"
                 )
         );
         return IpLoginProtectionResult.UNTRUSTED_IP.getDetailsMessage();
+    }
+
+    @Override
+    public void trustIp(final String suspectLoginId, final String uid) {
+        SuspectLogin suspectLogin = suspectLoginService.get(suspectLoginId, uid);
+        ipLoginProtectionHttpService.trustIp(
+                keycloakService.getAccessToken(),
+                suspectLogin.getHostname(),
+                suspectLogin.getUid(),
+                suspectLogin.getIpAddress()
+        );
+        suspectLoginService.delete(suspectLoginId);
     }
 }

@@ -4,4 +4,6 @@ import pl.bartlomiej.protectionservice.iploginprotection.model.IpLoginProtection
 
 public interface IpLoginProtectionService {
     String executeIpLoginProtection(IpLoginProtectionRequest request);
+
+    void trustIp(String suspectLoginId, String uid);
 }
