@@ -13,18 +13,18 @@ public class HttpInterfaceConfig {
 
 
     @Bean
-    RestClient ipLoginProtectorRestClient() {
+    RestClient ipLoginProtectionRestClient() {
         return RestClient.builder().build();
     }
 
     @Bean
-    HttpServiceProxyFactory restClientHttpServiceProxyFactory(@Qualifier("ipLoginProtectorRestClient") RestClient restClient) {
+    HttpServiceProxyFactory ipLoginProtectionFactory(@Qualifier("ipLoginProtectionRestClient") RestClient restClient) {
         RestClientAdapter adapter = RestClientAdapter.create(restClient);
         return HttpServiceProxyFactory.builderFor(adapter).build();
     }
 
     @Bean
-    IpLoginProtectionHttpService ipLoginProtectionHttpService(HttpServiceProxyFactory factory) {
+    IpLoginProtectionHttpService ipLoginProtectionHttpService(@Qualifier("ipLoginProtectionFactory") HttpServiceProxyFactory factory) {
         return factory.createClient(IpLoginProtectionHttpService.class);
     }
 }

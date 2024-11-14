@@ -11,7 +11,7 @@ mum-microservice-commons:
       enabled: true
       server-url: http://keycloak:8080
       realm-name: marine-unit-monitoring-master
-      client-id: developer-service-client
+      client-id: dev-service-client
       client-secret: ${keycloak.client-secret}
   exception-handling:
     type: servlet

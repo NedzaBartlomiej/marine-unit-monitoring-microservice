@@ -1,6 +1,7 @@
 package pl.bartlomiej.protectionservice.iploginprotection.service;
 
 import org.springframework.stereotype.Service;
+import pl.bartlomiej.mummicroservicecommons.config.loginservicereps.LoginServiceRepresentation;
 import pl.bartlomiej.mummicroservicecommons.constants.TokenConstants;
 import pl.bartlomiej.mummicroservicecommons.emailintegration.external.EmailHttpService;
 import pl.bartlomiej.mummicroservicecommons.emailintegration.external.model.LinkedEmail;
@@ -30,28 +31,30 @@ class DefaultIpLoginProtectionService implements IpLoginProtectionService {
 
     @Override
     public String executeIpLoginProtection(final IpLoginProtectionRequest request) {
-        String hostname = this.loginServiceResolver.resolveHostname(request.clientId());
+        LoginServiceRepresentation loginServiceRepresentation = this.loginServiceResolver.resolve(request.clientId());
         boolean isIpTrusted = ipLoginProtectionHttpService.verifyIp(
                 TokenConstants.BEARER_PREFIX + keycloakService.getAccessToken(),
-                hostname,
+                loginServiceRepresentation.hostname(),
+                loginServiceRepresentation.port(),
+                loginServiceRepresentation.loginResourceIdentifier(),
                 request.uid(),
                 request.ipAddress()
-        );
+        ).getBody();
         if (!isIpTrusted) {
-            return this.executeUntrustedIpAction(request, hostname);
+            return this.executeUntrustedIpAction(request, loginServiceRepresentation);
         }
         return IpLoginProtectionResult.TRUSTED_IP.getDetailsMessage();
     }
 
-    private String executeUntrustedIpAction(final IpLoginProtectionRequest request, final String loginServiceHostname) {
-        SuspectLogin suspectLogin = this.suspectLoginService.create(request.ipAddress(), request.uid(), loginServiceHostname);
+    private String executeUntrustedIpAction(final IpLoginProtectionRequest request, final LoginServiceRepresentation loginServiceRepresentation) {
+        SuspectLogin suspectLogin = this.suspectLoginService.create(request.ipAddress(), request.uid(), loginServiceRepresentation);
         this.emailHttpService.sendLinkedEmail(
-                keycloakService.getAccessToken(),
+                TokenConstants.BEARER_PREFIX + keycloakService.getAccessToken(),
                 new LinkedEmail(
                         request.email(),
                         "Untrusted login activity. 🛑",
                         "We've noticed untrusted log in activity on your account. Please check it.",
-                        "http://protection-service/suspect-logins/" + suspectLogin.getId(), // todo replace link with a frontend developer url (implement that)
+                        "http://protection-service/suspect-logins/" + suspectLogin.getId(),
                         "Check activity"
                 )
         );
@@ -62,8 +65,10 @@ class DefaultIpLoginProtectionService implements IpLoginProtectionService {
     public void trustIp(final String suspectLoginId, final String uid) {
         SuspectLogin suspectLogin = suspectLoginService.get(suspectLoginId, uid);
         ipLoginProtectionHttpService.trustIp(
-                keycloakService.getAccessToken(),
-                suspectLogin.getHostname(),
+                TokenConstants.BEARER_PREFIX + keycloakService.getAccessToken(),
+                suspectLogin.getLoginServiceRepresentation().hostname(),
+                suspectLogin.getLoginServiceRepresentation().port(),
+                suspectLogin.getLoginServiceRepresentation().loginResourceIdentifier(),
                 suspectLogin.getUid(),
                 suspectLogin.getIpAddress()
         );

@@ -20,7 +20,9 @@ logging:
     root: debug
 spring:
   config:
-    import: classpath:secrets.yaml
+    import:
+      - classpath:secrets.yaml
+      - classpath:login-service-reps-config.yaml
   data:
     mongodb:
       database: protectionServiceDB

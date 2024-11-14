@@ -87,7 +87,8 @@ for service in "${services[@]}"; do
   fi
 
   if ! mvn help:evaluate -pl "$service" -Dexpression=project.artifactId -q -DforceStdout > /dev/null 2>&1; then
-    echo -e "${RED}Warning: Maven module '$service' does not exist. Check for typos.${NC}"
+    echo -e "${RED}Error: Maven module '$service' does not exist. Check for typos.${NC}"
+    exit 1
   fi
 done
 

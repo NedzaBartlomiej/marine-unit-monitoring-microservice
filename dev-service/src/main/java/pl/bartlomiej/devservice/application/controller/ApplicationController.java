@@ -67,7 +67,7 @@ public class ApplicationController {
         return ResponseEntity.ok(
                 new ResponseModel.Builder<Void>(HttpStatus.OK, true)
                         .message("Updated application request status to: "
-                                + applicationService.considerAppRequest(id, requestStatus, considerationDetails.details())
+                                + applicationService.considerAppRequest(id, requestStatus, considerationDetails.message())
                         )
                         .build()
         );
