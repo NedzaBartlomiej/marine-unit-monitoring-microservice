@@ -20,6 +20,7 @@ public class ProtectionRPCController {
         this.ipLoginProtectionService = ipLoginProtectionService;
     }
 
+    // todo - make return true/false body and message can stay like now (false = untrustedIp/true = trustedIp)
     @PreAuthorize("hasRole('IP_LOGIN_PROTECTOR')")
     @PostMapping("/protect-login")
     public ResponseEntity<ResponseModel<Void>> protectLogin(@RequestBody final IpLoginProtectionRequest request) {
