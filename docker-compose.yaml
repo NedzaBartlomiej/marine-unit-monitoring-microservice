@@ -9,6 +9,7 @@ services:
     networks:
       - marine-unit-monitoring-network
       - keycloak-network
+    hostname: keycloak.pl
     depends_on:
       - keycloak-postgres-db
     command: start-dev --features=declarative-user-profile

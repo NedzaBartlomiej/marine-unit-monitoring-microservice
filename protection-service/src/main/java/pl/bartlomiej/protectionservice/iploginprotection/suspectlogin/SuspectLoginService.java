@@ -1,10 +1,8 @@
 package pl.bartlomiej.protectionservice.iploginprotection.suspectlogin;
 
-import pl.bartlomiej.mummicroservicecommons.config.loginservicereps.LoginServiceRepresentation;
-
 public interface SuspectLoginService {
 
-    SuspectLogin create(String ipAddress, String uid, LoginServiceRepresentation loginServiceRepresentation);
+    SuspectLogin create(String ipAddress, String uid, String loginServiceClientId);
 
     void delete(String id);
 

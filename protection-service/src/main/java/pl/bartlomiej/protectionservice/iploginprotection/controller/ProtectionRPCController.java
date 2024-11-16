@@ -2,6 +2,7 @@ package pl.bartlomiej.protectionservice.iploginprotection.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.bartlomiej.mummicroservicecommons.model.response.ResponseModel;
 import pl.bartlomiej.protectionservice.iploginprotection.model.IpLoginProtectionRequest;
@@ -19,6 +20,7 @@ public class ProtectionRPCController {
         this.ipLoginProtectionService = ipLoginProtectionService;
     }
 
+    @PreAuthorize("hasRole('IP_LOGIN_PROTECTOR')")
     @PostMapping("/protect-login")
     public ResponseEntity<ResponseModel<Void>> protectLogin(@RequestBody final IpLoginProtectionRequest request) {
         return ResponseEntity.ok(

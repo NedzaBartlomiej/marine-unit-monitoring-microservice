@@ -47,7 +47,7 @@ class DefaultIpLoginProtectionService implements IpLoginProtectionService {
     }
 
     private String executeUntrustedIpAction(final IpLoginProtectionRequest request, final LoginServiceRepresentation loginServiceRepresentation) {
-        SuspectLogin suspectLogin = this.suspectLoginService.create(request.ipAddress(), request.uid(), loginServiceRepresentation);
+        SuspectLogin suspectLogin = this.suspectLoginService.create(request.ipAddress(), request.uid(), loginServiceRepresentation.clientId());
         this.emailHttpService.sendLinkedEmail(
                 TokenConstants.BEARER_PREFIX + keycloakService.getAccessToken(),
                 new LinkedEmail(
@@ -64,11 +64,12 @@ class DefaultIpLoginProtectionService implements IpLoginProtectionService {
     @Override
     public void trustIp(final String suspectLoginId, final String uid) {
         SuspectLogin suspectLogin = suspectLoginService.get(suspectLoginId, uid);
+        LoginServiceRepresentation loginServiceRepresentation = this.loginServiceResolver.resolve(suspectLogin.getLoginServiceClientId());
         ipLoginProtectionHttpService.trustIp(
                 TokenConstants.BEARER_PREFIX + keycloakService.getAccessToken(),
-                suspectLogin.getLoginServiceRepresentation().hostname(),
-                suspectLogin.getLoginServiceRepresentation().port(),
-                suspectLogin.getLoginServiceRepresentation().loginResourceIdentifier(),
+                loginServiceRepresentation.hostname(),
+                loginServiceRepresentation.port(),
+                loginServiceRepresentation.loginResourceIdentifier(),
                 suspectLogin.getUid(),
                 suspectLogin.getIpAddress()
         );

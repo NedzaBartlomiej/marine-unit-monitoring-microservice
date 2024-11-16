@@ -47,6 +47,7 @@ public class UserController {
                 );
     }
 
+    @PreAuthorize("hasRole('IP_LOGIN_PROTECTOR')")
     @GetMapping("/{id}/trustedIpAddresses")
     public Mono<ResponseEntity<ResponseModel<Boolean>>> verifyIp(@PathVariable String id,
                                                                  @RequestParam String ipAddress) {
@@ -58,6 +59,7 @@ public class UserController {
                 );
     }
 
+    @PreAuthorize("hasRole('IP_LOGIN_PROTECTOR')")
     @PostMapping("/{id}/trustedIpAddresses")
     public Mono<ResponseEntity<ResponseModel<Void>>> trustIp(@PathVariable String id,
                                                              @RequestParam String ipAddress) {

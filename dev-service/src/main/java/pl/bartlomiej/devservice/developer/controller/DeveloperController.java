@@ -3,6 +3,7 @@ package pl.bartlomiej.devservice.developer.controller;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.bartlomiej.devservice.developer.domain.AppDeveloperEntity;
 import pl.bartlomiej.devservice.developer.domain.dto.DeveloperRegisterDto;
@@ -28,6 +29,7 @@ public class DeveloperController {
                 );
     }
 
+    @PreAuthorize("hasRole('IP_LOGIN_PROTECTOR')")
     @GetMapping("/{id}/trustedIpAddresses")
     public ResponseEntity<ResponseModel<Boolean>> verifyIp(@PathVariable String id,
                                                            @RequestParam String ipAddress) {
@@ -38,6 +40,7 @@ public class DeveloperController {
         );
     }
 
+    @PreAuthorize("hasRole('IP_LOGIN_PROTECTOR')")
     @PostMapping("/{id}/trustedIpAddresses")
     public ResponseEntity<ResponseModel<Void>> trustIp(@PathVariable String id,
                                                        @RequestParam String ipAddress) {

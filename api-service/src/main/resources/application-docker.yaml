@@ -6,7 +6,7 @@ mum-microservice-commons:
     type: reactor
     keycloak:
       enabled: true
-      server-url: http://keycloak:8080
+      server-url: http://keycloak.pl:8080
       realm-name: marine-unit-monitoring-master
       client-id: api-service-client
       client-secret: ${keycloak.client-secret}
@@ -29,8 +29,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8080/realms/marine-unit-monitoring-master
-          jwk-set-uri: http://keycloak:8080/realms/marine-unit-monitoring-master/protocol/openid-connect/certs
+          issuer-uri: http://keycloak.pl:8080/realms/marine-unit-monitoring-master
+          jwk-set-uri: http://keycloak.pl:8080/realms/marine-unit-monitoring-master/protocol/openid-connect/certs
 
 
 project-properties:

@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.ErrorResponseException;
-import pl.bartlomiej.mummicroservicecommons.config.loginservicereps.LoginServiceRepresentation;
 
 @Slf4j
 @Service
@@ -21,7 +20,7 @@ public class DefaultSuspectLoginService implements SuspectLoginService {
     }
 
     @Override
-    public SuspectLogin create(final String ipAddress, final String uid, final LoginServiceRepresentation loginServiceRepresentation) {
+    public SuspectLogin create(final String ipAddress, final String uid, final String loginServiceClientId) {
         log.debug("Initializing new suspect login.");
         try {
             IPResponse ipResponse = ipInfo.lookupIP(ipAddress);
@@ -29,7 +28,7 @@ public class DefaultSuspectLoginService implements SuspectLoginService {
                     new SuspectLogin(
                             uid,
                             ipAddress,
-                            loginServiceRepresentation,
+                            loginServiceClientId,
                             ipResponse.getHostname(),
                             ipResponse.getCity(),
                             ipResponse.getRegion(),

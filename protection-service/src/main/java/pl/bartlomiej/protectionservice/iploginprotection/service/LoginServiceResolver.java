@@ -10,7 +10,7 @@ import pl.bartlomiej.mummicroservicecommons.config.loginservicereps.LoginService
 class LoginServiceResolver {
 
     private static final Logger log = LoggerFactory.getLogger(LoginServiceResolver.class);
-    private final LoginServiceRepsProperties loginServiceRepsProperties; // todo empty list
+    private final LoginServiceRepsProperties loginServiceRepsProperties;
 
     LoginServiceResolver(LoginServiceRepsProperties loginServiceRepsProperties) {
         this.loginServiceRepsProperties = loginServiceRepsProperties;
@@ -23,8 +23,4 @@ class LoginServiceResolver {
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("Invalid clientId. Check the conformity of configuration and auth-server."));
     }
-
-    // todo
-    // clientid validation
-    // hostname and port validation
 }
