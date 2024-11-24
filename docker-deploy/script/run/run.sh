@@ -70,7 +70,10 @@ docker volume prune -f
 echo "Removing not used images"
 docker image prune -f
 
-# UPDATING APP CODE SECTION - todo add update (mvn clean install) keycloak-spi-bundle .jar section (but maybe its done cause u can maybe just provide keycloak-spi-bundle in this prompt function)
+# todo - updating the keycloak-spi-bundle .jar in the /opt/keycloak/providers it may be:
+# 1. rm a current .jar
+# 2. cp a new .jar
+# 3. docker compose restart keycloak
 echo -e "${YELLOW}Enter the names of the services you want to update (space-separated), or press Enter to skip:${NC}"
 read -r services_input
 

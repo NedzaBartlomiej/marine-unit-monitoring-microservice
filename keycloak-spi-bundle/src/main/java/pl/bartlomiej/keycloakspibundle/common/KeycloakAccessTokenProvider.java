@@ -7,9 +7,10 @@ import org.keycloak.models.KeycloakSession;
 
 import java.io.IOException;
 
-// todo refactor
+// todo refactor, and do something to don't call API every method invocation -> (https://chatgpt.com/c/67439970-1e8c-8001-a200-5a426726bcd0)
 public class KeycloakAccessTokenProvider {
 
+    // todo - extract to config file
     private static final String TOKEN_URL = "http://keycloak.pl:8080/realms/marine-unit-monitoring-master/protocol/openid-connect/token";
     private static final String CLIENT_ID = "protection-service-client";
     private static final String CLIENT_SECRET = "NfRXeBKAv4NCy3klk3XHAUDkSn4W4kha";

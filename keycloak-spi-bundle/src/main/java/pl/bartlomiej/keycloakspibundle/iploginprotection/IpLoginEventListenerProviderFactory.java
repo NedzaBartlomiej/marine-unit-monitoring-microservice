@@ -5,12 +5,14 @@ import org.keycloak.events.EventListenerProvider;
 import org.keycloak.events.EventListenerProviderFactory;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
+import pl.bartlomiej.keycloakspibundle.common.KeycloakAccessTokenProvider;
 
 public class IpLoginEventListenerProviderFactory implements EventListenerProviderFactory {
 
     @Override
     public EventListenerProvider create(KeycloakSession keycloakSession) {
-        return new IpLoginEventListenerProvider(keycloakSession);
+        return new IpLoginEventListenerProvider(keycloakSession,
+                new ProtectionServiceRequestService(new KeycloakAccessTokenProvider(), keycloakSession));
     }
 
     @Override
@@ -29,7 +31,7 @@ public class IpLoginEventListenerProviderFactory implements EventListenerProvide
     }
 
     @Override
-    public String getId() { // todo - refactor name with - spaces not _
-        return "ip_login_event_listener_provider";
+    public String getId() {
+        return "ip-login-event-listener-provider";
     }
 }
