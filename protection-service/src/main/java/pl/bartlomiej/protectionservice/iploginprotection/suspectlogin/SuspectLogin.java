@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Document("suspectLogins")
-public class SuspectLogin {
+public class SuspectLogin { // todo - cleaning function
 
     private String id;
     private String uid;

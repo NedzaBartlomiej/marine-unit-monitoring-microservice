@@ -3,7 +3,7 @@
   "realm": "marine-unit-monitoring-master",
   "displayName": "",
   "displayNameHtml": "Marine Unit Monitoring",
-  "notBefore": 1730575510,
+  "notBefore": 1731778927,
   "defaultSignatureAlgorithm": "RS256",
   "revokeRefreshToken": false,
   "refreshTokenMaxReuse": 0,
@@ -39,6 +39,8 @@
   "editUsernameAllowed": false,
   "bruteForceProtected": false,
   "permanentLockout": false,
+  "maxTemporaryLockouts": 0,
+  "bruteForceStrategy": "MULTIPLE",
   "maxFailureWaitSeconds": 900,
   "minimumQuickLoginWaitSeconds": 60,
   "waitIncrementSeconds": 60,
@@ -345,17 +347,6 @@
           "attributes": {}
         }
       ],
-      "developer-service-client": [
-        {
-          "id": "74be45b7-80fd-47ae-8db2-42b6b5ad1e7b",
-          "name": "DEF_DEVELOPER",
-          "description": "",
-          "composite": false,
-          "clientRole": true,
-          "containerId": "3d062b7c-3343-4831-bd6f-ea80dee25e09",
-          "attributes": {}
-        }
-      ],
       "security-admin-console": [],
       "admin-cli": [],
       "api-service-client": [
@@ -389,6 +380,17 @@
       ],
       "protection-service-client": [],
       "account-console": [],
+      "dev-service-client": [
+        {
+          "id": "74be45b7-80fd-47ae-8db2-42b6b5ad1e7b",
+          "name": "DEF_DEVELOPER",
+          "description": "",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "3d062b7c-3343-4831-bd6f-ea80dee25e09",
+          "attributes": {}
+        }
+      ],
       "broker": [
         {
           "id": "8ae4480a-7801-43d9-ab13-fdb505a20b09",
@@ -543,12 +545,12 @@
   "webAuthnPolicyPasswordlessExtraOrigins": [],
   "users": [
     {
-      "id": "cc1d577d-ebf1-4f86-be2f-59e70e500fcf",
-      "createdTimestamp": 1730323735368,
+      "id": "88506bf3-5983-4e29-a208-af53419848f2",
       "username": "service-account-api-service-client",
+      "emailVerified": true,
+      "createdTimestamp": 1732407430729,
       "enabled": true,
       "totp": false,
-      "emailVerified": false,
       "serviceAccountClientId": "api-service-client",
       "disableableCredentialTypes": [],
       "requiredActions": [],
@@ -557,23 +559,17 @@
         "default-roles-marine-unit-monitoring-master",
         "EMAIL_SENDER"
       ],
-      "clientRoles": {
-        "realm-management": [
-          "manage-users",
-          "realm-admin"
-        ]
-      },
       "notBefore": 0,
       "groups": []
     },
     {
-      "id": "bf830443-3162-40cd-9fb9-37c68d3ae1e4",
-      "createdTimestamp": 1730323833646,
-      "username": "service-account-developer-service-client",
+      "id": "90421020-86e0-4d17-ba1e-5faac0f61b08",
+      "username": "service-account-dev-service-client",
+      "emailVerified": true,
+      "createdTimestamp": 1732407504354,
       "enabled": true,
       "totp": false,
-      "emailVerified": false,
-      "serviceAccountClientId": "developer-service-client",
+      "serviceAccountClientId": "dev-service-client",
       "disableableCredentialTypes": [],
       "requiredActions": [],
       "realmRoles": [
@@ -582,7 +578,6 @@
       ],
       "clientRoles": {
         "realm-management": [
-          "manage-users",
           "realm-admin"
         ]
       },
@@ -590,12 +585,12 @@
       "groups": []
     },
     {
-      "id": "434a8a3d-0f5f-4593-9799-1866d99ef664",
-      "createdTimestamp": 1731000469345,
+      "id": "4e1df3ee-329c-4133-905a-3acec74bf768",
       "username": "service-account-protection-service-client",
+      "emailVerified": true,
+      "createdTimestamp": 1732407536362,
       "enabled": true,
       "totp": false,
-      "emailVerified": false,
       "serviceAccountClientId": "protection-service-client",
       "disableableCredentialTypes": [],
       "requiredActions": [],
@@ -604,11 +599,6 @@
         "IP_LOGIN_PROTECTOR",
         "EMAIL_SENDER"
       ],
-      "clientRoles": {
-        "realm-management": [
-          "realm-admin"
-        ]
-      },
       "notBefore": 0,
       "groups": []
     }
@@ -639,6 +629,7 @@
       "frontchannelLogout": false,
       "protocol": "openid-connect",
       "attributes": {
+        "realm_client": "false",
         "post.logout.redirect.uris": "+"
       },
       "authenticationFlowBindingOverrides": {},
@@ -649,6 +640,7 @@
         "acr",
         "profile",
         "roles",
+        "basic",
         "email"
       ],
       "optionalClientScopes": [
@@ -683,6 +675,7 @@
       "frontchannelLogout": false,
       "protocol": "openid-connect",
       "attributes": {
+        "realm_client": "false",
         "post.logout.redirect.uris": "+",
         "pkce.code.challenge.method": "S256"
       },
@@ -704,6 +697,7 @@
         "acr",
         "profile",
         "roles",
+        "basic",
         "email"
       ],
       "optionalClientScopes": [
@@ -733,15 +727,19 @@
       "publicClient": true,
       "frontchannelLogout": false,
       "protocol": "openid-connect",
-      "attributes": {},
+      "attributes": {
+        "realm_client": "false",
+        "client.use.lightweight.access.token.enabled": "true"
+      },
       "authenticationFlowBindingOverrides": {},
-      "fullScopeAllowed": false,
+      "fullScopeAllowed": true,
       "nodeReRegistrationTimeout": 0,
       "defaultClientScopes": [
         "web-origins",
         "acr",
         "profile",
         "roles",
+        "basic",
         "email"
       ],
       "optionalClientScopes": [
@@ -781,11 +779,12 @@
       "frontchannelLogout": true,
       "protocol": "openid-connect",
       "attributes": {
+        "realm_client": "false",
         "oidc.ciba.grant.enabled": "false",
         "client.secret.creation.time": "1730573081",
         "backchannel.logout.session.required": "true",
-        "display.on.consent.screen": "false",
         "oauth2.device.authorization.grant.enabled": "false",
+        "display.on.consent.screen": "false",
         "backchannel.logout.revoke.offline.tokens": "false"
       },
       "authenticationFlowBindingOverrides": {},
@@ -846,6 +845,7 @@
         "acr",
         "profile",
         "roles",
+        "basic",
         "email"
       ],
       "optionalClientScopes": [
@@ -875,7 +875,9 @@
       "publicClient": false,
       "frontchannelLogout": false,
       "protocol": "openid-connect",
-      "attributes": {},
+      "attributes": {
+        "realm_client": "true"
+      },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": false,
       "nodeReRegistrationTimeout": 0,
@@ -895,7 +897,7 @@
     },
     {
       "id": "3d062b7c-3343-4831-bd6f-ea80dee25e09",
-      "clientId": "developer-service-client",
+      "clientId": "dev-service-client",
       "name": "",
       "description": "",
       "rootUrl": "",
@@ -923,11 +925,12 @@
       "frontchannelLogout": true,
       "protocol": "openid-connect",
       "attributes": {
+        "realm_client": "false",
         "oidc.ciba.grant.enabled": "false",
         "client.secret.creation.time": "1730573134",
         "backchannel.logout.session.required": "true",
-        "display.on.consent.screen": "false",
         "oauth2.device.authorization.grant.enabled": "false",
+        "display.on.consent.screen": "false",
         "backchannel.logout.revoke.offline.tokens": "false"
       },
       "authenticationFlowBindingOverrides": {},
@@ -988,6 +991,7 @@
         "acr",
         "profile",
         "roles",
+        "basic",
         "email"
       ],
       "optionalClientScopes": [
@@ -1027,10 +1031,11 @@
       "frontchannelLogout": true,
       "protocol": "openid-connect",
       "attributes": {
+        "realm_client": "false",
         "oidc.ciba.grant.enabled": "false",
-        "oauth2.device.authorization.grant.enabled": "false",
         "client.secret.creation.time": "1731000469",
         "backchannel.logout.session.required": "true",
+        "oauth2.device.authorization.grant.enabled": "false",
         "backchannel.logout.revoke.offline.tokens": "false"
       },
       "authenticationFlowBindingOverrides": {},
@@ -1045,8 +1050,8 @@
           "consentRequired": false,
           "config": {
             "user.session.note": "client_id",
-            "introspection.token.claim": "true",
             "id.token.claim": "true",
+            "introspection.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "client_id",
             "jsonType.label": "String"
@@ -1060,8 +1065,8 @@
           "consentRequired": false,
           "config": {
             "user.session.note": "clientAddress",
-            "introspection.token.claim": "true",
             "id.token.claim": "true",
+            "introspection.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "clientAddress",
             "jsonType.label": "String"
@@ -1075,8 +1080,8 @@
           "consentRequired": false,
           "config": {
             "user.session.note": "clientHost",
-            "introspection.token.claim": "true",
             "id.token.claim": "true",
+            "introspection.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "clientHost",
             "jsonType.label": "String"
@@ -1088,6 +1093,7 @@
         "acr",
         "profile",
         "roles",
+        "basic",
         "email"
       ],
       "optionalClientScopes": [
@@ -1117,7 +1123,9 @@
       "publicClient": false,
       "frontchannelLogout": false,
       "protocol": "openid-connect",
-      "attributes": {},
+      "attributes": {
+        "realm_client": "true"
+      },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": false,
       "nodeReRegistrationTimeout": 0,
@@ -1162,11 +1170,13 @@
       "frontchannelLogout": false,
       "protocol": "openid-connect",
       "attributes": {
+        "realm_client": "false",
+        "client.use.lightweight.access.token.enabled": "true",
         "post.logout.redirect.uris": "+",
         "pkce.code.challenge.method": "S256"
       },
       "authenticationFlowBindingOverrides": {},
-      "fullScopeAllowed": false,
+      "fullScopeAllowed": true,
       "nodeReRegistrationTimeout": 0,
       "protocolMappers": [
         {
@@ -1191,6 +1201,7 @@
         "acr",
         "profile",
         "roles",
+        "basic",
         "email"
       ],
       "optionalClientScopes": [
@@ -1233,8 +1244,8 @@
       "protocol": "openid-connect",
       "attributes": {
         "include.in.token.scope": "true",
-        "display.on.consent.screen": "true",
-        "consent.screen.text": "${profileScopeConsentText}"
+        "consent.screen.text": "${profileScopeConsentText}",
+        "display.on.consent.screen": "true"
       },
       "protocolMappers": [
         {
@@ -1477,8 +1488,8 @@
       "protocol": "openid-connect",
       "attributes": {
         "include.in.token.scope": "true",
-        "display.on.consent.screen": "true",
-        "consent.screen.text": "${phoneScopeConsentText}"
+        "consent.screen.text": "${phoneScopeConsentText}",
+        "display.on.consent.screen": "true"
       },
       "protocolMappers": [
         {
@@ -1516,6 +1527,44 @@
       ]
     },
     {
+      "id": "bb78207d-57a7-4577-b402-ba01918d92f2",
+      "name": "basic",
+      "description": "OpenID Connect scope for add all basic claims to the token",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "id": "d067a143-6080-4ac6-97d7-570d64126df9",
+          "name": "sub",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-sub-mapper",
+          "consentRequired": false,
+          "config": {
+            "introspection.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        },
+        {
+          "id": "3a0aff2b-70a8-43f0-9088-b0a53502f982",
+          "name": "auth_time",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usersessionmodel-note-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.session.note": "AUTH_TIME",
+            "id.token.claim": "true",
+            "introspection.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "auth_time",
+            "jsonType.label": "long"
+          }
+        }
+      ]
+    },
+    {
       "id": "a58ae514-73f2-4203-bf2c-daed2f1f0c86",
       "name": "acr",
       "description": "OpenID Connect scope for add acr (authentication context class reference) to the token",
@@ -1546,8 +1595,8 @@
       "protocol": "openid-connect",
       "attributes": {
         "include.in.token.scope": "true",
-        "display.on.consent.screen": "true",
-        "consent.screen.text": "${emailScopeConsentText}"
+        "consent.screen.text": "${emailScopeConsentText}",
+        "display.on.consent.screen": "true"
       },
       "protocolMappers": [
         {
@@ -1591,8 +1640,8 @@
       "protocol": "openid-connect",
       "attributes": {
         "include.in.token.scope": "true",
-        "display.on.consent.screen": "true",
-        "consent.screen.text": "${addressScopeConsentText}"
+        "consent.screen.text": "${addressScopeConsentText}",
+        "display.on.consent.screen": "true"
       },
       "protocolMappers": [
         {
@@ -1667,8 +1716,8 @@
       "protocol": "openid-connect",
       "attributes": {
         "include.in.token.scope": "false",
-        "display.on.consent.screen": "true",
-        "consent.screen.text": "${rolesScopeConsentText}"
+        "consent.screen.text": "${rolesScopeConsentText}",
+        "display.on.consent.screen": "true"
       },
       "protocolMappers": [
         {
@@ -1689,12 +1738,12 @@
           "protocolMapper": "oidc-usermodel-realm-role-mapper",
           "consentRequired": false,
           "config": {
-            "introspection.token.claim": "true",
-            "multivalued": "true",
             "user.attribute": "foo",
+            "introspection.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "realm_access.roles",
-            "jsonType.label": "String"
+            "jsonType.label": "String",
+            "multivalued": "true"
           }
         },
         {
@@ -1704,12 +1753,12 @@
           "protocolMapper": "oidc-usermodel-client-role-mapper",
           "consentRequired": false,
           "config": {
-            "introspection.token.claim": "true",
-            "multivalued": "true",
             "user.attribute": "foo",
+            "introspection.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "resource_access.${client_id}.roles",
-            "jsonType.label": "String"
+            "jsonType.label": "String",
+            "multivalued": "true"
           }
         }
       ]
@@ -1721,8 +1770,8 @@
       "protocol": "openid-connect",
       "attributes": {
         "include.in.token.scope": "false",
-        "display.on.consent.screen": "false",
-        "consent.screen.text": ""
+        "consent.screen.text": "",
+        "display.on.consent.screen": "false"
       },
       "protocolMappers": [
         {
@@ -1745,7 +1794,8 @@
     "email",
     "roles",
     "web-origins",
-    "acr"
+    "acr",
+    "basic"
   ],
   "defaultOptionalClientScopes": [
     "offline_access",
@@ -1764,24 +1814,117 @@
     "strictTransportSecurity": "max-age=31536000; includeSubDomains"
   },
   "smtpServer": {
+    "password": "**********",
     "replyToDisplayName": "",
     "starttls": "true",
     "auth": "true",
-    "envelopeFrom": "",
-    "ssl": "false",
-    "password": "**********",
     "port": "587",
     "host": "smtp.gmail.com",
     "replyTo": "",
     "from": "marineunitmonitoring7@gmail.com",
     "fromDisplayName": "Marine Unit Monitoring",
+    "envelopeFrom": "",
+    "ssl": "false",
     "user": "marineunitmonitoring7@gmail.com"
   },
   "eventsEnabled": false,
   "eventsListeners": [
+    "ip_login_event_listener_provider",
     "jboss-logging"
   ],
-  "enabledEventTypes": [],
+  "enabledEventTypes": [
+    "UPDATE_CONSENT_ERROR",
+    "SEND_RESET_PASSWORD",
+    "GRANT_CONSENT",
+    "VERIFY_PROFILE_ERROR",
+    "UPDATE_TOTP",
+    "REMOVE_TOTP",
+    "REVOKE_GRANT",
+    "LOGIN_ERROR",
+    "CLIENT_LOGIN",
+    "RESET_PASSWORD_ERROR",
+    "UPDATE_CREDENTIAL",
+    "IMPERSONATE_ERROR",
+    "CODE_TO_TOKEN_ERROR",
+    "CUSTOM_REQUIRED_ACTION",
+    "OAUTH2_DEVICE_CODE_TO_TOKEN_ERROR",
+    "RESTART_AUTHENTICATION",
+    "UPDATE_PROFILE_ERROR",
+    "IMPERSONATE",
+    "LOGIN",
+    "UPDATE_PASSWORD_ERROR",
+    "OAUTH2_DEVICE_VERIFY_USER_CODE",
+    "CLIENT_INITIATED_ACCOUNT_LINKING",
+    "USER_DISABLED_BY_PERMANENT_LOCKOUT",
+    "OAUTH2_EXTENSION_GRANT",
+    "REMOVE_CREDENTIAL_ERROR",
+    "TOKEN_EXCHANGE",
+    "REGISTER",
+    "LOGOUT",
+    "AUTHREQID_TO_TOKEN",
+    "DELETE_ACCOUNT_ERROR",
+    "CLIENT_REGISTER",
+    "IDENTITY_PROVIDER_LINK_ACCOUNT",
+    "USER_DISABLED_BY_TEMPORARY_LOCKOUT",
+    "UPDATE_PASSWORD",
+    "DELETE_ACCOUNT",
+    "FEDERATED_IDENTITY_LINK_ERROR",
+    "CLIENT_DELETE",
+    "IDENTITY_PROVIDER_FIRST_LOGIN",
+    "VERIFY_EMAIL",
+    "CLIENT_DELETE_ERROR",
+    "CLIENT_LOGIN_ERROR",
+    "RESTART_AUTHENTICATION_ERROR",
+    "REMOVE_FEDERATED_IDENTITY_ERROR",
+    "EXECUTE_ACTIONS",
+    "TOKEN_EXCHANGE_ERROR",
+    "PERMISSION_TOKEN",
+    "FEDERATED_IDENTITY_OVERRIDE_LINK",
+    "SEND_IDENTITY_PROVIDER_LINK_ERROR",
+    "UPDATE_CREDENTIAL_ERROR",
+    "EXECUTE_ACTION_TOKEN_ERROR",
+    "SEND_VERIFY_EMAIL",
+    "OAUTH2_EXTENSION_GRANT_ERROR",
+    "OAUTH2_DEVICE_AUTH",
+    "EXECUTE_ACTIONS_ERROR",
+    "REMOVE_FEDERATED_IDENTITY",
+    "OAUTH2_DEVICE_CODE_TO_TOKEN",
+    "IDENTITY_PROVIDER_POST_LOGIN",
+    "IDENTITY_PROVIDER_LINK_ACCOUNT_ERROR",
+    "FEDERATED_IDENTITY_OVERRIDE_LINK_ERROR",
+    "UPDATE_EMAIL",
+    "OAUTH2_DEVICE_VERIFY_USER_CODE_ERROR",
+    "REGISTER_ERROR",
+    "REVOKE_GRANT_ERROR",
+    "LOGOUT_ERROR",
+    "UPDATE_EMAIL_ERROR",
+    "EXECUTE_ACTION_TOKEN",
+    "CLIENT_UPDATE_ERROR",
+    "UPDATE_PROFILE",
+    "AUTHREQID_TO_TOKEN_ERROR",
+    "INVITE_ORG_ERROR",
+    "FEDERATED_IDENTITY_LINK",
+    "CLIENT_REGISTER_ERROR",
+    "INVITE_ORG",
+    "SEND_VERIFY_EMAIL_ERROR",
+    "SEND_IDENTITY_PROVIDER_LINK",
+    "RESET_PASSWORD",
+    "CLIENT_INITIATED_ACCOUNT_LINKING_ERROR",
+    "OAUTH2_DEVICE_AUTH_ERROR",
+    "REMOVE_CREDENTIAL",
+    "UPDATE_CONSENT",
+    "REMOVE_TOTP_ERROR",
+    "VERIFY_EMAIL_ERROR",
+    "SEND_RESET_PASSWORD_ERROR",
+    "CLIENT_UPDATE",
+    "IDENTITY_PROVIDER_POST_LOGIN_ERROR",
+    "CUSTOM_REQUIRED_ACTION_ERROR",
+    "UPDATE_TOTP_ERROR",
+    "CODE_TO_TOKEN",
+    "VERIFY_PROFILE",
+    "GRANT_CONSENT_ERROR",
+    "IDENTITY_PROVIDER_FIRST_LOGIN_ERROR"
+  ],
   "adminEventsEnabled": false,
   "adminEventsDetailsEnabled": false,
   "identityProviders": [
@@ -1796,9 +1939,9 @@
       "addReadTokenRoleOnCreate": false,
       "authenticateByDefault": false,
       "linkOnly": false,
+      "hideOnLogin": true,
       "firstBrokerLoginFlowAlias": "first broker login",
       "config": {
-        "hideOnLoginPage": "true",
         "offlineAccess": "true",
         "acceptsPromptNoneForwardFromClient": "false",
         "clientId": "328813182877-qfauqip9t1vavogldrnovvc6d1lmaqb7.apps.googleusercontent.com",
@@ -1939,6 +2082,20 @@
         "config": {
           "priority": [
             "100"
+          ]
+        }
+      },
+      {
+        "id": "4dbf76c2-2878-412e-a4b3-3219e7c84e07",
+        "name": "hmac-generated-hs512",
+        "providerId": "hmac-generated",
+        "subComponents": {},
+        "config": {
+          "priority": [
+            "100"
+          ],
+          "algorithm": [
+            "HS512"
           ]
         }
       },
@@ -2588,6 +2745,15 @@
       "config": {}
     },
     {
+      "alias": "delete_credential",
+      "name": "Delete Credential",
+      "providerId": "delete_credential",
+      "enabled": true,
+      "defaultAction": false,
+      "priority": 100,
+      "config": {}
+    },
+    {
       "alias": "update_user_locale",
       "name": "Update User Locale",
       "providerId": "update_user_locale",
@@ -2603,13 +2769,13 @@
   "resetCredentialsFlow": "reset credentials",
   "clientAuthenticationFlow": "clients",
   "dockerAuthenticationFlow": "docker auth",
+  "firstBrokerLoginFlow": "first broker login",
   "attributes": {
     "cibaBackchannelTokenDeliveryMode": "poll",
     "cibaAuthRequestedUserHint": "login_hint",
     "oauth2DevicePollingInterval": "5",
     "clientOfflineSessionMaxLifespan": "0",
     "clientSessionIdleTimeout": "0",
-    "userProfileEnabled": "true",
     "clientOfflineSessionIdleTimeout": "0",
     "cibaInterval": "5",
     "realmReusableOtpCode": "false",
@@ -2620,8 +2786,9 @@
     "frontendUrl": "",
     "acr.loa.map": "{}"
   },
-  "keycloakVersion": "23.0.6",
+  "keycloakVersion": "26.0.6",
   "userManagedAccessAllowed": false,
+  "organizationsEnabled": false,
   "clientProfiles": {
     "profiles": []
   },

@@ -8,7 +8,6 @@ import pl.bartlomiej.mummicroservicecommons.emailintegration.external.model.Link
 import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.servlet.KeycloakService;
 import pl.bartlomiej.protectionservice.iploginprotection.controller.IpLoginProtectionHttpService;
 import pl.bartlomiej.protectionservice.iploginprotection.model.IpLoginProtectionRequest;
-import pl.bartlomiej.protectionservice.iploginprotection.model.IpLoginProtectionResult;
 import pl.bartlomiej.protectionservice.iploginprotection.suspectlogin.SuspectLogin;
 import pl.bartlomiej.protectionservice.iploginprotection.suspectlogin.SuspectLoginService;
 
@@ -29,8 +28,12 @@ class DefaultIpLoginProtectionService implements IpLoginProtectionService {
         this.emailHttpService = emailHttpService;
     }
 
+    /**
+     * @return true - when ipAddress from the request param is trusted,
+     * and returns false - when the ipAddress is untrusted
+     */
     @Override
-    public String executeIpLoginProtection(final IpLoginProtectionRequest request) {
+    public Boolean executeIpLoginProtection(final IpLoginProtectionRequest request) {
         LoginServiceRepresentation loginServiceRepresentation = this.loginServiceResolver.resolve(request.clientId());
         boolean isIpTrusted = ipLoginProtectionHttpService.verifyIp(
                 TokenConstants.BEARER_PREFIX + keycloakService.getAccessToken(),
@@ -41,12 +44,13 @@ class DefaultIpLoginProtectionService implements IpLoginProtectionService {
                 request.ipAddress()
         ).getBody();
         if (!isIpTrusted) {
-            return this.executeUntrustedIpAction(request, loginServiceRepresentation);
+            this.executeUntrustedIpAction(request, loginServiceRepresentation);
+            return false;
         }
-        return IpLoginProtectionResult.TRUSTED_IP.getDetailsMessage();
+        return true;
     }
 
-    private String executeUntrustedIpAction(final IpLoginProtectionRequest request, final LoginServiceRepresentation loginServiceRepresentation) {
+    private void executeUntrustedIpAction(final IpLoginProtectionRequest request, final LoginServiceRepresentation loginServiceRepresentation) {
         SuspectLogin suspectLogin = this.suspectLoginService.create(request.ipAddress(), request.uid(), loginServiceRepresentation.clientId());
         this.emailHttpService.sendLinkedEmail(
                 TokenConstants.BEARER_PREFIX + keycloakService.getAccessToken(),
@@ -58,7 +62,6 @@ class DefaultIpLoginProtectionService implements IpLoginProtectionService {
                         "Check activity"
                 )
         );
-        return IpLoginProtectionResult.UNTRUSTED_IP.getDetailsMessage();
     }
 
     @Override
