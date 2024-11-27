@@ -5,14 +5,17 @@ import org.keycloak.events.EventListenerProvider;
 import org.keycloak.events.EventListenerProviderFactory;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
-import pl.bartlomiej.keycloakspibundle.common.KeycloakAccessTokenProvider;
+import pl.bartlomiej.keycloakspibundle.common.AuthorizedSimpleHttp;
 
 public class IpLoginEventListenerProviderFactory implements EventListenerProviderFactory {
 
     @Override
     public EventListenerProvider create(KeycloakSession keycloakSession) {
         return new IpLoginEventListenerProvider(keycloakSession,
-                new ProtectionServiceRequestService(new KeycloakAccessTokenProvider(), keycloakSession));
+                new ProtectionServiceRequestService(
+                        keycloakSession, new AuthorizedSimpleHttp()
+                )
+        );
     }
 
     @Override

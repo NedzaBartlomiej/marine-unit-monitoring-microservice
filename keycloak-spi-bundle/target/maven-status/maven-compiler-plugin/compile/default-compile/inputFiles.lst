@@ -1,3 +1,11 @@
-/mnt/c/Users/barte/Desktop/Development/Project/marine-unit-monitoring-microservice/keycloak-spi-bundle/src/main/java/pl/bartlomiej/keycloakspibundle/common/KeycloakAccessTokenProvider.java
+/mnt/c/Users/barte/Desktop/Development/Project/marine-unit-monitoring-microservice/keycloak-spi-bundle/src/main/java/pl/bartlomiej/keycloakspibundle/common/AuthorizedSimpleHttp.java
+/mnt/c/Users/barte/Desktop/Development/Project/marine-unit-monitoring-microservice/keycloak-spi-bundle/src/main/java/pl/bartlomiej/keycloakspibundle/common/exception/AuthRetryException.java
+/mnt/c/Users/barte/Desktop/Development/Project/marine-unit-monitoring-microservice/keycloak-spi-bundle/src/main/java/pl/bartlomiej/keycloakspibundle/common/exception/HttpRequestException.java
+/mnt/c/Users/barte/Desktop/Development/Project/marine-unit-monitoring-microservice/keycloak-spi-bundle/src/main/java/pl/bartlomiej/keycloakspibundle/common/exception/ProtectionServiceException.java
+/mnt/c/Users/barte/Desktop/Development/Project/marine-unit-monitoring-microservice/keycloak-spi-bundle/src/main/java/pl/bartlomiej/keycloakspibundle/common/tokenaccess/TokenFetcher.java
+/mnt/c/Users/barte/Desktop/Development/Project/marine-unit-monitoring-microservice/keycloak-spi-bundle/src/main/java/pl/bartlomiej/keycloakspibundle/common/tokenaccess/TokenManager.java
 /mnt/c/Users/barte/Desktop/Development/Project/marine-unit-monitoring-microservice/keycloak-spi-bundle/src/main/java/pl/bartlomiej/keycloakspibundle/iploginprotection/IpLoginEventListenerProvider.java
 /mnt/c/Users/barte/Desktop/Development/Project/marine-unit-monitoring-microservice/keycloak-spi-bundle/src/main/java/pl/bartlomiej/keycloakspibundle/iploginprotection/IpLoginEventListenerProviderFactory.java
+/mnt/c/Users/barte/Desktop/Development/Project/marine-unit-monitoring-microservice/keycloak-spi-bundle/src/main/java/pl/bartlomiej/keycloakspibundle/iploginprotection/IpLoginProtectionRequest.java
+/mnt/c/Users/barte/Desktop/Development/Project/marine-unit-monitoring-microservice/keycloak-spi-bundle/src/main/java/pl/bartlomiej/keycloakspibundle/iploginprotection/PropertiesConfig.java
+/mnt/c/Users/barte/Desktop/Development/Project/marine-unit-monitoring-microservice/keycloak-spi-bundle/src/main/java/pl/bartlomiej/keycloakspibundle/iploginprotection/ProtectionServiceRequestService.java

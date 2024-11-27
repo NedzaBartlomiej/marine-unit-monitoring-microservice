@@ -1,21 +1,28 @@
-package pl.bartlomiej.keycloakspibundle.common;
+package pl.bartlomiej.keycloakspibundle.common.tokenaccess;
 
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.keycloak.broker.provider.util.SimpleHttp;
 import org.keycloak.models.KeycloakSession;
+import pl.bartlomiej.keycloakspibundle.common.exception.HttpRequestException;
 
 import java.io.IOException;
 
-// todo refactor, and do something to don't call API every method invocation -> (https://chatgpt.com/c/67439970-1e8c-8001-a200-5a426726bcd0)
-public class KeycloakAccessTokenProvider {
+public class TokenFetcher {
 
     // todo - extract to config file
     private static final String TOKEN_URL = "http://keycloak.pl:8080/realms/marine-unit-monitoring-master/protocol/openid-connect/token";
     private static final String CLIENT_ID = "protection-service-client";
     private static final String CLIENT_SECRET = "NfRXeBKAv4NCy3klk3XHAUDkSn4W4kha";
+    private static final Log log = LogFactory.getLog(TokenFetcher.class);
 
-    public String getToken(KeycloakSession keycloakSession) {
+    TokenFetcher() {
+    }
+
+    String fetchToken(final KeycloakSession keycloakSession) {
+        log.info("Fetching token.");
         try {
             return SimpleHttp.doPost(TOKEN_URL, keycloakSession)
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED)
@@ -26,7 +33,7 @@ public class KeycloakAccessTokenProvider {
                     .get("access_token")
                     .asText();
         } catch (IOException e) {
-            throw new RuntimeException("Something go wrong fetching access token from the keycloak server.", e);
+            throw new HttpRequestException("Access token request.", e);
         }
     }
 }

@@ -10,7 +10,6 @@ import org.keycloak.models.UserModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// todo - refactor
 public class IpLoginEventListenerProvider implements EventListenerProvider {
 
     private static final Logger log = LoggerFactory.getLogger(IpLoginEventListenerProvider.class);
@@ -25,25 +24,16 @@ public class IpLoginEventListenerProvider implements EventListenerProvider {
     @Override
     public void onEvent(Event event) {
         if (!event.getType().equals(EventType.LOGIN)) return;
+
         log.info("Login event detected. Executing IP login protection.");
-
-        IpLoginProtectionRequest protectionRequest = this.buildProtectionRequest(event);
-        SimpleHttp protectionResponse = this.requestService.sendProtectionRequest(protectionRequest);
-        this.requestService.handleProtectionResponse(protectionResponse);
-    }
-
-    private IpLoginProtectionRequest buildProtectionRequest(final Event event) {
-        log.info("Producing protection request details object.");
-        return new IpLoginProtectionRequest(
-                event.getIpAddress(),
-                event.getUserId(),
-                this.getUserModel(event).getEmail(),
-                event.getClientId()
-        );
+        IpLoginProtectionRequest protectionRequest = this.requestService
+                .buildProtectionRequest(event, this.getUserModel(event));
+        SimpleHttp protectionHttp = this.requestService.sendProtectionRequest(protectionRequest);
+        this.requestService.handleProtectionResponse(protectionHttp);
     }
 
     private UserModel getUserModel(final Event event) {
-        log.info("Getting UserModel from the event.");
+        log.info("Fetching UserModel from the event.");
         return keycloakSession.users()
                 .getUserById(keycloakSession.getContext().getRealm(), event.getUserId());
     }
