@@ -5,7 +5,9 @@ import org.keycloak.events.EventListenerProvider;
 import org.keycloak.events.EventListenerProviderFactory;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
+import org.keycloak.services.util.ObjectMapperResolver;
 import pl.bartlomiej.keycloakspibundle.common.AuthorizedSimpleHttp;
+import pl.bartlomiej.keycloakspibundle.common.config.PropertiesProvider;
 
 public class IpLoginEventListenerProviderFactory implements EventListenerProviderFactory {
 
@@ -13,7 +15,8 @@ public class IpLoginEventListenerProviderFactory implements EventListenerProvide
     public EventListenerProvider create(KeycloakSession keycloakSession) {
         return new IpLoginEventListenerProvider(keycloakSession,
                 new ProtectionServiceRequestService(
-                        keycloakSession, new AuthorizedSimpleHttp()
+                        keycloakSession, new AuthorizedSimpleHttp(),
+                        new PropertiesProvider(ObjectMapperResolver.createStreamSerializer())
                 )
         );
     }

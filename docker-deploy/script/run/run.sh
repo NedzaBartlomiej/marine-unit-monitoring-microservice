@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#todo refactor whole file - vars for everything etc etc
+
 # // VARS
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -9,6 +11,9 @@ NC='\033[0m'
 flag_file="./docker-deploy/script/run/initialized.flag"
 
 base_project_path="marine-unit-monitoring-microservice"
+
+KEYCLOAK_CONTAINER_NAME="keycloak"
+KEYCLOAK_IMAGE_NAME="marine-unit-monitoring-microservice-keycloak"
 # // VARS
 
 # RUNNING PATH VERIFICATION
@@ -70,10 +75,24 @@ docker volume prune -f
 echo "Removing not used images"
 docker image prune -f
 
-# todo - updating the keycloak-spi-bundle .jar in the /opt/keycloak/providers it may be:
-# 1. rm a current .jar
-# 2. cp a new .jar
-# 3. docker compose restart keycloak
+echo -e "${YELLOW}Do you want to update Keycloak SPI .jar? (y/n)${NC}"
+read -r response
+
+if [[ "$response" == "y" ]]; then
+  echo "Updating Keycloak SPIs"
+
+  mvn clean install -f ./keycloak-spi-bundle/pom.xml
+
+  docker rm -f "$KEYCLOAK_CONTAINER_NAME"
+  echo "Keycloak container removed."
+
+  docker rmi "$KEYCLOAK_IMAGE_NAME"
+  echo "Keycloak image removed."
+else
+  echo "Operation canceled."
+fi
+
+
 echo -e "${YELLOW}Enter the names of the services you want to update (space-separated), or press Enter to skip:${NC}"
 read -r services_input
 

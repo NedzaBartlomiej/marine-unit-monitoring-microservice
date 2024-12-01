@@ -8,6 +8,7 @@ import org.keycloak.models.UserModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.bartlomiej.keycloakspibundle.common.AuthorizedSimpleHttp;
+import pl.bartlomiej.keycloakspibundle.common.config.PropertiesProvider;
 import pl.bartlomiej.keycloakspibundle.common.exception.HttpRequestException;
 import pl.bartlomiej.keycloakspibundle.common.exception.ProtectionServiceException;
 
@@ -15,23 +16,30 @@ import java.io.IOException;
 
 public class ProtectionServiceRequestService {
 
-    // todo - extract to config file
-    public static final String IP_PROTECTION_URL = "http://protection-service:8085/v1/ip-login-protection/rpc/protect-login";
+    private final IpLoginProtectionProperties ipLoginProtectionProperties;
     public static final String SUCCESS_RESP_FIELD = "success";
     public static final String MESSAGE_RESP_FIELD = "message";
-
     private static final Logger log = LoggerFactory.getLogger(ProtectionServiceRequestService.class);
     private final KeycloakSession keycloakSession;
     private final AuthorizedSimpleHttp authorizedSimpleHttp;
 
-    public ProtectionServiceRequestService(KeycloakSession keycloakSession, AuthorizedSimpleHttp authorizedSimpleHttp) {
+    public ProtectionServiceRequestService(KeycloakSession keycloakSession,
+                                           AuthorizedSimpleHttp authorizedSimpleHttp,
+                                           PropertiesProvider propertiesProvider) {
         this.keycloakSession = keycloakSession;
         this.authorizedSimpleHttp = authorizedSimpleHttp;
+        this.ipLoginProtectionProperties = propertiesProvider.get(
+                "ip-login-protection.properties",
+                "",
+                IpLoginProtectionProperties.class
+        );
     }
 
     public SimpleHttp sendProtectionRequest(final IpLoginProtectionRequest protectionRequest) {
         log.info("Requesting to protection service.");
-        SimpleHttp protectionHttp = SimpleHttp.doPost(IP_PROTECTION_URL, keycloakSession);
+        SimpleHttp protectionHttp = SimpleHttp.doPost(
+                this.ipLoginProtectionProperties.protectionServiceUrl(),
+                keycloakSession);
         return authorizedSimpleHttp.request(protectionHttp, protectionRequest, keycloakSession);
     }
 

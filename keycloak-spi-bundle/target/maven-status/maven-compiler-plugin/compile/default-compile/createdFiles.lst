@@ -1,11 +1,14 @@
 pl/bartlomiej/keycloakspibundle/iploginprotection/IpLoginEventListenerProvider.class
 pl/bartlomiej/keycloakspibundle/iploginprotection/IpLoginEventListenerProviderFactory.class
-pl/bartlomiej/keycloakspibundle/iploginprotection/PropertiesConfig.class
 pl/bartlomiej/keycloakspibundle/common/tokenaccess/TokenManager.class
+pl/bartlomiej/keycloakspibundle/common/config/PropertyMapper.class
 pl/bartlomiej/keycloakspibundle/common/exception/AuthRetryException.class
 pl/bartlomiej/keycloakspibundle/common/exception/HttpRequestException.class
 pl/bartlomiej/keycloakspibundle/common/exception/ProtectionServiceException.class
+pl/bartlomiej/keycloakspibundle/common/config/ConfigLoader.class
+pl/bartlomiej/keycloakspibundle/common/config/PropertiesProvider.class
 pl/bartlomiej/keycloakspibundle/iploginprotection/IpLoginProtectionRequest.class
 pl/bartlomiej/keycloakspibundle/common/tokenaccess/TokenFetcher.class
+pl/bartlomiej/keycloakspibundle/iploginprotection/IpLoginProtectionProperties.class
 pl/bartlomiej/keycloakspibundle/iploginprotection/ProtectionServiceRequestService.class
 pl/bartlomiej/keycloakspibundle/common/AuthorizedSimpleHttp.class
