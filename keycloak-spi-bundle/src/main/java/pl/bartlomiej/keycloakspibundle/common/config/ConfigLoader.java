@@ -5,18 +5,25 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 class ConfigLoader {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigLoader.class);
     private static final String ROOT_CONFIG_PATH = "config/";
+    private static final Map<String, Properties> configCache = new ConcurrentHashMap<>();
 
     /**
      * Loads config file, from src/main/resources/config final root path.
      */
     static Properties load(final String configFileName) {
-        log.info("Loading config file - {}", configFileName); // todo (this is invoking a lot of times) - fix
+        return configCache.computeIfAbsent(configFileName, ConfigLoader::loadFromFile);
+    }
+
+    private static Properties loadFromFile(final String configFileName) {
+        log.info("Loading config file - {}", configFileName);
 
         try (InputStream stream = ConfigLoader.class.getClassLoader().getResourceAsStream(ROOT_CONFIG_PATH + configFileName)) {
             Properties properties = new Properties();
