@@ -75,6 +75,16 @@ docker volume prune -f
 echo "Removing not used images"
 docker image prune -f
 
+# UPDATING SECTION
+echo -e "${YELLOW}Do you want to update mum-microservice-commons? (y/n)${NC}"
+read -r response
+
+if [[ "$response" == "y" ]]; then
+  echo "Updating mum-microservice-commons"
+
+  mvn clean install -f ./mum-microservice-commons/pom.xml
+fi
+
 echo -e "${YELLOW}Do you want to update Keycloak SPI .jar? (y/n)${NC}"
 read -r response
 

@@ -5,7 +5,7 @@ import pl.bartlomiej.mummicroservicecommons.config.loginservicereps.LoginService
 import pl.bartlomiej.mummicroservicecommons.constants.TokenConstants;
 import pl.bartlomiej.mummicroservicecommons.emailintegration.external.EmailHttpService;
 import pl.bartlomiej.mummicroservicecommons.emailintegration.external.model.LinkedEmail;
-import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.servlet.KeycloakService;
+import pl.bartlomiej.mummicroservicecommons.webtools.retryclient.unauthorized.external.RetryClientTokenProvider;
 import pl.bartlomiej.protectionservice.iploginprotection.controller.IpLoginProtectionHttpService;
 import pl.bartlomiej.protectionservice.iploginprotection.model.IpLoginProtectionRequest;
 import pl.bartlomiej.protectionservice.iploginprotection.suspectlogin.SuspectLogin;
@@ -15,14 +15,14 @@ import pl.bartlomiej.protectionservice.iploginprotection.suspectlogin.SuspectLog
 class DefaultIpLoginProtectionService implements IpLoginProtectionService {
 
     private final LoginServiceResolver loginServiceResolver;
-    private final KeycloakService keycloakService;
+    private final RetryClientTokenProvider retryClientTokenProvider;
     private final IpLoginProtectionHttpService ipLoginProtectionHttpService;
     private final SuspectLoginService suspectLoginService;
     private final EmailHttpService emailHttpService;
 
-    DefaultIpLoginProtectionService(LoginServiceResolver loginServiceResolver, KeycloakService keycloakService, IpLoginProtectionHttpService ipLoginProtectionHttpService, SuspectLoginService suspectLoginService, EmailHttpService emailHttpService) {
+    DefaultIpLoginProtectionService(LoginServiceResolver loginServiceResolver, RetryClientTokenProvider retryClientTokenProvider, IpLoginProtectionHttpService ipLoginProtectionHttpService, SuspectLoginService suspectLoginService, EmailHttpService emailHttpService) {
         this.loginServiceResolver = loginServiceResolver;
-        this.keycloakService = keycloakService;
+        this.retryClientTokenProvider = retryClientTokenProvider;
         this.ipLoginProtectionHttpService = ipLoginProtectionHttpService;
         this.suspectLoginService = suspectLoginService;
         this.emailHttpService = emailHttpService;
@@ -36,7 +36,7 @@ class DefaultIpLoginProtectionService implements IpLoginProtectionService {
     public Boolean executeIpLoginProtection(final IpLoginProtectionRequest request) {
         LoginServiceRepresentation loginServiceRepresentation = this.loginServiceResolver.resolve(request.clientId());
         boolean isIpTrusted = ipLoginProtectionHttpService.verifyIp(
-                TokenConstants.BEARER_PREFIX + keycloakService.getAccessToken(),
+                TokenConstants.BEARER_PREFIX + retryClientTokenProvider.getToken(),
                 loginServiceRepresentation.hostname(),
                 loginServiceRepresentation.port(),
                 loginServiceRepresentation.loginResourceIdentifier(),
@@ -53,7 +53,7 @@ class DefaultIpLoginProtectionService implements IpLoginProtectionService {
     private void executeUntrustedIpAction(final IpLoginProtectionRequest request, final LoginServiceRepresentation loginServiceRepresentation) {
         SuspectLogin suspectLogin = this.suspectLoginService.create(request.ipAddress(), request.uid(), loginServiceRepresentation.clientId());
         this.emailHttpService.sendLinkedEmail(
-                TokenConstants.BEARER_PREFIX + keycloakService.getAccessToken(),
+                TokenConstants.BEARER_PREFIX + retryClientTokenProvider.getToken(),
                 new LinkedEmail(
                         request.email(),
                         "Untrusted login activity. 🛑",
@@ -69,7 +69,7 @@ class DefaultIpLoginProtectionService implements IpLoginProtectionService {
         SuspectLogin suspectLogin = suspectLoginService.get(suspectLoginId, uid);
         LoginServiceRepresentation loginServiceRepresentation = this.loginServiceResolver.resolve(suspectLogin.getLoginServiceClientId());
         ipLoginProtectionHttpService.trustIp(
-                TokenConstants.BEARER_PREFIX + keycloakService.getAccessToken(),
+                TokenConstants.BEARER_PREFIX + retryClientTokenProvider.getToken(),
                 loginServiceRepresentation.hostname(),
                 loginServiceRepresentation.port(),
                 loginServiceRepresentation.loginResourceIdentifier(),

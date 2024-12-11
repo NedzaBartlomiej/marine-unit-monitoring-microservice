@@ -11,12 +11,6 @@ import pl.bartlomiej.protectionservice.iploginprotection.controller.IpLoginProte
 @Configuration
 public class HttpInterfaceConfig {
 
-
-    @Bean
-    RestClient ipLoginProtectionRestClient() {
-        return RestClient.builder().build();
-    }
-
     @Bean
     HttpServiceProxyFactory ipLoginProtectionFactory(@Qualifier("ipLoginProtectionRestClient") RestClient restClient) {
         RestClientAdapter adapter = RestClientAdapter.create(restClient);

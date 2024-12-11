@@ -1,4 +1,9 @@
 mum-microservice-commons:
+  web-tools:
+    retry-client:
+      type: servlet
+      unauthorized:
+        enabled: true
   email-integration:
     enabled: true
     email-service-url: http://email-service:8084

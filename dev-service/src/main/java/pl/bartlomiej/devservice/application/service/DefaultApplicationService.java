@@ -109,7 +109,7 @@ class DefaultApplicationService implements ApplicationService {
     private void sendConsiderationEmail(String message, String developerEmail) {
         log.info("Sending consideration email.");
         emailHttpService.sendStandardEmail(
-                TokenConstants.BEARER_PREFIX + keycloakService.getAccessToken(),
+                TokenConstants.BEARER_PREFIX + keycloakService.getServiceAccessToken(),
                 new StandardEmail(developerEmail,
                         CONSIDERATION_EMAIL_TITLE,
                         message
