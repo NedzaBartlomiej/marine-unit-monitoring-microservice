@@ -14,7 +14,6 @@ import pl.bartlomiej.devservice.application.repository.ApplicationMongoRepositor
 import pl.bartlomiej.devservice.common.exception.apiexception.InvalidApplicationRequestStatusException;
 import pl.bartlomiej.devservice.developer.domain.AppDeveloperEntity;
 import pl.bartlomiej.devservice.developer.service.DeveloperService;
-import pl.bartlomiej.mumcommons.core.constants.TokenConstants;
 import pl.bartlomiej.mumcommons.emailintegration.external.EmailHttpService;
 import pl.bartlomiej.mumcommons.emailintegration.external.model.StandardEmail;
 import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.servlet.KeycloakService;
@@ -109,7 +108,6 @@ class DefaultApplicationService implements ApplicationService {
     private void sendConsiderationEmail(String message, String developerEmail) {
         log.info("Sending consideration email.");
         emailHttpService.sendStandardEmail(
-                TokenConstants.BEARER_PREFIX + keycloakService.getServiceAccessToken(),
                 new StandardEmail(developerEmail,
                         CONSIDERATION_EMAIL_TITLE,
                         message

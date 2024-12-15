@@ -35,6 +35,8 @@ public class ProtectionServiceRequestService {
         );
     }
 
+    // todo - DUPLICATION SOMEWHERE
+    //  (KEYCLOAK SENDING TWO REQUEST to the protection-service AND THIS IS THE PROBLEM)
     public SimpleHttp sendProtectionRequest(final IpLoginProtectionRequest protectionRequest) {
         log.info("Requesting to protection service.");
         SimpleHttp protectionHttp = SimpleHttp.doPost(

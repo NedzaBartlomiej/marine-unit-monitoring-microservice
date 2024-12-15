@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
-import pl.bartlomiej.protectionservice.iploginprotection.controller.IpLoginProtectionHttpService;
+import pl.bartlomiej.protectionservice.iploginprotection.controller.LoginServiceHttpService;
 
 @Configuration
 public class HttpInterfaceConfig {
@@ -18,7 +18,7 @@ public class HttpInterfaceConfig {
     }
 
     @Bean
-    IpLoginProtectionHttpService ipLoginProtectionHttpService(@Qualifier("ipLoginProtectionFactory") HttpServiceProxyFactory factory) {
-        return factory.createClient(IpLoginProtectionHttpService.class);
+    LoginServiceHttpService loginServiceHttpService(@Qualifier("ipLoginProtectionFactory") HttpServiceProxyFactory factory) {
+        return factory.createClient(LoginServiceHttpService.class);
     }
 }

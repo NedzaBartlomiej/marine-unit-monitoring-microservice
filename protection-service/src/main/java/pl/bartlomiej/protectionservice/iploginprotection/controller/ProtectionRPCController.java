@@ -1,5 +1,6 @@
 package pl.bartlomiej.protectionservice.iploginprotection.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,6 +12,7 @@ import pl.bartlomiej.protectionservice.iploginprotection.service.IpLoginProtecti
 
 import java.security.Principal;
 
+@Slf4j
 @RestController
 @RequestMapping("/v1/ip-login-protection/rpc")
 public class ProtectionRPCController {
@@ -24,6 +26,7 @@ public class ProtectionRPCController {
     @PreAuthorize("hasRole('IP_LOGIN_PROTECTOR')")
     @PostMapping("/protect-login")
     public ResponseEntity<ResponseModel<Boolean>> protectLogin(@RequestBody final IpLoginProtectionRequest protectionDetails) {
+        log.info("PROTECT-LOGIN ENDPOINT CALLED");
         final boolean protectionResult = this.ipLoginProtectionService.executeIpLoginProtection(protectionDetails);
         String message = protectionResult
                 ? IpLoginProtectionResult.TRUSTED_IP.getDetailsMessage()

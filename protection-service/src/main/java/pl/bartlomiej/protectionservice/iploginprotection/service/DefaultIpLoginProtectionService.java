@@ -1,13 +1,10 @@
 package pl.bartlomiej.protectionservice.iploginprotection.service;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import pl.bartlomiej.mumcommons.core.config.loginservicereps.LoginServiceRepresentation;
-import pl.bartlomiej.mumcommons.core.constants.TokenConstants;
-import pl.bartlomiej.mumcommons.core.webtools.retry.unauthorized.RetryClientTokenProvider;
 import pl.bartlomiej.mumcommons.emailintegration.external.EmailHttpService;
 import pl.bartlomiej.mumcommons.emailintegration.external.model.LinkedEmail;
-import pl.bartlomiej.protectionservice.iploginprotection.controller.IpLoginProtectionHttpService;
+import pl.bartlomiej.protectionservice.iploginprotection.controller.LoginServiceHttpService;
 import pl.bartlomiej.protectionservice.iploginprotection.model.IpLoginProtectionRequest;
 import pl.bartlomiej.protectionservice.iploginprotection.suspectlogin.SuspectLogin;
 import pl.bartlomiej.protectionservice.iploginprotection.suspectlogin.SuspectLoginService;
@@ -16,19 +13,16 @@ import pl.bartlomiej.protectionservice.iploginprotection.suspectlogin.SuspectLog
 class DefaultIpLoginProtectionService implements IpLoginProtectionService {
 
     private final LoginServiceResolver loginServiceResolver;
-    private final RetryClientTokenProvider retryClientTokenProvider;
-    private final IpLoginProtectionHttpService ipLoginProtectionHttpService;
+    private final LoginServiceHttpService loginServiceHttpService;
     private final SuspectLoginService suspectLoginService;
     private final EmailHttpService emailHttpService;
 
     DefaultIpLoginProtectionService(LoginServiceResolver loginServiceResolver,
-                                    @Qualifier("protectionRetryClientTokenProvider") RetryClientTokenProvider retryClientTokenProvider,
-                                    IpLoginProtectionHttpService ipLoginProtectionHttpService,
+                                    LoginServiceHttpService loginServiceHttpService,
                                     SuspectLoginService suspectLoginService,
                                     EmailHttpService emailHttpService) {
         this.loginServiceResolver = loginServiceResolver;
-        this.retryClientTokenProvider = retryClientTokenProvider;
-        this.ipLoginProtectionHttpService = ipLoginProtectionHttpService;
+        this.loginServiceHttpService = loginServiceHttpService;
         this.suspectLoginService = suspectLoginService;
         this.emailHttpService = emailHttpService;
     }
@@ -40,8 +34,7 @@ class DefaultIpLoginProtectionService implements IpLoginProtectionService {
     @Override
     public Boolean executeIpLoginProtection(final IpLoginProtectionRequest request) {
         LoginServiceRepresentation loginServiceRepresentation = this.loginServiceResolver.resolve(request.clientId());
-        boolean isIpTrusted = ipLoginProtectionHttpService.verifyIp(
-                TokenConstants.BEARER_PREFIX + retryClientTokenProvider.getValidToken(),
+        boolean isIpTrusted = loginServiceHttpService.verifyIp(
                 loginServiceRepresentation.hostname(),
                 loginServiceRepresentation.port(),
                 loginServiceRepresentation.loginResourceIdentifier(),
@@ -58,7 +51,6 @@ class DefaultIpLoginProtectionService implements IpLoginProtectionService {
     private void executeUntrustedIpAction(final IpLoginProtectionRequest request, final LoginServiceRepresentation loginServiceRepresentation) {
         SuspectLogin suspectLogin = this.suspectLoginService.create(request.ipAddress(), request.uid(), loginServiceRepresentation.clientId());
         this.emailHttpService.sendLinkedEmail(
-                TokenConstants.BEARER_PREFIX + retryClientTokenProvider.getValidToken(),
                 new LinkedEmail(
                         request.email(),
                         "Untrusted login activity. 🛑",
@@ -73,8 +65,7 @@ class DefaultIpLoginProtectionService implements IpLoginProtectionService {
     public void trustIp(final String suspectLoginId, final String uid) {
         SuspectLogin suspectLogin = suspectLoginService.get(suspectLoginId, uid);
         LoginServiceRepresentation loginServiceRepresentation = this.loginServiceResolver.resolve(suspectLogin.getLoginServiceClientId());
-        ipLoginProtectionHttpService.trustIp(
-                TokenConstants.BEARER_PREFIX + retryClientTokenProvider.getValidToken(),
+        loginServiceHttpService.trustIp(
                 loginServiceRepresentation.hostname(),
                 loginServiceRepresentation.port(),
                 loginServiceRepresentation.loginResourceIdentifier(),
