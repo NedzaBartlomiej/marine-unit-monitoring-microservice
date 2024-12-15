@@ -1,6 +1,6 @@
 package pl.bartlomiej.devservice.developer.domain;
 
-import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.model.KeycloakRole;
+import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.model.KeycloakRole;
 
 public enum DeveloperKeycloakRole implements KeycloakRole {
     DEVELOPER("DEVELOPER");

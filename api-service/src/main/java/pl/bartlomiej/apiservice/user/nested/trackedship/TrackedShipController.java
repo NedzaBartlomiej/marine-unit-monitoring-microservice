@@ -5,7 +5,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.bartlomiej.apiservice.user.nested.trackedship.service.TrackedShipService;
 import pl.bartlomiej.apiservice.user.service.UserService;
-import pl.bartlomiej.mummicroservicecommons.model.response.ResponseModel;
+import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

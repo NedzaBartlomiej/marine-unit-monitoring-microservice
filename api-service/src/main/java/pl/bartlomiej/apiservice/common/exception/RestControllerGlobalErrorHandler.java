@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import pl.bartlomiej.apiservice.common.exception.apiexception.MmsiConflictException;
-import pl.bartlomiej.mummicroservicecommons.model.response.ResponseModel;
+import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
 
 @RestControllerAdvice
 public class RestControllerGlobalErrorHandler {

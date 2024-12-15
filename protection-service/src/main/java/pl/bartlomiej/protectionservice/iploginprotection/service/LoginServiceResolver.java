@@ -3,8 +3,8 @@ package pl.bartlomiej.protectionservice.iploginprotection.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import pl.bartlomiej.mummicroservicecommons.config.loginservicereps.LoginServiceRepresentation;
-import pl.bartlomiej.mummicroservicecommons.config.loginservicereps.LoginServiceRepsProperties;
+import pl.bartlomiej.mumcommons.core.config.loginservicereps.LoginServiceRepresentation;
+import pl.bartlomiej.mumcommons.core.config.loginservicereps.LoginServiceRepsProperties;
 
 @Component
 class LoginServiceResolver {

@@ -6,7 +6,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import pl.bartlomiej.emailservice.common.service.AbstractEmailService;
 import pl.bartlomiej.emailservice.common.service.EmailServiceImpl;
-import pl.bartlomiej.mummicroservicecommons.emailintegration.external.model.LinkedEmail;
+import pl.bartlomiej.mumcommons.emailintegration.external.model.LinkedEmail;
 
 @EmailServiceImpl
 public class LinkedEmailService extends AbstractEmailService<LinkedEmail> {

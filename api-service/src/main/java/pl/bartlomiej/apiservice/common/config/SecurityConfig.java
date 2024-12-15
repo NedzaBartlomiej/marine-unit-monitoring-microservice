@@ -14,9 +14,9 @@ import org.springframework.security.oauth2.server.resource.authentication.Reacti
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 import pl.bartlomiej.apiservice.common.apiaccess.ApiKeyWebFilter;
-import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.reactor.DefaultResponseModelServerAccessDeniedHandler;
-import pl.bartlomiej.mummicroservicecommons.exceptionhandling.external.reactor.DefaultResponseModelServerAuthEntryPoint;
-import pl.bartlomiej.mummicroservicecommons.authconversion.external.reactor.KeycloakReactiveJwtGrantedAuthoritiesConverter;
+import pl.bartlomiej.mumcommons.core.exceptionhandling.external.reactor.DefaultResponseModelServerAccessDeniedHandler;
+import pl.bartlomiej.mumcommons.core.exceptionhandling.external.reactor.DefaultResponseModelServerAuthEntryPoint;
+import pl.bartlomiej.mumcommons.globalidmservice.authconversion.external.reactor.KeycloakReactiveJwtGrantedAuthoritiesConverter;
 
 import java.util.List;
 

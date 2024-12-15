@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.bartlomiej.apiservice.shiptracking.service.ShipTrackService;
 import pl.bartlomiej.apiservice.user.service.UserService;
-import pl.bartlomiej.mummicroservicecommons.model.response.ResponseModel;
+import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
 import reactor.core.publisher.Flux;
 
 import java.security.Principal;

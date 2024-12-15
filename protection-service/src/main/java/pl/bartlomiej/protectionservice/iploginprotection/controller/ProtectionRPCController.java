@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import pl.bartlomiej.mummicroservicecommons.model.response.ResponseModel;
+import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
 import pl.bartlomiej.protectionservice.iploginprotection.model.IpLoginProtectionRequest;
 import pl.bartlomiej.protectionservice.iploginprotection.model.IpLoginProtectionResult;
 import pl.bartlomiej.protectionservice.iploginprotection.service.IpLoginProtectionService;

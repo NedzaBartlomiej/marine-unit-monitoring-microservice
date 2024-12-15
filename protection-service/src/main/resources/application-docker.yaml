@@ -1,25 +1,21 @@
-mum-microservice-commons:
-  web-tools:
-    retry-client:
+mum-commons:
+  core:
+    exception-handling:
+      enabled: true
       type: servlet
-      unauthorized:
-        enabled: true
   email-integration:
     enabled: true
     email-service-url: http://email-service:8084
-  auth-conversion:
-    type: servlet
-    keycloak-client-id: protection-service-client
   global-idm-service:
     type: servlet
+    auth-conversion:
+      keycloak-client-id: protection-service-client
     keycloak:
       enabled: true
       server-url: http://keycloak.pl:8080
       realm-name: marine-unit-monitoring-master
       client-id: protection-service-client
       client-secret: ${keycloak.client-secret}
-  exception-handling:
-    type: servlet
 logging:
   level:
     root: debug

@@ -1,3 +1,3 @@
-[submodule "mum-microservice-commons"]
-	path = mum-microservice-commons
-	url = git@github.com:NedzaBartlomiej/mum-microservice-commons.git
+[submodule "mum-commons"]
+	path = mum-commons
+	url = git@github.com:NedzaBartlomiej/mum-commons.git

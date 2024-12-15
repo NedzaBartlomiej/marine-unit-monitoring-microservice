@@ -1,10 +1,9 @@
-mum-microservice-commons:
+mum-commons:
+  core:
+    exception-handling:
+      enabled: true
+      type: servlet
   global-idm-service:
-    keycloak:
-      enabled: false
-  exception-handling:
-    type: servlet
-  auth-conversion:
     type: servlet
 logging:
   level:

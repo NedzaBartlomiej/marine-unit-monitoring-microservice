@@ -1,17 +1,18 @@
-mum-microservice-commons:
-  auth-conversion:
-    type: reactor
-    keycloak-client-id: api-service-client
+mum-commons:
+  core:
+    exception-handling:
+      enabled: true
+      type: reactor
   global-idm-service:
     type: reactor
+    auth-conversion:
+      keycloak-client-id: api-service-client
     keycloak:
       enabled: true
       server-url: http://keycloak.pl:8080
       realm-name: marine-unit-monitoring-master
       client-id: api-service-client
       client-secret: ${keycloak.client-secret}
-  exception-handling:
-    type: reactor
 logging:
   level:
     root: debug

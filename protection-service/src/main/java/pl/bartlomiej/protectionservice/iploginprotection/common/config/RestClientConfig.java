@@ -4,19 +4,23 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
-import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.servlet.KeycloakService;
-import pl.bartlomiej.mummicroservicecommons.webtools.retryclient.unauthorized.external.RetryClientTokenProvider;
+import pl.bartlomiej.mumcommons.core.webtools.retry.unauthorized.KeycloakRetryClientTokenProvider;
+import pl.bartlomiej.mumcommons.core.webtools.retry.unauthorized.RetryClientTokenProvider;
+import pl.bartlomiej.mumcommons.core.webtools.retry.unauthorized.UnauthorizedRetryRequestInterceptor;
+import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.servlet.KeycloakService;
 
 @Configuration
 public class RestClientConfig {
 
     @Bean
-    RestClient ipLoginProtectionRestClient(@Qualifier("unauthorizedRetryRestClient") RestClient restClient) {
-        return restClient;
+    RestClient ipLoginProtectionRestClient(@Qualifier("protectionRetryClientTokenProvider") RetryClientTokenProvider tokenProvider) {
+        return RestClient.builder()
+                .requestInterceptor(new UnauthorizedRetryRequestInterceptor(tokenProvider))
+                .build();
     }
 
     @Bean
-    RetryClientTokenProvider retryClientTokenProvider(KeycloakService keycloakService) {
+    RetryClientTokenProvider protectionRetryClientTokenProvider(KeycloakService keycloakService) {
         return new KeycloakRetryClientTokenProvider(keycloakService);
     }
 }

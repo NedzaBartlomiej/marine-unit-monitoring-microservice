@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.bartlomiej.apiservice.user.domain.User;
 import pl.bartlomiej.apiservice.user.domain.dto.UserRegisterDto;
 import pl.bartlomiej.apiservice.user.service.UserService;
-import pl.bartlomiej.mummicroservicecommons.model.response.ResponseModel;
+import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
 import reactor.core.publisher.Mono;
 
 import java.security.Principal;

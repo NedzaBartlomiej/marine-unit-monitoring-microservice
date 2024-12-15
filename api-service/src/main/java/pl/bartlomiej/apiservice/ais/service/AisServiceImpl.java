@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import pl.bartlomiej.apiservice.ais.AisShip;
 import pl.bartlomiej.apiservice.ais.accesstoken.AisApiAuthTokenProvider;
 import pl.bartlomiej.apiservice.common.util.CommonShipFields;
-import pl.bartlomiej.mummicroservicecommons.constants.TokenConstants;
+import pl.bartlomiej.mumcommons.core.constants.TokenConstants;
 import reactor.core.publisher.Flux;
 
 import java.util.List;

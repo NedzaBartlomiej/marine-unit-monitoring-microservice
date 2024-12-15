@@ -8,7 +8,7 @@ import pl.bartlomiej.apiservice.point.activepoint.ActivePoint;
 import pl.bartlomiej.apiservice.point.activepoint.InactivePointFilter;
 import pl.bartlomiej.apiservice.point.activepoint.service.ActivePointService;
 import pl.bartlomiej.apiservice.point.service.PointService;
-import pl.bartlomiej.mummicroservicecommons.model.response.ResponseModel;
+import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
 import reactor.core.publisher.Flux;
 
 import static org.springframework.http.HttpStatus.OK;

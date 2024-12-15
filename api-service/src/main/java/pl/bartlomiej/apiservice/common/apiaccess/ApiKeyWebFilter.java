@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
-import pl.bartlomiej.mummicroservicecommons.constants.TokenConstants;
-import pl.bartlomiej.mummicroservicecommons.globalidmservice.external.keycloakidm.reactor.ReactiveKeycloakService;
+import pl.bartlomiej.mumcommons.core.constants.TokenConstants;
+import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.reactor.ReactiveKeycloakService;
 import reactor.core.publisher.Mono;
 
 @Component
