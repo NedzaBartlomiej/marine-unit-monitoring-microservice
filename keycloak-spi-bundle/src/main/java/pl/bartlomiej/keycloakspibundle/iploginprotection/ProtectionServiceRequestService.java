@@ -35,9 +35,7 @@ public class ProtectionServiceRequestService {
         );
     }
 
-    // todo - DUPLICATION SOMEWHERE
-    //  (KEYCLOAK SENDING TWO REQUEST to the protection-service AND THIS IS THE PROBLEM)
-    public SimpleHttp sendProtectionRequest(final IpLoginProtectionRequest protectionRequest) {
+    public SimpleHttp.Response sendProtectionRequest(final IpLoginProtectionRequest protectionRequest) {
         log.info("Requesting to protection service.");
         SimpleHttp protectionHttp = SimpleHttp.doPost(
                 this.ipLoginProtectionProperties.protectionServiceUrl(),
@@ -45,10 +43,10 @@ public class ProtectionServiceRequestService {
         return authorizedSimpleHttp.request(protectionHttp, protectionRequest, keycloakSession);
     }
 
-    public void handleProtectionResponse(final SimpleHttp requestHttp) {
+    public void handleProtectionResponse(final SimpleHttp.Response response) {
         log.info("Handling protection service response.");
         try {
-            JsonNode json = requestHttp.asJson();
+            JsonNode json = response.asJson();
             JsonNode success = json.get(SUCCESS_RESP_FIELD);
             JsonNode message = json.get(MESSAGE_RESP_FIELD);
 
@@ -59,7 +57,7 @@ public class ProtectionServiceRequestService {
             throw new ProtectionServiceException("Some error occurred executing protection (from protection-service): " + message);
 
         } catch (IOException e) {
-            throw new HttpRequestException("Protection service request.", e);
+            throw new HttpRequestException("Protection service request problem.", e);
         }
     }
 

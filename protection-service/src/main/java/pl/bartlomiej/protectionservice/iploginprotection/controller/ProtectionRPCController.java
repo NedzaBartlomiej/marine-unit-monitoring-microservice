@@ -26,7 +26,6 @@ public class ProtectionRPCController {
     @PreAuthorize("hasRole('IP_LOGIN_PROTECTOR')")
     @PostMapping("/protect-login")
     public ResponseEntity<ResponseModel<Boolean>> protectLogin(@RequestBody final IpLoginProtectionRequest protectionDetails) {
-        log.info("PROTECT-LOGIN ENDPOINT CALLED");
         final boolean protectionResult = this.ipLoginProtectionService.executeIpLoginProtection(protectionDetails);
         String message = protectionResult
                 ? IpLoginProtectionResult.TRUSTED_IP.getDetailsMessage()

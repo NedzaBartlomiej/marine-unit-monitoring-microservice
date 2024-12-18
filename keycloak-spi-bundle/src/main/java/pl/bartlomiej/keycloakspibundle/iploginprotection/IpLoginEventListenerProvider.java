@@ -28,7 +28,7 @@ public class IpLoginEventListenerProvider implements EventListenerProvider {
         log.info("Login event detected. Executing IP login protection.");
         IpLoginProtectionRequest protectionRequest = this.requestService
                 .buildProtectionRequest(event, this.getUserModel(event));
-        SimpleHttp protectionHttp = this.requestService.sendProtectionRequest(protectionRequest);
+        SimpleHttp.Response protectionHttp = this.requestService.sendProtectionRequest(protectionRequest);
         this.requestService.handleProtectionResponse(protectionHttp);
     }
 
