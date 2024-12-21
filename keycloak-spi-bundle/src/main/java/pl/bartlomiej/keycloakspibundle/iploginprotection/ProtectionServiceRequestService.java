@@ -8,11 +8,12 @@ import org.keycloak.models.UserModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.bartlomiej.keycloakspibundle.common.AuthorizedSimpleHttp;
-import pl.bartlomiej.keycloakspibundle.common.config.PropertiesProvider;
 import pl.bartlomiej.keycloakspibundle.common.exception.HttpRequestException;
 import pl.bartlomiej.keycloakspibundle.common.exception.ProtectionServiceException;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 
 public class ProtectionServiceRequestService {
 
@@ -25,22 +26,21 @@ public class ProtectionServiceRequestService {
 
     public ProtectionServiceRequestService(KeycloakSession keycloakSession,
                                            AuthorizedSimpleHttp authorizedSimpleHttp,
-                                           PropertiesProvider propertiesProvider) {
+                                           IpLoginProtectionProperties ipLoginProtectionProperties) {
         this.keycloakSession = keycloakSession;
         this.authorizedSimpleHttp = authorizedSimpleHttp;
-        this.ipLoginProtectionProperties = propertiesProvider.get(
-                "ip-login-protection.properties",
-                "",
-                IpLoginProtectionProperties.class
-        );
+        this.ipLoginProtectionProperties = ipLoginProtectionProperties;
     }
 
-    public SimpleHttp.Response sendProtectionRequest(final IpLoginProtectionRequest protectionRequest) {
+    public CompletableFuture<SimpleHttp.Response> sendProtectionRequest(final IpLoginProtectionRequest protectionRequest) {
         log.info("Requesting to protection service.");
         SimpleHttp protectionHttp = SimpleHttp.doPost(
                 this.ipLoginProtectionProperties.protectionServiceUrl(),
                 keycloakSession);
-        return authorizedSimpleHttp.request(protectionHttp, protectionRequest, keycloakSession);
+        return CompletableFuture.supplyAsync(
+                () -> authorizedSimpleHttp.request(protectionHttp, protectionRequest, keycloakSession),
+                Executors.newVirtualThreadPerTaskExecutor()
+        );
     }
 
     public void handleProtectionResponse(final SimpleHttp.Response response) {

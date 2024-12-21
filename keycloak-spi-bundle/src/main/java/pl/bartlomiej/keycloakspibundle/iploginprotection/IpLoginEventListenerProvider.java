@@ -1,6 +1,5 @@
 package pl.bartlomiej.keycloakspibundle.iploginprotection;
 
-import org.keycloak.broker.provider.util.SimpleHttp;
 import org.keycloak.events.Event;
 import org.keycloak.events.EventListenerProvider;
 import org.keycloak.events.EventType;
@@ -28,8 +27,8 @@ public class IpLoginEventListenerProvider implements EventListenerProvider {
         log.info("Login event detected. Executing IP login protection.");
         IpLoginProtectionRequest protectionRequest = this.requestService
                 .buildProtectionRequest(event, this.getUserModel(event));
-        SimpleHttp.Response protectionHttp = this.requestService.sendProtectionRequest(protectionRequest);
-        this.requestService.handleProtectionResponse(protectionHttp);
+        this.requestService.sendProtectionRequest(protectionRequest)
+                .thenAccept(this.requestService::handleProtectionResponse);
     }
 
     private UserModel getUserModel(final Event event) {

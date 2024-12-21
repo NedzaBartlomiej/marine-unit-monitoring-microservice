@@ -9,7 +9,7 @@ import org.springframework.web.client.RestClient;
 import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.servlet.*;
 
 @Configuration
-public class ProtectionAuthorizedRestClientConfig {
+public class KeycloakAuthorizedRestClientConfig {
 
     @Bean
     RestClient ipLoginProtectionRestClient(@Qualifier("protectionAuthorizedRequestInterceptor") ClientHttpRequestInterceptor interceptor) {
