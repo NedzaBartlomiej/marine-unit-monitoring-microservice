@@ -1,26 +1,25 @@
-package pl.bartlomiej.apiservice.ais.accesstoken;
+package pl.bartlomiej.apiservice.ais;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
+import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.reactor.AuthorizedExchangeTokenProvider;
 import reactor.core.publisher.Mono;
 
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 import static org.springframework.web.reactive.function.BodyInserters.fromFormData;
-import static pl.bartlomiej.apiservice.common.config.RedisCacheConfig.AIS_AUTH_TOKEN_CACHE_NAME;
 
 @Service
-public class BarentswatchAisApiTokenProvider implements AisApiAuthTokenProvider {
+public class AisApiAuthorizedExchangeTokenProvider implements AuthorizedExchangeTokenProvider {
 
-    private static final Logger log = LoggerFactory.getLogger(BarentswatchAisApiTokenProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(AisApiAuthorizedExchangeTokenProvider.class);
     private final WebClient webClient;
 
     private final String clientId;
@@ -33,12 +32,12 @@ public class BarentswatchAisApiTokenProvider implements AisApiAuthTokenProvider 
 
     private final String accessTokenApiUrl;
 
-    public BarentswatchAisApiTokenProvider(@Qualifier("retryWebClient") WebClient webClient,
-                                           @Value("${ais-api.auth.client-id}") String clientId,
-                                           @Value("${ais-api.auth.scope}") String scope,
-                                           @Value("${ais-api.auth.client-secret}") String clientSecret,
-                                           @Value("${ais-api.auth.grant-type}") String grantType,
-                                           @Value("${ais-api.auth.url}") String accessTokenApiUrl) {
+    public AisApiAuthorizedExchangeTokenProvider(@Qualifier("defaultWebClient") WebClient webClient,
+                                                 @Value("${ais-api.auth.client-id}") String clientId,
+                                                 @Value("${ais-api.auth.scope}") String scope,
+                                                 @Value("${ais-api.auth.client-secret}") String clientSecret,
+                                                 @Value("${ais-api.auth.grant-type}") String grantType,
+                                                 @Value("${ais-api.auth.url}") String accessTokenApiUrl) {
         this.webClient = webClient;
         this.clientId = clientId;
         this.scope = scope;
@@ -56,15 +55,9 @@ public class BarentswatchAisApiTokenProvider implements AisApiAuthTokenProvider 
         return body;
     }
 
-    @Cacheable(cacheNames = AIS_AUTH_TOKEN_CACHE_NAME)
-    public Mono<String> getAisAuthToken() {
+    @Override
+    public Mono<String> getValidToken() {
         log.info("Access token has refreshed now.");
-        return this.fetchAuthTokenFromApi()
-                .map(this::extractTokenFromApiResponse)
-                .cache();
-    }
-
-    public Mono<String> getAisAuthTokenWithoutCache() {
         return this.fetchAuthTokenFromApi()
                 .map(this::extractTokenFromApiResponse);
     }

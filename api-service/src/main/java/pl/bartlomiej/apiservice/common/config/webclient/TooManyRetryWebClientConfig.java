@@ -1,4 +1,4 @@
-package pl.bartlomiej.apiservice.common.config;
+package pl.bartlomiej.apiservice.common.config.webclient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,27 +16,20 @@ import java.time.Duration;
 
 
 @Configuration
-public class WebClientConfig {
+public class TooManyRetryWebClientConfig {
 
     public static final long RETRY_REQUEST_DELAY = 250L;
     public static final long MAX_ATTEMPTS = 4L;
-    private static final Logger log = LoggerFactory.getLogger(WebClientConfig.class);
+    private static final Logger log = LoggerFactory.getLogger(TooManyRetryWebClientConfig.class);
 
     @Bean
-    public WebClient retryWebClient() {
+    public WebClient tooManyRetryWebClient() {
         return WebClient.builder()
                 .filter(this.buildRetryExchangeFilterFunction())
                 .build();
     }
 
-    @Bean
-    WebClient
-    devAppHttpServiceWebClient() {
-        return WebClient.builder()
-                .baseUrl("http://dev-service:8083/")
-                .build();
-    }
-
+    // todo - take care of this
     private ExchangeFilterFunction buildRetryExchangeFilterFunction() {
         return (request, next) -> next.exchange(request)
                 .flatMap(clientResponse -> Mono.just(clientResponse)

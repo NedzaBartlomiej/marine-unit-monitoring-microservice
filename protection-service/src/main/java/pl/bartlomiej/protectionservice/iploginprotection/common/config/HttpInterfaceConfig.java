@@ -12,13 +12,13 @@ import pl.bartlomiej.protectionservice.iploginprotection.controller.LoginService
 public class HttpInterfaceConfig {
 
     @Bean
-    HttpServiceProxyFactory ipLoginProtectionFactory(@Qualifier("ipLoginProtectionRestClient") RestClient restClient) {
+    HttpServiceProxyFactory restClientProtectionFactory(@Qualifier("ipLoginProtectionAuthorizedRestClient") RestClient restClient) {
         RestClientAdapter adapter = RestClientAdapter.create(restClient);
         return HttpServiceProxyFactory.builderFor(adapter).build();
     }
 
     @Bean
-    LoginServiceHttpService loginServiceHttpService(@Qualifier("ipLoginProtectionFactory") HttpServiceProxyFactory factory) {
+    LoginServiceHttpService loginServiceHttpService(@Qualifier("restClientProtectionFactory") HttpServiceProxyFactory factory) {
         return factory.createClient(LoginServiceHttpService.class);
     }
 }

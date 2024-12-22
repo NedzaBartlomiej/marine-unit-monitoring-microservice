@@ -6,19 +6,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
-import pl.bartlomiej.apiservice.common.apiaccess.DevAppHttpService;
+import pl.bartlomiej.apiservice.common.apiaccess.DevServiceHttpService;
 
 @Configuration
-public class HttpExchangeClientConfig {
+public class HttpInterfaceConfig {
 
     @Bean
-    HttpServiceProxyFactory webClientHttpServiceProxyFactory(@Qualifier("devAppHttpServiceWebClient") WebClient webClient) {
+    HttpServiceProxyFactory webClientDevFactory(@Qualifier("devServiceAuthorizedWebClient") WebClient webClient) {
         WebClientAdapter adapter = WebClientAdapter.create(webClient);
         return HttpServiceProxyFactory.builderFor(adapter).build();
     }
 
     @Bean
-    DevAppHttpService devAppHttpExchangeService(HttpServiceProxyFactory factory) {
-        return factory.createClient(DevAppHttpService.class);
+    DevServiceHttpService devAppHttpExchangeService(@Qualifier("webClientDevFactory") HttpServiceProxyFactory factory) {
+        return factory.createClient(DevServiceHttpService.class);
     }
 }

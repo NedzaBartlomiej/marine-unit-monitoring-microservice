@@ -12,7 +12,7 @@ import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.s
 public class KeycloakAuthorizedRestClientConfig {
 
     @Bean
-    RestClient ipLoginProtectionRestClient(@Qualifier("protectionAuthorizedRequestInterceptor") ClientHttpRequestInterceptor interceptor) {
+    RestClient ipLoginProtectionAuthorizedRestClient(@Qualifier("protectionAuthorizedRequestInterceptor") ClientHttpRequestInterceptor interceptor) {
         return RestClient.builder()
                 .requestInterceptor(interceptor)
                 .build();

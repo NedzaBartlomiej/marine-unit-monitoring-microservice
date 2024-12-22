@@ -27,7 +27,7 @@ public class HereGeocodeServiceImpl implements GeocodeService {
     private final String geocodeApiKey;
     private final String geocodeApiBaseUrl;
 
-    public HereGeocodeServiceImpl(@Qualifier("retryWebClient") WebClient webClient,
+    public HereGeocodeServiceImpl(@Qualifier("tooManyRetryWebClient") WebClient webClient,
                                   @Value("${geocode-api.api-key}") String geocodeApiKey,
                                   @Value("${geocode-api.api-base-url}") String geocodeApiBaseUrl) {
         this.webClient = webClient;
