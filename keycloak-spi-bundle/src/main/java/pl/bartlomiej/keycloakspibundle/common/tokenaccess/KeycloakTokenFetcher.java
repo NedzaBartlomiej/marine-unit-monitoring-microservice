@@ -19,7 +19,7 @@ public class KeycloakTokenFetcher {
         this.keycloakTokenParams = keycloakTokenParams;
     }
 
-    String fetchToken(final KeycloakSession keycloakSession) {
+    public String fetchToken(final KeycloakSession keycloakSession) {
         log.info("Fetching token.");
         try {
             return SimpleHttp.doPost(this.keycloakTokenParams.tokenUrl(), keycloakSession)
