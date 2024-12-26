@@ -84,7 +84,6 @@ class KeycloakTokenManagerTest {
             for (int i = 0; i < threadCount; i++) {
                 executorService.submit(() -> {
                     String token = tokenManager.getToken(keycloakSession);
-                    // Log the token each thread retrieves
                     System.out.println(Thread.currentThread().getName() + " retrieved token: " + token);
                 });
             }
@@ -96,5 +95,26 @@ class KeycloakTokenManagerTest {
             assertEquals(expectedToken, token);
             verify(keycloakTokenFetcher, times(1)).fetchToken(keycloakSession); // Token should be fetched only once
         }
+    }
+
+    @Test
+    public void testRefreshTokenConcurrencySafety() throws InterruptedException {
+        int numberOfThreads = 1000;
+        ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+
+        String fakeToken = "token123";
+        when(keycloakTokenFetcher.fetchToken(any())).thenReturn(fakeToken);
+
+        for (int i = 0; i < numberOfThreads; i++) {
+            executorService.submit(() -> {
+                tokenManager.refreshToken(mock(KeycloakSession.class));
+
+                verify(keycloakTokenFetcher, times(1)).fetchToken(any()); // Sprawdzamy, czy fetchToken zostało wywołane dokładnie raz
+            });
+        }
+
+        executorService.shutdown();
+
+        verify(keycloakTokenFetcher, times(1)).fetchToken(any());
     }
 }

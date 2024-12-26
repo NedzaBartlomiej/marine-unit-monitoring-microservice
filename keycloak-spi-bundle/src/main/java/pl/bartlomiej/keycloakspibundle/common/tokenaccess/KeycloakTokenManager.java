@@ -4,6 +4,7 @@ import org.keycloak.models.KeycloakSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -12,6 +13,8 @@ public class KeycloakTokenManager {
     private final KeycloakTokenFetcher keycloakTokenFetcher;
     private String token;
     private final Lock tokenLock = new ReentrantLock();
+    private final Lock refreshLock = new ReentrantLock();
+    private final AtomicBoolean isRefreshing = new AtomicBoolean(false);
 
     public KeycloakTokenManager(KeycloakTokenFetcher keycloakTokenFetcher) {
         this.keycloakTokenFetcher = keycloakTokenFetcher;
@@ -41,8 +44,8 @@ public class KeycloakTokenManager {
         return this.token;
     }
 
+    // todo - concurrent optimization - refresh token once, and not by every thread
     public void refreshToken(final KeycloakSession keycloakSession) {
-        log.info("Refreshing token.");
-        this.token = this.keycloakTokenFetcher.fetchToken(keycloakSession);
+        
     }
 }
