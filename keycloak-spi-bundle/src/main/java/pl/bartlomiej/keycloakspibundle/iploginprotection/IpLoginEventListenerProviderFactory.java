@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import pl.bartlomiej.keycloakspibundle.common.AuthorizedSimpleHttp;
 import pl.bartlomiej.keycloakspibundle.common.config.PropertiesProvider;
 import pl.bartlomiej.keycloakspibundle.common.tokenaccess.KeycloakTokenFetcher;
-import pl.bartlomiej.keycloakspibundle.common.tokenaccess.KeycloakTokenManager;
+import pl.bartlomiej.keycloakspibundle.common.tokenaccess.KeycloakTokenStorage;
 import pl.bartlomiej.keycloakspibundle.common.tokenaccess.KeycloakTokenParams;
 
 public class IpLoginEventListenerProviderFactory implements EventListenerProviderFactory {
@@ -49,7 +49,7 @@ public class IpLoginEventListenerProviderFactory implements EventListenerProvide
                 ipLoginProtectionProperties.clientSecret()
         );
         var keycloakTokenFetcher = new KeycloakTokenFetcher(keycloakTokenParams);
-        var keycloakTokenManager = new KeycloakTokenManager(keycloakTokenFetcher);
+        var keycloakTokenManager = new KeycloakTokenStorage(keycloakTokenFetcher);
         this.authorizedSimpleHttp = new AuthorizedSimpleHttp(keycloakTokenManager);
     }
 
