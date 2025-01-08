@@ -20,15 +20,15 @@ public class KeycloakTokenStorage {
 
     public String getValidToken(final KeycloakSession keycloakSession) {
         String executorThreadName = Thread.currentThread().getName();
-        if (this.token != null && !isTokenExpired(keycloakSession)) {
+        if (isTokenValid(keycloakSession)) {
             log.debug("Token is valid, returning available token. Thread name: {}", executorThreadName);
             return this.token;
         }
-        log.debug("Token is null or expired, attempting to lock and refresh. Thread name: {}", executorThreadName);
+        log.debug("Token is invalid, attempting to lock and refresh. Thread name: {}", executorThreadName);
         this.tokenLock.lock();
         try {
             log.debug("Locked token resource. Executing resource operations. Thread name: {}", executorThreadName);
-            if (this.token == null || isTokenExpired(keycloakSession)) {
+            if (!isTokenValid(keycloakSession)) {
                 this.refreshToken(keycloakSession);
             }
             log.debug("Token has been refreshed by another thread, returning this valid token. Thread name: {}", executorThreadName);
@@ -39,12 +39,12 @@ public class KeycloakTokenStorage {
         return this.token;
     }
 
-    private boolean isTokenExpired(final KeycloakSession keycloakSession) {
+    private boolean isTokenValid(final KeycloakSession keycloakSession) {
         if (this.token == null) {
-            return true;
+            return false;
         }
         AccessToken decodedToken = keycloakSession.tokens().decode(this.token, AccessToken.class);
-        return decodedToken.isExpired();
+        return !decodedToken.isExpired();
     }
 
     private void refreshToken(final KeycloakSession keycloakSession) {
