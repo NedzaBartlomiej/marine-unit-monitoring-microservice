@@ -5,14 +5,13 @@ import org.keycloak.events.EventListenerProvider;
 import org.keycloak.events.EventListenerProviderFactory;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
-import org.keycloak.services.util.ObjectMapperResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.bartlomiej.keycloakspibundle.common.AuthorizedSimpleHttp;
 import pl.bartlomiej.keycloakspibundle.common.config.PropertiesProvider;
 import pl.bartlomiej.keycloakspibundle.common.tokenaccess.KeycloakTokenFetcher;
-import pl.bartlomiej.keycloakspibundle.common.tokenaccess.KeycloakTokenStorage;
 import pl.bartlomiej.keycloakspibundle.common.tokenaccess.KeycloakTokenParams;
+import pl.bartlomiej.keycloakspibundle.common.tokenaccess.KeycloakTokenStorage;
 
 public class IpLoginEventListenerProviderFactory implements EventListenerProviderFactory {
 
@@ -35,10 +34,9 @@ public class IpLoginEventListenerProviderFactory implements EventListenerProvide
     @Override
     public void init(Config.Scope scope) {
         log.info("IpLoginEventListenerProviderFactory - init().");
-        var propertiesProvider = new PropertiesProvider(ObjectMapperResolver.createStreamSerializer());
+        var propertiesProvider = new PropertiesProvider();
         var ipLoginProtectionProperties = propertiesProvider.get(
-                "ip-login-protection.properties",
-                "",
+                "ip-login-protection-config.yaml",
                 IpLoginProtectionProperties.class
         );
         this.ipLoginProtectionProperties = ipLoginProtectionProperties;

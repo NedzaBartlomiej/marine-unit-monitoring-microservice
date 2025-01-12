@@ -41,6 +41,12 @@
         </dependency>
 
         <dependency>
+            <groupId>pl.bartlomiej</groupId>
+            <artifactId>login-services</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>

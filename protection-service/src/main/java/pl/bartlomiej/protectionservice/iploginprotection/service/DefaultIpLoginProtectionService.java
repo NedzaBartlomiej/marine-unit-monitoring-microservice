@@ -1,7 +1,8 @@
 package pl.bartlomiej.protectionservice.iploginprotection.service;
 
 import org.springframework.stereotype.Service;
-import pl.bartlomiej.mumcommons.core.config.loginservicereps.LoginServiceRepresentation;
+import pl.bartlomiej.loginservices.LoginServiceRepresentation;
+import pl.bartlomiej.loginservices.LoginServiceResolver;
 import pl.bartlomiej.mumcommons.emailintegration.external.EmailHttpService;
 import pl.bartlomiej.mumcommons.emailintegration.external.model.LinkedEmail;
 import pl.bartlomiej.protectionservice.iploginprotection.controller.LoginServiceHttpService;
