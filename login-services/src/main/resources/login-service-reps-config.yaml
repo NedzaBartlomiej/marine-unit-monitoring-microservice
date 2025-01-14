@@ -8,3 +8,5 @@ login-service-reps:
       port: 8083
       login-resource-identifier: developers
       client-id: dev-service-client
+
+# todo - to be used by snakeYaml it needs to be camelCased

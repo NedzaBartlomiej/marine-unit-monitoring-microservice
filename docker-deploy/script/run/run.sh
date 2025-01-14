@@ -75,7 +75,7 @@ docker volume prune -f
 echo "Removing not used images"
 docker image prune -f
 
-# UPDATING SECTION
+# UPDATING SECTION /todo add update login-services (if established structure not impl)
 echo -e "${YELLOW}Do you want to update mum-commons? (y/n)${NC}"
 read -r response
 

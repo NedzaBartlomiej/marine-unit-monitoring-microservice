@@ -7,8 +7,11 @@ import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
 import pl.bartlomiej.keycloakspibundle.common.AuthorizedSimpleHttp;
-import pl.bartlomiej.keycloakspibundle.common.config.PropertiesProvider;
+import pl.bartlomiej.keycloakspibundle.common.config.ConfigCache;
+import pl.bartlomiej.keycloakspibundle.common.config.ConfigLoader;
 import pl.bartlomiej.keycloakspibundle.common.tokenaccess.KeycloakTokenFetcher;
 import pl.bartlomiej.keycloakspibundle.common.tokenaccess.KeycloakTokenParams;
 import pl.bartlomiej.keycloakspibundle.common.tokenaccess.KeycloakTokenStorage;
@@ -17,7 +20,7 @@ public class IpLoginEventListenerProviderFactory implements EventListenerProvide
 
     private static final Logger log = LoggerFactory.getLogger(IpLoginEventListenerProviderFactory.class);
     private AuthorizedSimpleHttp authorizedSimpleHttp;
-    private IpLoginProtectionProperties ipLoginProtectionProperties;
+    private IpLoginProtectionConfig ipLoginProtectionConfig;
 
     @Override
     public EventListenerProvider create(KeycloakSession keycloakSession) {
@@ -26,7 +29,7 @@ public class IpLoginEventListenerProviderFactory implements EventListenerProvide
                 new ProtectionServiceRequestService(
                         keycloakSession,
                         authorizedSimpleHttp,
-                        ipLoginProtectionProperties
+                        ipLoginProtectionConfig
                 )
         );
     }
@@ -34,17 +37,19 @@ public class IpLoginEventListenerProviderFactory implements EventListenerProvide
     @Override
     public void init(Config.Scope scope) {
         log.info("IpLoginEventListenerProviderFactory - init().");
-        var propertiesProvider = new PropertiesProvider();
-        var ipLoginProtectionProperties = propertiesProvider.get(
+        var yaml = new Yaml();
+        var configCache = new ConfigCache();
+        var configLoader = new ConfigLoader<IpLoginProtectionConfig>(yaml, configCache);
+        var ipLoginProtectionProperties = configLoader.load(
                 "ip-login-protection-config.yaml",
-                IpLoginProtectionProperties.class
+                IpLoginProtectionConfig.class
         );
-        this.ipLoginProtectionProperties = ipLoginProtectionProperties;
+        this.ipLoginProtectionConfig = ipLoginProtectionProperties;
 
         var keycloakTokenParams = new KeycloakTokenParams(
-                ipLoginProtectionProperties.tokenUrl(),
-                ipLoginProtectionProperties.clientId(),
-                ipLoginProtectionProperties.clientSecret()
+                ipLoginProtectionProperties.getTokenUrl(),
+                ipLoginProtectionProperties.getClientId(),
+                ipLoginProtectionProperties.getClientSecret()
         );
         var keycloakTokenFetcher = new KeycloakTokenFetcher(keycloakTokenParams);
         var keycloakTokenManager = new KeycloakTokenStorage(keycloakTokenFetcher);

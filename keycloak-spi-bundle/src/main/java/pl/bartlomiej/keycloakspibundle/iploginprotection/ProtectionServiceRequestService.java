@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
 
 public class ProtectionServiceRequestService {
 
-    private final IpLoginProtectionProperties ipLoginProtectionProperties;
+    private final IpLoginProtectionConfig ipLoginProtectionConfig;
     public static final String SUCCESS_RESP_FIELD = "success";
     public static final String MESSAGE_RESP_FIELD = "message";
     private static final Logger log = LoggerFactory.getLogger(ProtectionServiceRequestService.class);
@@ -26,16 +26,16 @@ public class ProtectionServiceRequestService {
 
     public ProtectionServiceRequestService(KeycloakSession keycloakSession,
                                            AuthorizedSimpleHttp authorizedSimpleHttp,
-                                           IpLoginProtectionProperties ipLoginProtectionProperties) {
+                                           IpLoginProtectionConfig ipLoginProtectionConfig) {
         this.keycloakSession = keycloakSession;
         this.authorizedSimpleHttp = authorizedSimpleHttp;
-        this.ipLoginProtectionProperties = ipLoginProtectionProperties;
+        this.ipLoginProtectionConfig = ipLoginProtectionConfig;
     }
 
     public CompletableFuture<SimpleHttp.Response> sendProtectionRequest(final IpLoginProtectionRequest protectionRequest) {
         log.info("Requesting to protection service.");
         SimpleHttp protectionHttp = SimpleHttp.doPost(
-                this.ipLoginProtectionProperties.protectionServiceUrl(),
+                this.ipLoginProtectionConfig.getProtectionServiceUrl(),
                 keycloakSession);
         return CompletableFuture.supplyAsync(
                 () -> authorizedSimpleHttp.request(protectionHttp, protectionRequest, keycloakSession),
