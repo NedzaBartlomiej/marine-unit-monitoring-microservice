@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
-import pl.bartlomiej.protectionservice.iploginprotection.model.IpLoginProtectionRequest;
+import pl.bartlomiej.protectionservice.iploginprotection.model.ProtectionServiceRequest;
 import pl.bartlomiej.protectionservice.iploginprotection.model.IpLoginProtectionResult;
 import pl.bartlomiej.protectionservice.iploginprotection.service.IpLoginProtectionService;
 
@@ -25,7 +25,7 @@ public class ProtectionRPCController {
 
     @PreAuthorize("hasRole('IP_LOGIN_PROTECTOR')")
     @PostMapping("/protect-login")
-    public ResponseEntity<ResponseModel<Boolean>> protectLogin(@RequestBody final IpLoginProtectionRequest protectionDetails) {
+    public ResponseEntity<ResponseModel<Boolean>> protectLogin(@RequestBody final ProtectionServiceRequest protectionDetails) {
         final boolean protectionResult = this.ipLoginProtectionService.executeIpLoginProtection(protectionDetails);
         String message = protectionResult
                 ? IpLoginProtectionResult.TRUSTED_IP.getDetailsMessage()

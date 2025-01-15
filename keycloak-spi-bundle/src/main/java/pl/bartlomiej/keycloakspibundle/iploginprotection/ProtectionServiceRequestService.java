@@ -8,7 +8,6 @@ import org.keycloak.models.UserModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.bartlomiej.keycloakspibundle.common.AuthorizedSimpleHttp;
-import pl.bartlomiej.keycloakspibundle.common.exception.HttpRequestException;
 import pl.bartlomiej.keycloakspibundle.common.exception.ProtectionServiceException;
 
 import java.io.IOException;
@@ -43,6 +42,7 @@ public class ProtectionServiceRequestService {
         );
     }
 
+    // todo - check how will look a handleRegistrationResponse method and maybe extract them to some common method
     public void handleProtectionResponse(final SimpleHttp.Response response) {
         log.info("Handling protection service response.");
         try {
@@ -57,7 +57,7 @@ public class ProtectionServiceRequestService {
             throw new ProtectionServiceException("Some error occurred executing protection (from protection-service): " + message);
 
         } catch (IOException e) {
-            throw new HttpRequestException("Protection service request problem.", e);
+            throw new RuntimeException("An error occurred when parsing response to json.", e);
         }
     }
 

@@ -42,7 +42,7 @@
 
         <dependency>
             <groupId>pl.bartlomiej</groupId>
-            <artifactId>login-services</artifactId>
+            <artifactId>idm-services-reps</artifactId>
             <version>1.0</version>
         </dependency>
 

@@ -19,7 +19,7 @@ public class SuspectLogin {
     private String id;
     private String uid;
     private String ipAddress;
-    private String loginServiceClientId;
+    private String idmServiceClientId;
     private String hostname;
     private String city;
     private String region;
@@ -27,10 +27,10 @@ public class SuspectLogin {
     private String loc;
     private LocalDateTime time = LocalDateTime.now();
 
-    public SuspectLogin(String uid, String ipAddress, String loginServiceClientId, String hostname, String city, String region, String country, String loc) {
+    public SuspectLogin(String uid, String ipAddress, String idmServiceClientId, String hostname, String city, String region, String country, String loc) {
         this.uid = uid;
         this.ipAddress = ipAddress;
-        this.loginServiceClientId = loginServiceClientId;
+        this.idmServiceClientId = idmServiceClientId;
         this.hostname = hostname;
         this.city = city;
         this.region = region;

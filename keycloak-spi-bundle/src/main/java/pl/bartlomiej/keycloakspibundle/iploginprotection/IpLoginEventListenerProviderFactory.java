@@ -8,7 +8,6 @@ import org.keycloak.models.KeycloakSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
 import pl.bartlomiej.keycloakspibundle.common.AuthorizedSimpleHttp;
 import pl.bartlomiej.keycloakspibundle.common.config.ConfigCache;
 import pl.bartlomiej.keycloakspibundle.common.config.ConfigLoader;

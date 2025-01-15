@@ -23,7 +23,7 @@ spring:
   config:
     import:
       - classpath:secrets.yaml
-      - classpath:login-service-reps-config.yaml
+      - classpath:idm-services-reps-config.yaml
   data:
     mongodb:
       database: protectionServiceDB

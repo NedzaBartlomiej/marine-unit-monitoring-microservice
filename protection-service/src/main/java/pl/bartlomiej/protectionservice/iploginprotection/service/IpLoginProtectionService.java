@@ -1,9 +1,9 @@
 package pl.bartlomiej.protectionservice.iploginprotection.service;
 
-import pl.bartlomiej.protectionservice.iploginprotection.model.IpLoginProtectionRequest;
+import pl.bartlomiej.protectionservice.iploginprotection.model.ProtectionServiceRequest;
 
 public interface IpLoginProtectionService {
-    Boolean executeIpLoginProtection(IpLoginProtectionRequest request);
+    Boolean executeIpLoginProtection(ProtectionServiceRequest request);
 
     void trustIp(String suspectLoginId, String uid);
 }

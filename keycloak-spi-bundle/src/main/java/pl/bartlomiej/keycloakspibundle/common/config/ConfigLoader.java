@@ -21,7 +21,7 @@ public class ConfigLoader<T> {
 
     /**
      * If config by configFileName exists, return it from cache.
-     * If not, load config file, from src/main/resources/config final root path.
+     * If not, load config files from src/main/resources/config - root path.
      */
     public T load(final String configFileName, final Class<T> propertiesClass) {
         return this.configCache.computeIfAbsent(configFileName, propertiesClass, this::loadFromFile);
