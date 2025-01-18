@@ -40,7 +40,7 @@ public class TrackedShipServiceImpl implements TrackedShipService {
 
     @Override
     public Mono<TrackedShip> addTrackedShip(String id, String mmsi) {
-        return userService.isUserExists(id)
+        return userService.handleUserDoesNotExists(id)
                 .then(activePointService.isPointActive(mmsi))
                 .then(this.isShipTrackedMono(id, mmsi, false))
                 .then(activePointService.getName(mmsi)
@@ -51,7 +51,7 @@ public class TrackedShipServiceImpl implements TrackedShipService {
 
     @Override
     public Mono<Void> removeTrackedShip(String id, String mmsi) {
-        return userService.isUserExists(id)
+        return userService.handleUserDoesNotExists(id)
                 .then(this.isShipTrackedMono(id, mmsi, true))
                 .then(customUserRepository.pullTrackedShip(id, mmsi));
     }

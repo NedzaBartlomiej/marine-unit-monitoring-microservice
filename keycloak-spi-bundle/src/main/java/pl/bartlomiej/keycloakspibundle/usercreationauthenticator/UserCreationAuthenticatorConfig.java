@@ -1,19 +1,17 @@
-package pl.bartlomiej.keycloakspibundle.iploginprotection;
+package pl.bartlomiej.keycloakspibundle.usercreationauthenticator;
 
-public class IpLoginProtectionConfig {
+public class UserCreationAuthenticatorConfig {
     private String tokenUrl;
     private String clientId;
     private String clientSecret;
-    private String protectionServiceUrl;
 
-    public IpLoginProtectionConfig() {
+    public UserCreationAuthenticatorConfig() {
     }
 
-    public IpLoginProtectionConfig(String tokenUrl, String clientId, String clientSecret, String protectionServiceUrl) {
+    public UserCreationAuthenticatorConfig(String tokenUrl, String clientId, String clientSecret) {
         this.tokenUrl = tokenUrl;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
-        this.protectionServiceUrl = protectionServiceUrl;
     }
 
     public String getTokenUrl() {
@@ -28,10 +26,6 @@ public class IpLoginProtectionConfig {
         return clientSecret;
     }
 
-    public String getProtectionServiceUrl() {
-        return protectionServiceUrl;
-    }
-
     public void setTokenUrl(String tokenUrl) {
         this.tokenUrl = tokenUrl;
     }
@@ -42,9 +36,5 @@ public class IpLoginProtectionConfig {
 
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
-    }
-
-    public void setProtectionServiceUrl(String protectionServiceUrl) {
-        this.protectionServiceUrl = protectionServiceUrl;
     }
 }

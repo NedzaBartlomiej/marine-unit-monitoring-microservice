@@ -27,7 +27,7 @@ public class IpLoginEventListenerProvider implements EventListenerProvider {
         log.info("Login event detected. Executing IP login protection.");
         IpLoginProtectionRequest protectionRequest = this.requestService
                 .buildProtectionRequest(event, this.getUserModel(event));
-        this.requestService.sendProtectionRequest(protectionRequest)
+        this.requestService.sendProtectionRequest(protectionRequest, keycloakSession)
                 .thenAccept(this.requestService::handleProtectionResponse);
     }
 

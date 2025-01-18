@@ -5,12 +5,12 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class IdmServiceResolver {
+public class IdmServiceRepResolver {
 
-    private static final Logger log = LoggerFactory.getLogger(IdmServiceResolver.class);
+    private static final Logger log = LoggerFactory.getLogger(IdmServiceRepResolver.class);
     private final List<IdmServiceRepresentation> configuredIdmServices;
 
-    public IdmServiceResolver(List<IdmServiceRepresentation> configuredIdmServices) {
+    public IdmServiceRepResolver(List<IdmServiceRepresentation> configuredIdmServices) {
         this.configuredIdmServices = configuredIdmServices;
     }
 

@@ -1,2 +1,3 @@
-pl\bartlomiej\loginservices\IdmServiceRepresentation.class
-pl\bartlomiej\loginservices\IdmServiceResolver.class
+pl/bartlomiej/loginservices/IdmServiceResolver.class
+pl/bartlomiej/loginservices/IdmServiceRepresentation.class
+pl/bartlomiej/loginservices/IdmServiceUserCreationDto.class

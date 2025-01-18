@@ -21,13 +21,8 @@ class DefaultDeveloperService extends AbstractIDMService<AppDeveloperEntity> imp
 
     @Override
     protected AppDeveloperEntity createEntity(final KeycloakUserRepresentation keycloakUserRepresentation, final String ipAddress) {
-        AppDeveloperEntity appDeveloperEntity = new AppDeveloperEntity(
-                keycloakUserRepresentation.id(),
-                keycloakUserRepresentation.email()
-        );
-        appDeveloperEntity.setTrustedIpAddresses(Collections.singletonList(ipAddress));
-
-        return appDeveloperEntity;
+        return this.createAppDeveloperEntity(keycloakUserRepresentation.id(),
+                keycloakUserRepresentation.email(), ipAddress);
     }
 
     @Override
@@ -36,10 +31,23 @@ class DefaultDeveloperService extends AbstractIDMService<AppDeveloperEntity> imp
     }
 
     @Override
+    public AppDeveloperEntity create(String id, String email, String ipAddress) {
+        return this.developerMongoRepository.save(
+                this.createAppDeveloperEntity(id, email, ipAddress)
+        );
+    }
+
+    private AppDeveloperEntity createAppDeveloperEntity(String id, String email, String ipAddress) {
+        AppDeveloperEntity appDeveloperEntity = new AppDeveloperEntity(id, email);
+        appDeveloperEntity.setTrustedIpAddresses(Collections.singletonList(ipAddress));
+        return appDeveloperEntity;
+    }
+
+    @Override
     public void trustIp(String id, String ipAddress) {
         AppDeveloperEntity developer = super.getEntity(id);
         developer.getTrustedIpAddresses().add(ipAddress);
-        developerMongoRepository.save(developer);
+        this.developerMongoRepository.save(developer);
     }
 
     @Override

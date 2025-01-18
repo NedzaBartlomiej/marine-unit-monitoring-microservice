@@ -2,7 +2,7 @@ package pl.bartlomiej.protectionservice.iploginprotection.service;
 
 import org.springframework.stereotype.Service;
 import pl.bartlomiej.loginservices.IdmServiceRepresentation;
-import pl.bartlomiej.loginservices.IdmServiceResolver;
+import pl.bartlomiej.loginservices.IdmServiceRepResolver;
 import pl.bartlomiej.mumcommons.emailintegration.external.EmailHttpService;
 import pl.bartlomiej.mumcommons.emailintegration.external.model.LinkedEmail;
 import pl.bartlomiej.protectionservice.iploginprotection.controller.IdmServiceHttpService;
@@ -13,16 +13,16 @@ import pl.bartlomiej.protectionservice.iploginprotection.suspectlogin.SuspectLog
 @Service
 class DefaultIpLoginProtectionService implements IpLoginProtectionService {
 
-    private final IdmServiceResolver idmServiceResolver;
+    private final IdmServiceRepResolver idmServiceRepResolver;
     private final IdmServiceHttpService idmServiceHttpService;
     private final SuspectLoginService suspectLoginService;
     private final EmailHttpService emailHttpService;
 
-    DefaultIpLoginProtectionService(IdmServiceResolver idmServiceResolver,
+    DefaultIpLoginProtectionService(IdmServiceRepResolver idmServiceRepResolver,
                                     IdmServiceHttpService idmServiceHttpService,
                                     SuspectLoginService suspectLoginService,
                                     EmailHttpService emailHttpService) {
-        this.idmServiceResolver = idmServiceResolver;
+        this.idmServiceRepResolver = idmServiceRepResolver;
         this.idmServiceHttpService = idmServiceHttpService;
         this.suspectLoginService = suspectLoginService;
         this.emailHttpService = emailHttpService;
@@ -34,7 +34,7 @@ class DefaultIpLoginProtectionService implements IpLoginProtectionService {
      */
     @Override
     public Boolean executeIpLoginProtection(final ProtectionServiceRequest request) {
-        IdmServiceRepresentation idmServiceRepresentation = this.idmServiceResolver.resolve(request.clientId());
+        IdmServiceRepresentation idmServiceRepresentation = this.idmServiceRepResolver.resolve(request.clientId());
         boolean isIpTrusted = idmServiceHttpService.verifyIp(
                 idmServiceRepresentation.getHostname(),
                 idmServiceRepresentation.getPort(),
@@ -66,7 +66,7 @@ class DefaultIpLoginProtectionService implements IpLoginProtectionService {
     @Override
     public void trustIp(final String suspectLoginId, final String uid) {
         SuspectLogin suspectLogin = suspectLoginService.get(suspectLoginId, uid);
-        IdmServiceRepresentation idmServiceRepresentation = this.idmServiceResolver.resolve(suspectLogin.getIdmServiceClientId());
+        IdmServiceRepresentation idmServiceRepresentation = this.idmServiceRepResolver.resolve(suspectLogin.getIdmServiceClientId());
         idmServiceHttpService.trustIp(
                 idmServiceRepresentation.getHostname(),
                 idmServiceRepresentation.getPort(),

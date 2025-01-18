@@ -26,7 +26,6 @@ public class IpLoginEventListenerProviderFactory implements EventListenerProvide
         return new IpLoginEventListenerProvider(
                 keycloakSession,
                 new ProtectionServiceRequestService(
-                        keycloakSession,
                         authorizedSimpleHttp,
                         ipLoginProtectionConfig
                 )
@@ -38,7 +37,7 @@ public class IpLoginEventListenerProviderFactory implements EventListenerProvide
         log.info("IpLoginEventListenerProviderFactory - init().");
         var yaml = new Yaml();
         var configCache = new ConfigCache();
-        var configLoader = new ConfigLoader<IpLoginProtectionConfig>(yaml, configCache);
+        var configLoader = new ConfigLoader(yaml, configCache);
         var ipLoginProtectionProperties = configLoader.load(
                 "ip-login-protection-config.yaml",
                 IpLoginProtectionConfig.class

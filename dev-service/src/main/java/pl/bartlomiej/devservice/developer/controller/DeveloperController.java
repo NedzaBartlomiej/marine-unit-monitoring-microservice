@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.bartlomiej.devservice.developer.domain.AppDeveloperEntity;
 import pl.bartlomiej.devservice.developer.domain.dto.DeveloperRegisterDto;
 import pl.bartlomiej.devservice.developer.service.DeveloperService;
+import pl.bartlomiej.loginservices.IdmServiceRepUserCreationDto;
 import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
 
 @RestController
@@ -20,11 +21,26 @@ public class DeveloperController {
         this.developerService = developerService;
     }
 
-    @PostMapping
-    public ResponseEntity<ResponseModel<AppDeveloperEntity>> create(@RequestBody @Valid final DeveloperRegisterDto developerRegisterDto) {
+    @PostMapping("/register")
+    public ResponseEntity<ResponseModel<AppDeveloperEntity>> register(@RequestBody @Valid final DeveloperRegisterDto developerRegisterDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseModel.Builder<AppDeveloperEntity>(HttpStatus.CREATED, true)
-                        .body(developerService.create(developerRegisterDto, "127.0.0.1"))
+                        .body(developerService.register(developerRegisterDto, "127.0.0.1"))
+                        .build()
+                );
+    }
+
+    @PreAuthorize("hasRole('USER_CREATION_AUTHENTICATOR')")
+    @PostMapping
+    public ResponseEntity<ResponseModel<AppDeveloperEntity>> create(@RequestBody final IdmServiceRepUserCreationDto idmServiceRepUserCreationDto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ResponseModel.Builder<AppDeveloperEntity>(HttpStatus.CREATED, true)
+                        .body(developerService.create(
+                                        idmServiceRepUserCreationDto.uid(),
+                                        idmServiceRepUserCreationDto.email(),
+                                        idmServiceRepUserCreationDto.ipAddress()
+                                )
+                        )
                         .build()
                 );
     }

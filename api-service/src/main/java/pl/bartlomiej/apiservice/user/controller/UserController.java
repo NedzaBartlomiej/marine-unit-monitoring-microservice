@@ -4,9 +4,10 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import pl.bartlomiej.apiservice.user.domain.User;
+import pl.bartlomiej.apiservice.user.domain.ApiUserEntity;
 import pl.bartlomiej.apiservice.user.domain.dto.UserRegisterDto;
 import pl.bartlomiej.apiservice.user.service.UserService;
+import pl.bartlomiej.loginservices.IdmServiceRepUserCreationDto;
 import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
 import reactor.core.publisher.Mono;
 
@@ -28,21 +29,35 @@ public class UserController {
 
     @PreAuthorize("hasRole(T(pl.bartlomiej.apiservice.user.domain.UserKeycloakRole).API_USER.getRole())")
     @GetMapping("/me")
-    public Mono<ResponseEntity<ResponseModel<User>>> getAuthenticatedUser(Principal principal) {
+    public Mono<ResponseEntity<ResponseModel<ApiUserEntity>>> getAuthenticatedUser(Principal principal) {
         return userService.getEntity(principal.getName())
                 .map(user -> ResponseEntity.ok(
-                        new ResponseModel.Builder<User>(OK, true)
+                        new ResponseModel.Builder<ApiUserEntity>(OK, true)
                                 .body(user)
                                 .build())
                 );
     }
 
-    @PostMapping
-    public Mono<ResponseEntity<ResponseModel<User>>> createUser(@RequestBody @Valid UserRegisterDto userRegisterDto) {
-        return userService.create(userRegisterDto, "127.0.0.1")
+    @PostMapping("/register")
+    public Mono<ResponseEntity<ResponseModel<ApiUserEntity>>> register(@RequestBody @Valid UserRegisterDto userRegisterDto) {
+        return userService.register(userRegisterDto, "127.0.0.1")
                 .map(user -> ResponseEntity.status(CREATED)
-                        .body(new ResponseModel.Builder<User>(CREATED, true)
+                        .body(new ResponseModel.Builder<ApiUserEntity>(CREATED, true)
                                 .body(user)
+                                .build())
+                );
+    }
+
+    @PreAuthorize("hasRole('USER_CREATION_AUTHENTICATOR')")
+    @PostMapping
+    public Mono<ResponseEntity<ResponseModel<ApiUserEntity>>> create(@RequestBody IdmServiceRepUserCreationDto idmServiceRepUserCreationDto) {
+        return userService.create(
+                        idmServiceRepUserCreationDto.uid(),
+                        idmServiceRepUserCreationDto.ipAddress()
+                )
+                .map(apiUserEntity -> ResponseEntity.status(CREATED)
+                        .body(new ResponseModel.Builder<ApiUserEntity>(CREATED, true)
+                                .body(apiUserEntity)
                                 .build())
                 );
     }

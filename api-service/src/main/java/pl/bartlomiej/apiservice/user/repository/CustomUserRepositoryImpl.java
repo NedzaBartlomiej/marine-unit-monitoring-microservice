@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 import pl.bartlomiej.apiservice.common.helper.repository.CustomRepository;
 import pl.bartlomiej.apiservice.common.util.CommonShipFields;
-import pl.bartlomiej.apiservice.user.domain.User;
+import pl.bartlomiej.apiservice.user.domain.ApiUserEntity;
 import pl.bartlomiej.apiservice.user.domain.UserConstants;
 import pl.bartlomiej.apiservice.user.nested.trackedship.TrackedShip;
 import reactor.core.publisher.Flux;
@@ -39,7 +39,7 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
                 .updateFirst(
                         customRepository.getIdValidQuery(id),
                         new Update().pull(UserConstants.TRACKED_SHIPS, query(where(CommonShipFields.MMSI).is(mmsi))),
-                        User.class
+                        ApiUserEntity.class
                 ).then();
     }
 
@@ -49,21 +49,21 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
                 .updateMulti(
                         new Query(),
                         new Update().pull(UserConstants.TRACKED_SHIPS, query(where(CommonShipFields.MMSI).is(mmsi))),
-                        User.class
+                        ApiUserEntity.class
                 ).then();
     }
 
     @Override
     public Flux<TrackedShip> getTrackedShips(String id) {
-        return reactiveMongoTemplate.findById(id, User.class)
-                .flatMapIterable(User::getTrackedShips)
+        return reactiveMongoTemplate.findById(id, ApiUserEntity.class)
+                .flatMapIterable(ApiUserEntity::getTrackedShips)
                 .onErrorResume(NullPointerException.class, ex -> Flux.empty());
     }
 
     @Override
     public Flux<TrackedShip> getTrackedShips() {
-        return reactiveMongoTemplate.findAll(User.class)
-                .flatMapIterable(User::getTrackedShips)
+        return reactiveMongoTemplate.findAll(ApiUserEntity.class)
+                .flatMapIterable(ApiUserEntity::getTrackedShips)
                 .onErrorResume(NullPointerException.class, ex -> Flux.empty());
     }
 
@@ -72,7 +72,7 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
                 .updateFirst(
                         customRepository.getIdValidQuery(id),
                         new Update().push(updatedFieldName, pushedValue),
-                        User.class
+                        ApiUserEntity.class
                 );
     }
 }

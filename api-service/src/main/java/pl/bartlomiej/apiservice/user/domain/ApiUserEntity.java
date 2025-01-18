@@ -12,13 +12,13 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Document(collection = "users")
-public class User {
+public class ApiUserEntity {
 
     private String id;
     private List<TrackedShip> trackedShips;
     private List<String> trustedIpAddresses;
 
-    public User(String id) {
+    public ApiUserEntity(String id) {
         this.id = id;
     }
 }

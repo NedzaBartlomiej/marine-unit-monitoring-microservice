@@ -1,4 +1,4 @@
 tokenUrl: http://keycloak.pl:8080/realms/marine-unit-monitoring-master/protocol/openid-connect/token
-clientId: protection-service-client
-clientSecret: NfRXeBKAv4NCy3klk3XHAUDkSn4W4kha
+clientId: ip-login-protection-client
+clientSecret: O2m1TDq5YGR2n6FiIeVAj0OMphaMTefm
 protectionServiceUrl: http://protection-service:8085/v1/ip-login-protection/rpc/protect-login

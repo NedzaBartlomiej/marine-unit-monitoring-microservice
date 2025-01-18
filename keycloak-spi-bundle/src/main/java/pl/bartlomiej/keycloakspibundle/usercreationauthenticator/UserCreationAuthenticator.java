@@ -1,4 +1,4 @@
-package pl.bartlomiej.keycloakspibundle.registrationauthenticator;
+package pl.bartlomiej.keycloakspibundle.usercreationauthenticator;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.keycloak.authentication.AuthenticationFlowContext;
@@ -9,29 +9,32 @@ import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
 import pl.bartlomiej.keycloakspibundle.common.AuthorizedSimpleHttp;
-import pl.bartlomiej.loginservices.IdmServiceResolver;
+import pl.bartlomiej.loginservices.IdmServiceRepResolver;
+import pl.bartlomiej.loginservices.IdmServiceRepUserCreationDto;
 
 import java.io.IOException;
 
-public class RegistrationAuthenticator implements Authenticator {
+public class UserCreationAuthenticator implements Authenticator {
 
-    private final IdmServiceResolver idmServiceResolver;
+    private final IdmServiceRepResolver idmServiceRepResolver;
     private final AuthorizedSimpleHttp authorizedSimpleHttp;
 
-    public RegistrationAuthenticator(IdmServiceResolver idmServiceResolver, AuthorizedSimpleHttp authorizedSimpleHttp) {
-        this.idmServiceResolver = idmServiceResolver;
+    public UserCreationAuthenticator(IdmServiceRepResolver idmServiceRepResolver, AuthorizedSimpleHttp authorizedSimpleHttp) {
+        this.idmServiceRepResolver = idmServiceRepResolver;
         this.authorizedSimpleHttp = authorizedSimpleHttp;
     }
 
+    // todo - refactoring and UAT
     @Override
     public void authenticate(AuthenticationFlowContext authenticationFlowContext) {
 
         // operation data
         UserModel keycloakCreatedUser = authenticationFlowContext.getUser();
         String clientId = authenticationFlowContext.getAuthenticationSession().getClient().getClientId();
+        KeycloakSession keycloakSession = authenticationFlowContext.getSession();
 
         // request data
-        var loginServiceRepresentation = this.idmServiceResolver.resolve(clientId);
+        var loginServiceRepresentation = this.idmServiceRepResolver.resolve(clientId);
         String registrationUrl =
                 "http://" + loginServiceRepresentation.getHostname()
                         + ":" + loginServiceRepresentation.getPort()
@@ -39,14 +42,15 @@ public class RegistrationAuthenticator implements Authenticator {
                         + "/" + loginServiceRepresentation.getIdmResourceIdentifier();
 
         // requesting
-        KeycloakSession keycloakSession = authenticationFlowContext.getSession();
         SimpleHttp registrationHttp = SimpleHttp.doPost(
                 registrationUrl,
                 keycloakSession);
         SimpleHttp.Response registrationResponse = this.authorizedSimpleHttp.request(
                 registrationHttp,
-                new RegistrationServiceRequest(
-                        // todo
+                new IdmServiceRepUserCreationDto(
+                        keycloakCreatedUser.getId(),
+                        keycloakCreatedUser.getEmail(),
+                        keycloakSession.getContext().getConnection().getRemoteAddr()
                 ),
                 keycloakSession
         );
@@ -57,7 +61,8 @@ public class RegistrationAuthenticator implements Authenticator {
             boolean success = json.get("success").asBoolean();
             JsonNode createdUser = json.get("body");
 
-            if (!success && createdUser == null) {
+            // registration in idm-service error compensation
+            if (!success || createdUser == null) {
                 keycloakSession.users().removeUser(
                         keycloakSession.getContext().getRealm(),
                         keycloakCreatedUser

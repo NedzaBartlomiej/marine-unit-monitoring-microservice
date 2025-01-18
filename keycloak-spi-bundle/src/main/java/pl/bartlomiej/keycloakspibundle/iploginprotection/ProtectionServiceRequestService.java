@@ -20,18 +20,16 @@ public class ProtectionServiceRequestService {
     public static final String SUCCESS_RESP_FIELD = "success";
     public static final String MESSAGE_RESP_FIELD = "message";
     private static final Logger log = LoggerFactory.getLogger(ProtectionServiceRequestService.class);
-    private final KeycloakSession keycloakSession;
     private final AuthorizedSimpleHttp authorizedSimpleHttp;
 
-    public ProtectionServiceRequestService(KeycloakSession keycloakSession,
-                                           AuthorizedSimpleHttp authorizedSimpleHttp,
+    public ProtectionServiceRequestService(AuthorizedSimpleHttp authorizedSimpleHttp,
                                            IpLoginProtectionConfig ipLoginProtectionConfig) {
-        this.keycloakSession = keycloakSession;
         this.authorizedSimpleHttp = authorizedSimpleHttp;
         this.ipLoginProtectionConfig = ipLoginProtectionConfig;
     }
 
-    public CompletableFuture<SimpleHttp.Response> sendProtectionRequest(final IpLoginProtectionRequest protectionRequest) {
+    public CompletableFuture<SimpleHttp.Response> sendProtectionRequest(final IpLoginProtectionRequest protectionRequest,
+                                                                        final KeycloakSession keycloakSession) {
         log.info("Requesting to protection service.");
         SimpleHttp protectionHttp = SimpleHttp.doPost(
                 this.ipLoginProtectionConfig.getProtectionServiceUrl(),
@@ -62,7 +60,7 @@ public class ProtectionServiceRequestService {
     }
 
     public IpLoginProtectionRequest buildProtectionRequest(final Event event, final UserModel userModel) {
-        log.info("Producing protection request details object.");
+        log.info("Building protection request details object.");
         return new IpLoginProtectionRequest(
                 event.getIpAddress(),
                 event.getUserId(),
