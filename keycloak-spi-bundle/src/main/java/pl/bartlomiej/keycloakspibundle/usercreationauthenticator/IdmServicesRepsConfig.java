@@ -1,6 +1,6 @@
 package pl.bartlomiej.keycloakspibundle.usercreationauthenticator;
 
-import pl.bartlomiej.loginservices.IdmServiceRepresentation;
+import pl.bartlomiej.idmservicesreps.IdmServiceRepresentation;
 
 import java.util.List;
 
@@ -16,5 +16,9 @@ public class IdmServicesRepsConfig {
 
     public List<IdmServiceRepresentation> getIdmServiceRepresentations() {
         return idmServiceRepresentations;
+    }
+
+    public void setIdmServiceRepresentations(List<IdmServiceRepresentation> idmServiceRepresentations) {
+        this.idmServiceRepresentations = idmServiceRepresentations;
     }
 }

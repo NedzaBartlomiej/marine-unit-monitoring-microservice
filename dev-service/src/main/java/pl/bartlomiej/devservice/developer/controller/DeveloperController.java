@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.bartlomiej.devservice.developer.domain.AppDeveloperEntity;
 import pl.bartlomiej.devservice.developer.domain.dto.DeveloperRegisterDto;
 import pl.bartlomiej.devservice.developer.service.DeveloperService;
-import pl.bartlomiej.loginservices.IdmServiceRepUserCreationDto;
+import pl.bartlomiej.idmservicesreps.IdmServiceRepUserCreationDto;
 import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
 
 @RestController

@@ -91,7 +91,7 @@ read -r response
 if [[ "$response" == "y" ]]; then
   echo "Updating Keycloak SPIs"
 
-  mvn clean install -f ./keycloak-spi-bundle/pom.xml
+  mvn clean package -f ./keycloak-spi-bundle/pom.xml
 
   docker rm -f "$KEYCLOAK_CONTAINER_NAME"
   echo "Keycloak container removed."

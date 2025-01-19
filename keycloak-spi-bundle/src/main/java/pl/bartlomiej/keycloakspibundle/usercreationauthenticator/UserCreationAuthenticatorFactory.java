@@ -10,13 +10,13 @@ import org.keycloak.provider.ProviderConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
+import pl.bartlomiej.idmservicesreps.IdmServiceRepResolver;
 import pl.bartlomiej.keycloakspibundle.common.AuthorizedSimpleHttp;
 import pl.bartlomiej.keycloakspibundle.common.config.ConfigCache;
 import pl.bartlomiej.keycloakspibundle.common.config.ConfigLoader;
 import pl.bartlomiej.keycloakspibundle.common.tokenaccess.KeycloakTokenFetcher;
 import pl.bartlomiej.keycloakspibundle.common.tokenaccess.KeycloakTokenParams;
 import pl.bartlomiej.keycloakspibundle.common.tokenaccess.KeycloakTokenStorage;
-import pl.bartlomiej.loginservices.IdmServiceRepResolver;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class UserCreationAuthenticatorFactory implements AuthenticatorFactory {
 
     @Override
     public String getDisplayType() {
-        return "ResourceServerRegistrationAuthenticator";
+        return "Resource Server User Creation";
     }
 
     @Override
@@ -54,7 +54,7 @@ public class UserCreationAuthenticatorFactory implements AuthenticatorFactory {
 
     @Override
     public String getHelpText() {
-        return "An Authenticator used to register new user in the resource server's database.";
+        return "An Authenticator used to create a new user in the resource server's database based on client-id.";
     }
 
     @Override
@@ -107,6 +107,6 @@ public class UserCreationAuthenticatorFactory implements AuthenticatorFactory {
 
     @Override
     public String getId() {
-        return "resource-server-registration-authenticator";
+        return "resource-server-user-creation";
     }
 }

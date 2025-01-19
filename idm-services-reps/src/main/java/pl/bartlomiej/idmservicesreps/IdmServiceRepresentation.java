@@ -1,4 +1,4 @@
-package pl.bartlomiej.loginservices;
+package pl.bartlomiej.idmservicesreps;
 
 public class IdmServiceRepresentation {
 
@@ -37,5 +37,25 @@ public class IdmServiceRepresentation {
 
     public String getClientId() {
         return clientId;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public void setResourceApiVersion(String resourceApiVersion) {
+        this.resourceApiVersion = resourceApiVersion;
+    }
+
+    public void setIdmResourceIdentifier(String idmResourceIdentifier) {
+        this.idmResourceIdentifier = idmResourceIdentifier;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 }

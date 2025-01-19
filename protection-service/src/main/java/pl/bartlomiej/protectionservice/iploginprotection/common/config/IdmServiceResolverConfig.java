@@ -2,7 +2,7 @@ package pl.bartlomiej.protectionservice.iploginprotection.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pl.bartlomiej.loginservices.IdmServiceRepResolver;
+import pl.bartlomiej.idmservicesreps.IdmServiceRepResolver;
 
 @Configuration
 public class IdmServiceResolverConfig {

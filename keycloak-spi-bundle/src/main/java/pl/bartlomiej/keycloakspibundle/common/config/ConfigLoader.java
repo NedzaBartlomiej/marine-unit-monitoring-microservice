@@ -22,19 +22,17 @@ public class ConfigLoader {
      * If config by configFileName exists, return it from cache.
      * If not, load config files from src/main/resources - root path.
      */
-    public <T> T load(final String configFileName, final Class<T> propertiesClass) {
-        return this.configCache.computeIfAbsent(configFileName, propertiesClass, this::loadFromFile);
+    public <T> T load(final String configFileName, final Class<T> configClass) {
+        return this.configCache.computeIfAbsent(configFileName, configClass, this::loadFromFile);
     }
 
-    private <T> T loadFromFile(final String configFileName, final Class<T> propertiesClass) {
+    private <T> T loadFromFile(final String configFileName, final Class<T> configClass) {
         log.info("Loading config file named {}", configFileName);
-        // todo - load config files also from dependency
-        //  (idm-services-reps-config loading doesn't work)
-        try (InputStream stream = getClass().getClassLoader().getResourceAsStream(configFileName)) {
+        try (InputStream stream = this.getClass().getClassLoader().getResourceAsStream(configFileName)) {
             if (stream == null) {
                 throw new IllegalArgumentException("No config file found in path: " + configFileName + " when loading.");
             }
-            T loadedConfig = this.yaml.loadAs(stream, propertiesClass);
+            T loadedConfig = this.yaml.loadAs(stream, configClass);
             if (loadedConfig == null) {
                 throw new IllegalStateException("Loaded config is null for file: " + configFileName);
             }

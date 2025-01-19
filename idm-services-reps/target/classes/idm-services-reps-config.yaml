@@ -1,12 +1,11 @@
-idmServicesReps:
-  idmServiceRepresentations:
-    - hostname: api-service
-      port: 8081
-      idmResourceIdentifier: users
-      resourceApiVersion: v1
-      clientId: api-service-client
-    - hostname: dev-service
-      port: 8083
-      resourceApiVersion: v1
-      idmResourceIdentifier: developers
-      clientId: dev-service-client
+idmServiceRepresentations:
+  - hostname: api-service
+    port: 8081
+    idmResourceIdentifier: users
+    resourceApiVersion: v1
+    clientId: api-service-client
+  - hostname: dev-service
+    port: 8083
+    resourceApiVersion: v1
+    idmResourceIdentifier: developers
+    clientId: dev-service-client

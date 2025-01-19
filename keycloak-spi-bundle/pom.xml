@@ -69,24 +69,47 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+        </dependency>
+        <dependency>
             <groupId>pl.bartlomiej</groupId>
             <artifactId>idm-services-reps</artifactId>
             <version>1.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
-        <finalName>keycloak-spi-bundle</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>pl.bartlomiej:idm-services-reps</include>
+                                </includes>
+                            </artifactSet>
+                            <minimizeJar>true</minimizeJar>
+                            <finalName>keycloak-spi-bundle</finalName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
+        <finalName>keycloak-spi-bundle</finalName>
     </build>
 </project>

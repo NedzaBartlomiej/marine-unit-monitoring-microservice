@@ -8,8 +8,8 @@
     <artifactId>idm-services-reps</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
-    <name>login-services</name>
-    <description>login-services</description>
+    <name>idm-services-reps</name>
+    <description>idm-services-reps</description>
 
     <properties>
         <java.version>21</java.version>
@@ -34,7 +34,7 @@
                 </configuration>
             </plugin>
         </plugins>
-        <finalName>login-services</finalName>
+        <finalName>idm-services-reps</finalName>
     </build>
 
 </project>

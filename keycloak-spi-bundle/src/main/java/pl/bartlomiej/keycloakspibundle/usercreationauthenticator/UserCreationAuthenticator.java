@@ -8,9 +8,9 @@ import org.keycloak.broker.provider.util.SimpleHttp;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
+import pl.bartlomiej.idmservicesreps.IdmServiceRepResolver;
+import pl.bartlomiej.idmservicesreps.IdmServiceRepUserCreationDto;
 import pl.bartlomiej.keycloakspibundle.common.AuthorizedSimpleHttp;
-import pl.bartlomiej.loginservices.IdmServiceRepResolver;
-import pl.bartlomiej.loginservices.IdmServiceRepUserCreationDto;
 
 import java.io.IOException;
 
