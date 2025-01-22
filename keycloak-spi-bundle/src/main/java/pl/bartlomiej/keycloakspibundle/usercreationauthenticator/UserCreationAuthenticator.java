@@ -8,72 +8,32 @@ import org.keycloak.broker.provider.util.SimpleHttp;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.bartlomiej.idmservicesreps.IdmServiceRepResolver;
 import pl.bartlomiej.idmservicesreps.IdmServiceRepUserCreationDto;
-import pl.bartlomiej.keycloakspibundle.common.AuthorizedSimpleHttp;
+import pl.bartlomiej.keycloakspibundle.common.delegateprovider.http.HttpDelegateProvider;
+import pl.bartlomiej.keycloakspibundle.common.delegateprovider.http.HttpDelegateProviderExecutor;
+import pl.bartlomiej.keycloakspibundle.common.delegateprovider.http.MumResponseModelUtil;
 
-import java.io.IOException;
+public class UserCreationAuthenticator implements Authenticator, HttpDelegateProvider<AuthenticationFlowContext> {
 
-public class UserCreationAuthenticator implements Authenticator {
-
+    private static final Logger log = LoggerFactory.getLogger(UserCreationAuthenticator.class);
     private final IdmServiceRepResolver idmServiceRepResolver;
-    private final AuthorizedSimpleHttp authorizedSimpleHttp;
+    private final HttpDelegateProviderExecutor<AuthenticationFlowContext> httpDelegateProviderExecutor;
 
-    public UserCreationAuthenticator(IdmServiceRepResolver idmServiceRepResolver, AuthorizedSimpleHttp authorizedSimpleHttp) {
+    public UserCreationAuthenticator(IdmServiceRepResolver idmServiceRepResolver, HttpDelegateProviderExecutor<AuthenticationFlowContext> httpDelegateProviderExecutor) {
         this.idmServiceRepResolver = idmServiceRepResolver;
-        this.authorizedSimpleHttp = authorizedSimpleHttp;
+        this.httpDelegateProviderExecutor = httpDelegateProviderExecutor;
     }
 
-    // todo - refactoring and UAT
     @Override
     public void authenticate(AuthenticationFlowContext authenticationFlowContext) {
-
-        // operation data
-        UserModel keycloakCreatedUser = authenticationFlowContext.getUser();
-        String clientId = authenticationFlowContext.getAuthenticationSession().getClient().getClientId();
-        KeycloakSession keycloakSession = authenticationFlowContext.getSession();
-
-        // request data
-        var loginServiceRepresentation = this.idmServiceRepResolver.resolve(clientId);
-        String registrationUrl =
-                "http://" + loginServiceRepresentation.getHostname()
-                        + ":" + loginServiceRepresentation.getPort()
-                        + "/" + loginServiceRepresentation.getResourceApiVersion()
-                        + "/" + loginServiceRepresentation.getIdmResourceIdentifier();
-
-        // requesting
-        SimpleHttp registrationHttp = SimpleHttp.doPost(
-                registrationUrl,
-                keycloakSession);
-        SimpleHttp.Response registrationResponse = this.authorizedSimpleHttp.request(
-                registrationHttp,
-                new IdmServiceRepUserCreationDto(
-                        keycloakCreatedUser.getId(),
-                        keycloakCreatedUser.getEmail(),
-                        keycloakSession.getContext().getConnection().getRemoteAddr()
-                ),
-                keycloakSession
+        this.httpDelegateProviderExecutor.executeHttpDelegation(
+                this,
+                authenticationFlowContext,
+                authenticationFlowContext.getSession()
         );
-
-        // response handling
-        try {
-            JsonNode json = registrationResponse.asJson();
-            boolean success = json.get("success").asBoolean();
-            JsonNode createdUser = json.get("body");
-
-            // registration in idm-service error compensation
-            if (!success || createdUser == null) {
-                keycloakSession.users().removeUser(
-                        keycloakSession.getContext().getRealm(),
-                        keycloakCreatedUser
-                );
-                authenticationFlowContext.failure(AuthenticationFlowError.INTERNAL_ERROR);
-                return;
-            }
-            authenticationFlowContext.success();
-        } catch (IOException e) {
-            throw new RuntimeException("An error occurred when parsing response to json.", e);
-        }
     }
 
     @Override
@@ -99,5 +59,51 @@ public class UserCreationAuthenticator implements Authenticator {
     @Override
     public void close() {
 
+    }
+
+    @Override
+    public SimpleHttp buildSimpleHttp(AuthenticationFlowContext context) {
+        return SimpleHttp.doPost(
+                this.buildCreationUrl(context),
+                context.getSession());
+    }
+
+    @Override
+    public Object buildRequestBody(AuthenticationFlowContext context) {
+        UserModel keycloakCreatedUser = context.getUser();
+
+        return new IdmServiceRepUserCreationDto(
+                keycloakCreatedUser.getId(),
+                keycloakCreatedUser.getEmail(),
+                context.getSession().getContext().getConnection().getRemoteAddr()
+        );
+    }
+
+    @Override
+    public void handleSuccess(JsonNode response, AuthenticationFlowContext context) {
+        log.info("Successfully created user in the requested resource server: {}", MumResponseModelUtil.getMessage(response));
+        context.success();
+    }
+
+    @Override
+    public void handleFailure(JsonNode response, AuthenticationFlowContext context) {
+        log.error("Some error occurred when creating user in the requested resource server: {}", MumResponseModelUtil.getMessage(response));
+        UserModel keycloakCreatedUser = context.getUser();
+        KeycloakSession keycloakSession = context.getSession();
+
+        keycloakSession.users().removeUser(
+                keycloakSession.getContext().getRealm(),
+                keycloakCreatedUser
+        );
+        context.failure(AuthenticationFlowError.INTERNAL_ERROR);
+    }
+
+    private String buildCreationUrl(final AuthenticationFlowContext context) {
+        String clientId = context.getAuthenticationSession().getClient().getClientId();
+        var idmServiceRepresentation = this.idmServiceRepResolver.resolve(clientId);
+        return "http://" + idmServiceRepresentation.getHostname()
+                + ":" + idmServiceRepresentation.getPort()
+                + "/" + idmServiceRepresentation.getResourceApiVersion()
+                + "/" + idmServiceRepresentation.getIdmResourceIdentifier();
     }
 }

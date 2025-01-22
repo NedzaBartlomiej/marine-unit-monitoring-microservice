@@ -1,6 +1,7 @@
 package pl.bartlomiej.keycloakspibundle.usercreationauthenticator;
 
 import org.keycloak.Config;
+import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.Authenticator;
 import org.keycloak.authentication.AuthenticatorFactory;
 import org.keycloak.models.AuthenticationExecutionModel;
@@ -14,6 +15,8 @@ import pl.bartlomiej.idmservicesreps.IdmServiceRepResolver;
 import pl.bartlomiej.keycloakspibundle.common.AuthorizedSimpleHttp;
 import pl.bartlomiej.keycloakspibundle.common.config.ConfigCache;
 import pl.bartlomiej.keycloakspibundle.common.config.ConfigLoader;
+import pl.bartlomiej.keycloakspibundle.common.delegateprovider.http.HttpDelegateProviderExecutor;
+import pl.bartlomiej.keycloakspibundle.common.delegateprovider.http.HttpDelegateService;
 import pl.bartlomiej.keycloakspibundle.common.tokenaccess.KeycloakTokenFetcher;
 import pl.bartlomiej.keycloakspibundle.common.tokenaccess.KeycloakTokenParams;
 import pl.bartlomiej.keycloakspibundle.common.tokenaccess.KeycloakTokenStorage;
@@ -23,7 +26,7 @@ import java.util.List;
 public class UserCreationAuthenticatorFactory implements AuthenticatorFactory {
     private static final Logger log = LoggerFactory.getLogger(UserCreationAuthenticatorFactory.class);
     private IdmServiceRepResolver idmServiceRepResolver;
-    private AuthorizedSimpleHttp authorizedSimpleHttp;
+    private HttpDelegateProviderExecutor<AuthenticationFlowContext> httpDelegateProviderExecutor;
 
     @Override
     public String getDisplayType() {
@@ -64,12 +67,16 @@ public class UserCreationAuthenticatorFactory implements AuthenticatorFactory {
 
     @Override
     public Authenticator create(KeycloakSession keycloakSession) {
-        return new UserCreationAuthenticator(this.idmServiceRepResolver, this.authorizedSimpleHttp);
+        return new UserCreationAuthenticator(
+                this.idmServiceRepResolver,
+                this.httpDelegateProviderExecutor
+        );
     }
 
     @Override
     public void init(Config.Scope scope) {
         log.info("UserCreationAuthenticator - init().");
+
         var yaml = new Yaml();
         var configCache = new ConfigCache();
         var configLoader = new ConfigLoader(yaml, configCache);
@@ -78,15 +85,8 @@ public class UserCreationAuthenticatorFactory implements AuthenticatorFactory {
                 UserCreationAuthenticatorConfig.class
         );
 
-        var keycloakTokenParams = new KeycloakTokenParams(
-                userCreationAuthenticatorConfig.getTokenUrl(),
-                userCreationAuthenticatorConfig.getClientId(),
-                userCreationAuthenticatorConfig.getClientSecret()
-        );
-        var keycloakTokenFetcher = new KeycloakTokenFetcher(keycloakTokenParams);
-        var keycloakTokenManager = new KeycloakTokenStorage(keycloakTokenFetcher);
-        this.authorizedSimpleHttp = new AuthorizedSimpleHttp(keycloakTokenManager);
-
+        var delegateHttpService = getHttpDelegateService(userCreationAuthenticatorConfig);
+        this.httpDelegateProviderExecutor = new HttpDelegateProviderExecutor<>(delegateHttpService);
 
         var idmServicesRepresentations = configLoader.load(
                 "idm-services-reps-config.yaml",
@@ -108,5 +108,19 @@ public class UserCreationAuthenticatorFactory implements AuthenticatorFactory {
     @Override
     public String getId() {
         return "resource-server-user-creation";
+    }
+
+    private static HttpDelegateService getHttpDelegateService(UserCreationAuthenticatorConfig userCreationAuthenticatorConfig) {
+        var keycloakTokenParams = new KeycloakTokenParams(
+                userCreationAuthenticatorConfig.getTokenUrl(),
+                userCreationAuthenticatorConfig.getClientId(),
+                userCreationAuthenticatorConfig.getClientSecret()
+        );
+        var keycloakTokenFetcher = new KeycloakTokenFetcher(keycloakTokenParams);
+        var keycloakTokenManager = new KeycloakTokenStorage(keycloakTokenFetcher);
+
+        var authorizedSimpleHttp = new AuthorizedSimpleHttp(keycloakTokenManager);
+
+        return new HttpDelegateService(authorizedSimpleHttp);
     }
 }
