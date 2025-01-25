@@ -75,7 +75,7 @@ docker volume prune -f
 echo "Removing not used images"
 docker image prune -f
 
-# UPDATING SECTION todo add update idm-services-reps (if established structure not impl)
+# UPDATING SECTION
 echo -e "${YELLOW}Do you want to update mum-commons? (y/n)${NC}"
 read -r response
 
@@ -83,6 +83,15 @@ if [[ "$response" == "y" ]]; then
   echo "Updating mum-commons"
 
   mvn clean install -f ./mum-commons/pom.xml
+fi
+
+echo -e "${YELLOW}Do you want to update login-services-reps? (y/n)${NC}"
+read -r response
+
+if [[ "$response" == "y" ]]; then
+  echo "Updating login-services-reps"
+
+  mvn clean install -f ./login-services-reps/pom.xml
 fi
 
 echo -e "${YELLOW}Do you want to update Keycloak SPI .jar? (y/n)${NC}"

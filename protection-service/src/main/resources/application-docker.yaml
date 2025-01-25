@@ -34,3 +34,12 @@ spring:
         jwt:
           issuer-uri: http://keycloak.pl:8080/realms/marine-unit-monitoring-master
           jwk-set-uri: http://keycloak.pl:8080/realms/marine-unit-monitoring-master/protocol/openid-connect/certs
+project-properties:
+  times:
+    in-ms:
+      default-suspect-logins:
+        cleaning-time-count-before-actual: 259200000 # 72h
+  scheduling-delays:
+    in-ms:
+      default-suspect-logins:
+        cleaning: 259200000 # 72h

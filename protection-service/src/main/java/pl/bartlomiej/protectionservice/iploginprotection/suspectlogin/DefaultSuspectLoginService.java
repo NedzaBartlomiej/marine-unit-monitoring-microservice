@@ -4,19 +4,28 @@ import io.ipinfo.api.IPinfo;
 import io.ipinfo.api.errors.RateLimitedException;
 import io.ipinfo.api.model.IPResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.ErrorResponseException;
+
+import java.util.Date;
 
 @Slf4j
 @Service
 public class DefaultSuspectLoginService implements SuspectLoginService {
     private final MongoSuspectLoginRepository mongoSuspectLoginRepository;
     private final IPinfo ipInfo;
+    private final long cleaningTimeCountBeforeActual;
 
-    public DefaultSuspectLoginService(MongoSuspectLoginRepository mongoSuspectLoginRepository, IPinfo ipInfo) {
+    public DefaultSuspectLoginService(MongoSuspectLoginRepository mongoSuspectLoginRepository,
+                                      IPinfo ipInfo,
+                                      @Value("${project-properties.times.in-ms.default-suspect-logins.cleaning-time-count-before-actual}")
+                                      long cleaningTimeCountBeforeActual) {
         this.mongoSuspectLoginRepository = mongoSuspectLoginRepository;
         this.ipInfo = ipInfo;
+        this.cleaningTimeCountBeforeActual = cleaningTimeCountBeforeActual;
     }
 
     @Override
@@ -59,5 +68,12 @@ public class DefaultSuspectLoginService implements SuspectLoginService {
             throw new ErrorResponseException(HttpStatus.FORBIDDEN);
         }
         return suspectLogin;
+    }
+
+    @Scheduled(initialDelay = 0, fixedDelayString = "${project-properties.scheduling-delays.in-ms.default-suspect-logins.cleaning}")
+    public void clean() {
+        long timeBeforeMs = System.currentTimeMillis() - this.cleaningTimeCountBeforeActual;
+        Date timeBeforeDate = new Date(timeBeforeMs);
+        mongoSuspectLoginRepository.deleteAllByTimeBefore(timeBeforeDate);
     }
 }

@@ -29,14 +29,14 @@ public class TooManyRetryWebClientConfig {
                 .build();
     }
 
-    // todo - take care of this
     private ExchangeFilterFunction buildRetryExchangeFilterFunction() {
         return (request, next) -> next.exchange(request)
                 .flatMap(clientResponse -> Mono.just(clientResponse)
                         .filter(response -> clientResponse.statusCode().isError())
                         .flatMap(response -> clientResponse.createException())
                         .flatMap(Mono::error)
-                        .thenReturn(clientResponse))
+                        .thenReturn(clientResponse)
+                )
                 .retryWhen(this.retryWhenTooManyRequests())
                 .doOnError(throwable -> {
                     log.error("Something go wrong on retrying request: {}", throwable.getMessage());
@@ -47,7 +47,10 @@ public class TooManyRetryWebClientConfig {
     private RetryBackoffSpec retryWhenTooManyRequests() {
         return Retry.backoff(MAX_ATTEMPTS, Duration.ofMillis(RETRY_REQUEST_DELAY))
                 .filter(this::isTooManyRequestsException)
-                .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> retrySignal.failure());
+                .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
+                    log.error("Unsuccessful 429 status retry operation - MAX_ATTEMPTS has been reached.");
+                    return retrySignal.failure();
+                });
     }
 
     private boolean isTooManyRequestsException(final Throwable throwable) {

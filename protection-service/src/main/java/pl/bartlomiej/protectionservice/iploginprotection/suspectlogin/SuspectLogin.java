@@ -12,9 +12,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Document("suspectLogins")
 public class SuspectLogin {
-    // todo - cleaning function
-    //  (firstly - delete all connected/with the same reason/invocation suspectLogins
-    //  when the user trust that suspectLogin's IP)
 
     private String id;
     private String uid;

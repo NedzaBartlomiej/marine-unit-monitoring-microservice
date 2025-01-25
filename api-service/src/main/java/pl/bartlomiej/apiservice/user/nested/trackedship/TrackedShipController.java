@@ -33,7 +33,7 @@ public class TrackedShipController {
             "T(pl.bartlomiej.apiservice.user.domain.UserKeycloakRole).API_ADMIN.getRole())" +
             ")"
     )
-    @GetMapping // todo pageable
+    @GetMapping
     public ResponseEntity<Flux<ResponseModel<TrackedShip>>> getTrackedShips(Principal principal) {
         return ok(userService.getEntity(principal.getName())
                 .flatMapMany(user -> trackedShipService.getTrackedShips(user.getId())
