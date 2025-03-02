@@ -14,7 +14,7 @@ import reactor.util.retry.RetryBackoffSpec;
 
 import java.time.Duration;
 
-
+// todo - TODAY OUT OF THE QUEUE I'M GOING FORWARD - TIME REASONS
 @Configuration
 public class TooManyRetryWebClientConfig {
 

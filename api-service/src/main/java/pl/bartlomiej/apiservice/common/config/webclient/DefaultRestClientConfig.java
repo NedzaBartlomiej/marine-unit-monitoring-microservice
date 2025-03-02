@@ -2,12 +2,12 @@ package pl.bartlomiej.apiservice.common.config.webclient;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestClient;
 
 @Configuration
-public class DefaultWebClientConfig {
+public class DefaultRestClientConfig {
     @Bean
-    WebClient defaultWebClient() {
-        return WebClient.builder().build();
+    RestClient defaultRestClient() {
+        return RestClient.builder().build();
     }
 }

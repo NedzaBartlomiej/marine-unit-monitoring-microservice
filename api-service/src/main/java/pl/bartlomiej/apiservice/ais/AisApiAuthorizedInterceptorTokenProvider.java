@@ -8,19 +8,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.reactive.function.client.WebClient;
-import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.reactor.AuthorizedExchangeTokenProvider;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestClient;
+import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.servlet.AuthorizedInterceptorTokenProvider;
 
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 import static org.springframework.web.reactive.function.BodyInserters.fromFormData;
 
 @Service
-public class AisApiAuthorizedExchangeTokenProvider implements AuthorizedExchangeTokenProvider {
+public class AisApiAuthorizedInterceptorTokenProvider implements AuthorizedInterceptorTokenProvider {
 
-    private static final Logger log = LoggerFactory.getLogger(AisApiAuthorizedExchangeTokenProvider.class);
-    private final WebClient webClient;
+    private static final Logger log = LoggerFactory.getLogger(AisApiAuthorizedInterceptorTokenProvider.class);
+    private final RestClient restClient;
 
     private final String clientId;
 
@@ -32,13 +31,13 @@ public class AisApiAuthorizedExchangeTokenProvider implements AuthorizedExchange
 
     private final String accessTokenApiUrl;
 
-    public AisApiAuthorizedExchangeTokenProvider(@Qualifier("defaultWebClient") WebClient webClient,
-                                                 @Value("${ais-api.auth.client-id}") String clientId,
-                                                 @Value("${ais-api.auth.scope}") String scope,
-                                                 @Value("${ais-api.auth.client-secret}") String clientSecret,
-                                                 @Value("${ais-api.auth.grant-type}") String grantType,
-                                                 @Value("${ais-api.auth.url}") String accessTokenApiUrl) {
-        this.webClient = webClient;
+    public AisApiAuthorizedInterceptorTokenProvider(@Qualifier("defaultRestClient") RestClient restClient,
+                                                    @Value("${ais-api.auth.client-id}") String clientId,
+                                                    @Value("${ais-api.auth.scope}") String scope,
+                                                    @Value("${ais-api.auth.client-secret}") String clientSecret,
+                                                    @Value("${ais-api.auth.grant-type}") String grantType,
+                                                    @Value("${ais-api.auth.url}") String accessTokenApiUrl) {
+        this.restClient = restClient;
         this.clientId = clientId;
         this.scope = scope;
         this.clientSecret = clientSecret;
@@ -56,20 +55,21 @@ public class AisApiAuthorizedExchangeTokenProvider implements AuthorizedExchange
     }
 
     @Override
-    public Mono<String> getValidToken() {
+    public String getValidToken() {
         log.info("Access token has refreshed now.");
-        return this.fetchAuthTokenFromApi()
-                .map(this::extractTokenFromApiResponse);
+        return this.extractTokenFromApiResponse(
+                this.fetchAuthTokenFromApi()
+        );
     }
 
-    private Mono<JsonNode> fetchAuthTokenFromApi() {
-        return webClient
+    private JsonNode fetchAuthTokenFromApi() {
+        return restClient
                 .post()
                 .uri(accessTokenApiUrl)
                 .header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE)
                 .body(fromFormData(buildAuthBody()))
                 .retrieve()
-                .bodyToMono(JsonNode.class);
+                .body(JsonNode.class);
     }
 
     private String extractTokenFromApiResponse(JsonNode response) {

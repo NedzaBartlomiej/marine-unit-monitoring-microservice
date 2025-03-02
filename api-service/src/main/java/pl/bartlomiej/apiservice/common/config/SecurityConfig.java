@@ -2,21 +2,17 @@ package pl.bartlomiej.apiservice.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
-import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
-import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
-import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.config.web.server.ServerHttpSecurity.CsrfSpec;
-import org.springframework.security.config.web.server.ServerHttpSecurity.FormLoginSpec;
-import org.springframework.security.config.web.server.ServerHttpSecurity.HttpBasicSpec;
-import org.springframework.security.config.web.server.ServerHttpSecurity.LogoutSpec;
-import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverter;
-import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFilter;
 import pl.bartlomiej.apiservice.common.apiaccess.ApiKeyWebFilter;
-import pl.bartlomiej.mumcommons.core.exceptionhandling.external.reactor.DefaultResponseModelServerAccessDeniedHandler;
-import pl.bartlomiej.mumcommons.core.exceptionhandling.external.reactor.DefaultResponseModelServerAuthEntryPoint;
-import pl.bartlomiej.mumcommons.globalidmservice.authconversion.external.reactor.KeycloakReactiveJwtGrantedAuthoritiesConverter;
+import pl.bartlomiej.mumcommons.core.exceptionhandling.external.servlet.DefaultResponseModelAccessDeniedHandler;
+import pl.bartlomiej.mumcommons.core.exceptionhandling.external.servlet.DefaultResponseModelAuthEntryPoint;
+import pl.bartlomiej.mumcommons.globalidmservice.authconversion.external.servlet.KeycloakJwtGrantedAuthoritiesConverter;
 
 import java.util.List;
 
@@ -24,8 +20,7 @@ import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 
 @Configuration
-@EnableWebFluxSecurity
-@EnableReactiveMethodSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final List<String> postOpenEndpoints = List.of(
@@ -36,21 +31,21 @@ public class SecurityConfig {
     );
 
     @Bean
-    SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http,
-                                                  ReactiveJwtAuthenticationConverter authenticationConverter,
-                                                  DefaultResponseModelServerAuthEntryPoint authEntryPoint,
-                                                  DefaultResponseModelServerAccessDeniedHandler accessDeniedHandler,
-                                                  ApiKeyWebFilter apiKeyWebFilter) {
+    SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                            JwtAuthenticationConverter authenticationConverter,
+                                            DefaultResponseModelAuthEntryPoint authEntryPoint,
+                                            DefaultResponseModelAccessDeniedHandler accessDeniedHandler,
+                                            ApiKeyWebFilter apiKeyWebFilter) throws Exception {
         return http
-                .httpBasic(HttpBasicSpec::disable)
-                .formLogin(FormLoginSpec::disable)
-                .logout(LogoutSpec::disable)
-                .csrf(CsrfSpec::disable)
-                .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
-                .authorizeExchange(auth -> {
-                    postOpenEndpoints.forEach(e -> auth.pathMatchers(POST, e).permitAll());
-                    getOpenEndpoints.forEach(e -> auth.pathMatchers(GET, e).permitAll());
-                    auth.anyExchange().authenticated();
+                .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> {
+                    postOpenEndpoints.forEach(e -> auth.requestMatchers(POST, e).permitAll());
+                    getOpenEndpoints.forEach(e -> auth.requestMatchers(GET, e).permitAll());
+                    auth.anyRequest().authenticated();
                 })
                 .oauth2ResourceServer(oAuth2ResourceServerSpec ->
                         oAuth2ResourceServerSpec
@@ -63,14 +58,14 @@ public class SecurityConfig {
                                 .authenticationEntryPoint(authEntryPoint)
                                 .accessDeniedHandler(accessDeniedHandler)
                 )
-                .addFilterAfter(apiKeyWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+                .addFilterAfter(apiKeyWebFilter, AuthenticationFilter.class)
                 .build();
     }
 
     @Bean
-    ReactiveJwtAuthenticationConverter reactiveJwtAuthenticationConverter(KeycloakReactiveJwtGrantedAuthoritiesConverter grantedAuthoritiesConverter) {
-        var authenticationConverter = new ReactiveJwtAuthenticationConverter();
-        authenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
-        return authenticationConverter;
+    JwtAuthenticationConverter jwtAuthenticationConverter(KeycloakJwtGrantedAuthoritiesConverter authoritiesConverter) {
+        var authConverter = new JwtAuthenticationConverter();
+        authConverter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
+        return authConverter;
     }
 }

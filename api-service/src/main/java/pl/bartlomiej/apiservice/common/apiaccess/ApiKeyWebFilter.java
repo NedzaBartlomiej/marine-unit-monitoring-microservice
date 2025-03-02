@@ -1,16 +1,19 @@
 package pl.bartlomiej.apiservice.common.apiaccess;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
-import reactor.core.publisher.Mono;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
 
 @Component
-public class ApiKeyWebFilter implements WebFilter {
+public class ApiKeyWebFilter extends OncePerRequestFilter {
 
     private final DevServiceHttpService devServiceHttpService;
 
@@ -18,27 +21,23 @@ public class ApiKeyWebFilter implements WebFilter {
         this.devServiceHttpService = devServiceHttpService;
     }
 
-    @NonNull
     @Override
-    public Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull WebFilterChain chain) {
-        return this.extractApiKeyHeader(exchange)
-                .flatMap(devServiceHttpService::checkToken)
-                .flatMap(responseEntity -> Mono.justOrEmpty(responseEntity.getBody())
-                        .flatMap(responseModel -> this.processTokenValidation(responseModel.getBody(), chain, exchange))
-                        .switchIfEmpty(Mono.error(new AuthenticationServiceException("Api token validation internal error.")))
-                );
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+        String apiKey = this.extractApiKey(request);
+        var checkResponse = devServiceHttpService.checkToken(apiKey);
+        if (checkResponse.getBody() == null) {
+            throw new AuthenticationServiceException("Api token validation internal error.");
+        }
+        if (!checkResponse.getBody().getBody()) {
+            throw new AuthenticationCredentialsNotFoundException("x-api-key header token is invalid.");
+        }
+        filterChain.doFilter(request, response);
     }
 
-    private Mono<String> extractApiKeyHeader(final ServerWebExchange exchange) {
-        String xApiKey = exchange.getRequest().getHeaders().getFirst("x-api-key");
-        return Mono.justOrEmpty(xApiKey)
-                .switchIfEmpty(Mono.error(new AuthenticationCredentialsNotFoundException("x-api-key header is null.")));
+    private String extractApiKey(HttpServletRequest request) {
+        String xApiKey = request.getHeader("x-api-key");
+        if (xApiKey == null || xApiKey.isBlank())
+            throw new AuthenticationCredentialsNotFoundException("x-api-key header is null.");
+        return xApiKey;
     }
-
-    private Mono<Void> processTokenValidation(final boolean isTokenValid, final WebFilterChain chain, final ServerWebExchange exchange) {
-        return isTokenValid
-                ? chain.filter(exchange)
-                : Mono.error(new AuthenticationCredentialsNotFoundException("x-api-key header token is invalid."));
-    }
-
 }
