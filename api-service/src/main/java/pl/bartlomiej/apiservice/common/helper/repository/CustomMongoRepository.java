@@ -1,20 +1,19 @@
 package pl.bartlomiej.apiservice.common.helper.repository;
 
 import com.mongodb.client.result.UpdateResult;
-import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 import pl.bartlomiej.apiservice.common.util.CommonFields;
-import reactor.core.publisher.Mono;
 
 @Repository
 public class CustomMongoRepository implements CustomRepository {
-    private final ReactiveMongoTemplate reactiveMongoTemplate;
+    private final MongoTemplate mongoTemplate;
 
-    public CustomMongoRepository(ReactiveMongoTemplate reactiveMongoTemplate) {
-        this.reactiveMongoTemplate = reactiveMongoTemplate;
+    public CustomMongoRepository(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
     }
 
     @Override
@@ -23,8 +22,8 @@ public class CustomMongoRepository implements CustomRepository {
     }
 
     @Override
-    public Mono<UpdateResult> updateOne(String id, String updateFieldName, Object updateValue, Class<?> entityClass) {
-        return reactiveMongoTemplate.updateFirst(
+    public UpdateResult updateOne(String id, String updateFieldName, Object updateValue, Class<?> entityClass) {
+        return mongoTemplate.updateFirst(
                 this.getIdValidQuery(id),
                 this.getFieldUpdate(updateFieldName, updateValue),
                 entityClass
@@ -32,8 +31,8 @@ public class CustomMongoRepository implements CustomRepository {
     }
 
     @Override
-    public Mono<UpdateResult> updateMulti(String id, String updateFieldName, Object updateValue, Class<?> entityClass) {
-        return reactiveMongoTemplate.updateMulti(
+    public UpdateResult updateMulti(String id, String updateFieldName, Object updateValue, Class<?> entityClass) {
+        return mongoTemplate.updateMulti(
                 this.getIdValidQuery(id),
                 this.getFieldUpdate(updateFieldName, updateValue),
                 entityClass

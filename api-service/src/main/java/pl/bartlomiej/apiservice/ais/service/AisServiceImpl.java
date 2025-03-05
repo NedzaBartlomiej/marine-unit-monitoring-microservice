@@ -40,7 +40,8 @@ public class AisServiceImpl implements AisService {
                 .retrieve()
                 .body(new ParameterizedTypeReference<>() {
                 });
-        return Objects.requireNonNull(aisShips).stream().limit(resultLimit).toList();
+        return Objects.requireNonNull(aisShips, "AisShip list from the API is null.")
+                .stream().limit(resultLimit).toList();
     }
 
     @Override
