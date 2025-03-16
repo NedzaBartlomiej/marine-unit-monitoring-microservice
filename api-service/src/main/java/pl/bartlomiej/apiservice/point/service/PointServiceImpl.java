@@ -7,8 +7,8 @@ import pl.bartlomiej.apiservice.ais.service.AisService;
 import pl.bartlomiej.apiservice.geocoding.Position;
 import pl.bartlomiej.apiservice.geocoding.service.GeocodeService;
 import pl.bartlomiej.apiservice.point.Point;
-import reactor.core.publisher.Flux;
 
+import java.util.List;
 import java.util.Objects;
 
 import static pl.bartlomiej.apiservice.ais.nested.Geometry.X_COORDINATE_INDEX;
@@ -29,32 +29,28 @@ public class PointServiceImpl implements PointService {
 
     @Cacheable(cacheNames = POINTS_CACHE_NAME)
     @Override
-    public Flux<Point> getPoints() {
-        return aisService.fetchLatestShips()
-                .flatMap(this::mapToPoint)
-                .cache();
+    public List<Point> getPoints() {
+        return aisService.fetchLatestShips().stream()
+                .map(this::mapToPoint)
+                .toList();
     }
 
-    private Flux<Point> mapToPoint(AisShip aisShip) {
-
+    private Point mapToPoint(AisShip aisShip) {
         String mayNullName = Objects.requireNonNullElse(aisShip.properties().name(), UNKNOWN_NOT_REPORTED);
         String mayNullDestination = Objects.requireNonNullElse(aisShip.properties().destination(), UNKNOWN_NOT_REPORTED);
-
-        return this.getShipDestinationCoordinates(aisShip)
-                .map(position ->
-                        new Point(
-                                aisShip.properties().mmsi().toString(),
-                                mayNullName,
-                                aisShip.geometry().coordinates().get(X_COORDINATE_INDEX),
-                                aisShip.geometry().coordinates().get(Y_COORDINATE_INDEX),
-                                mayNullDestination,
-                                position.x(),
-                                position.y()
-                        )
-                );
+        Position shipPosition = this.getShipPosition(aisShip);
+        return new Point(
+                aisShip.properties().mmsi().toString(),
+                mayNullName,
+                aisShip.geometry().coordinates().get(X_COORDINATE_INDEX),
+                aisShip.geometry().coordinates().get(Y_COORDINATE_INDEX),
+                mayNullDestination,
+                shipPosition.x(),
+                shipPosition.y()
+        );
     }
 
-    private Flux<Position> getShipDestinationCoordinates(AisShip aisShip) {
+    private Position getShipPosition(AisShip aisShip) {
         return geocodeService.getAddressCoordinates(aisShip.properties().destination());
     }
 }

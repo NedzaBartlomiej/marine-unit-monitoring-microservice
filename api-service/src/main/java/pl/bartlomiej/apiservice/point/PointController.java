@@ -9,7 +9,8 @@ import pl.bartlomiej.apiservice.point.activepoint.InactivePointFilter;
 import pl.bartlomiej.apiservice.point.activepoint.service.ActivePointService;
 import pl.bartlomiej.apiservice.point.service.PointService;
 import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
-import reactor.core.publisher.Flux;
+
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -31,31 +32,27 @@ public class PointController {
     }
 
     @GetMapping
-    public ResponseEntity<Flux<ResponseModel<Point>>> getPoints() {
+    public ResponseEntity<ResponseModel<List<Point>>> getPoints() {
+        List<Point> points = pointService.getPoints();
         // ACTIVE LIST FILTRATION
-        pointService.getPoints()
+        List<String> currPointsMmsis = points.stream()
                 .map(Point::mmsi)
-                .collectList()
-                .subscribe(mmsis ->
-                        inactivePointFilter.filter(mmsis).subscribe()
-                );
+                .toList();
+        inactivePointFilter.filter(currPointsMmsis);
+
+        // ActivePoint SYNC todo -> !(To be optimized, described in the ActivePoint.class)!
+        points.forEach(point -> activePointService.addActivePoint(
+                new ActivePoint(
+                        point.mmsi(),
+                        point.name()
+                )
+        ));
 
         // RESPONSE
         return ResponseEntity.ok(
-                pointService.getPoints()
-                        .flatMap(point ->
-                                activePointService.addActivePoint(
-                                        new ActivePoint(
-                                                point.mmsi(),
-                                                point.name()
-                                        )
-                                ).thenReturn(point)
-                        )
-                        .map(point ->
-                                new ResponseModel.Builder<Point>(OK, true)
-                                        .body(point)
-                                        .build()
-                        )
+                new ResponseModel.Builder<List<Point>>(OK, true)
+                        .body(points)
+                        .build()
         );
     }
 }

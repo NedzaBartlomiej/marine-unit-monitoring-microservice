@@ -8,12 +8,8 @@ import pl.bartlomiej.apiservice.common.exception.apiexception.MmsiConflictExcept
 import pl.bartlomiej.apiservice.point.activepoint.service.ActivePointService;
 import pl.bartlomiej.apiservice.shiptracking.service.ShipTrackService;
 import pl.bartlomiej.apiservice.user.nested.trackedship.service.TrackedShipService;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
-
-import static reactor.core.publisher.Mono.empty;
-import static reactor.core.publisher.Mono.error;
 
 @Component
 public class InactivePointFilter {
@@ -32,40 +28,33 @@ public class InactivePointFilter {
         this.trackedShipService = trackedShipService;
     }
 
-    public Mono<Void> filter(List<String> activeMmsis) {
-        return activePointService.getMmsis()
-                .flatMap(actualMmsis -> {
+    /**
+     * Function that removes Inactive Points basing on its argument. Deletes all connections and data of this point.
+     * @param activePointsMmsis A list of currently active points
+     */
+    public void filter(List<String> activePointsMmsis) {
+        if (activePointsMmsis.isEmpty()) {
+            throw new MmsiConflictException("Filtered ActivePointsMmsis cannot be empty.");
+        }
 
-                    if (activeMmsis.isEmpty()) {
-                        return error(new MmsiConflictException("Active mmsis is empty."));
-                    }
+        List<String> currStoredActivePointsMmsis = activePointService.getMmsis();
+        List<String> inactiveMmsis = currStoredActivePointsMmsis.stream()
+                .filter(currMmsi -> !activePointsMmsis.contains(currMmsi))
+                .toList();
+        if (inactiveMmsis.isEmpty()) {
+            log.info("All points are active. End of the filtering.");
+            return;
+        }
 
-                    // exclude matching mmsis and detailing inactive mmsis
-                    List<String> inactiveMmsis = actualMmsis.stream()
-                            .filter(actualMmsi -> !activeMmsis.contains(actualMmsi))
-                            .toList();
-
-                    if (inactiveMmsis.isEmpty()) {
-                        log.info("All points are active.");
-                    } else {
-                        inactiveMmsis
-                                .forEach(mmsi -> {
-                                    log.info("Removing inactive point - {}", mmsi);
-                                    activePointService.removeActivePoint(mmsi)
-                                            .doOnError(e -> log.warn("Active points - {}", e.getMessage()))
-                                            .subscribe();
-                                    trackedShipService.removeTrackedShip(mmsi)
-                                            .doOnError(e -> log.warn("Tracked ships - {}", e.getMessage()))
-                                            .subscribe();
-                                    shipTrackService.clearShipHistory(mmsi)
-                                            .doOnError(e -> log.warn("Ship track history - {}", e.getMessage()))
-                                            .subscribe();
-                                });
-                    }
-
-                    return empty();
-                })
-                .doOnError(err -> log.warn("Something processIssue when filtering - {}", err.getMessage()))
-                .then();
+        log.info("There are some inactive points, permanently removing them");
+        inactiveMmsis.forEach(inactiveMmsi -> {
+            log.info("Removing inactive point: {}.", inactiveMmsi);
+            log.info("From the ActivePoint list.");
+            activePointService.removeActivePoint(inactiveMmsi);
+            log.info("From the ShipTracking list.");
+            trackedShipService.removeTrackedShip(inactiveMmsi);
+            log.info("From the ShipTracking history.");
+            shipTrackService.clearShipHistory(inactiveMmsi);
+        });
     }
 }

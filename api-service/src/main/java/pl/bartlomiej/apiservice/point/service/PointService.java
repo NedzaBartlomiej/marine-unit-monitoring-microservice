@@ -1,9 +1,10 @@
 package pl.bartlomiej.apiservice.point.service;
 
 import pl.bartlomiej.apiservice.point.Point;
-import reactor.core.publisher.Flux;
+
+import java.util.List;
 
 public interface PointService {
 
-    Flux<Point> getPoints();
+    List<Point> getPoints();
 }
