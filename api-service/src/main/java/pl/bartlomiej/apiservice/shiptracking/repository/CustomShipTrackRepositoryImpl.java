@@ -1,14 +1,11 @@
 package pl.bartlomiej.apiservice.shiptracking.repository;
 
-import jakarta.ws.rs.NotFoundException;
-import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 import pl.bartlomiej.apiservice.shiptracking.ShipTrack;
 import pl.bartlomiej.apiservice.shiptracking.ShipTrackConstants;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,38 +13,32 @@ import java.util.List;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 import static org.springframework.data.domain.Sort.by;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static reactor.core.publisher.Mono.error;
-import static reactor.core.publisher.Mono.from;
 
 @Repository
 public class CustomShipTrackRepositoryImpl implements CustomShipTrackRepository {
 
-    private final ReactiveMongoTemplate reactiveMongoTemplate;
+    private final MongoTemplate mongoTemplate;
 
-    public CustomShipTrackRepositoryImpl(ReactiveMongoTemplate reactiveMongoTemplate) {
-        this.reactiveMongoTemplate = reactiveMongoTemplate;
+    public CustomShipTrackRepositoryImpl(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
     }
 
     @Override
-    public Flux<ShipTrack> findByMmsiInAndReadingTimeBetween(List<String> mmsis, LocalDateTime from, LocalDateTime to) {
+    public List<ShipTrack> findByMmsiInAndReadingTimeBetween(List<String> mmsis, LocalDateTime from, LocalDateTime to) {
         Query q = new Query().addCriteria(
                 Criteria
                         .where(ShipTrackConstants.MMSI).in(mmsis)
                         .and(ShipTrackConstants.READING_TIME).gte(from).lte(to)
         );
-        return reactiveMongoTemplate.find(q, ShipTrack.class);
+        return mongoTemplate.find(q, ShipTrack.class);
     }
 
     @Override
-    public Mono<ShipTrack> getLatest(String mmsi) {
+    public ShipTrack getLatest(String mmsi) {
         Query q = new Query();
         q.addCriteria(where(ShipTrackConstants.MMSI).is(mmsi));
         q.with(by(DESC, ShipTrackConstants.READING_TIME));
         q.limit(1);
-
-        return from(
-                reactiveMongoTemplate.find(q, ShipTrack.class)
-                        .switchIfEmpty(error(NotFoundException::new))
-        );
+        return mongoTemplate.find(q, ShipTrack.class).getFirst();
     }
 }

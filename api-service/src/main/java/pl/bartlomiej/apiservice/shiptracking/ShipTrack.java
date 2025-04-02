@@ -1,6 +1,5 @@
 package pl.bartlomiej.apiservice.shiptracking;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -10,8 +9,8 @@ import static java.time.LocalDateTime.now;
 @Document(collection = "shipTracks")
 public class ShipTrack {
 
+    private String id;
     private final LocalDateTime readingTime = now();
-    @Id
     private String mmsi;
     private Double x;
     private Double y;
@@ -23,6 +22,10 @@ public class ShipTrack {
     }
 
     public ShipTrack() {
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getMmsi() {
@@ -40,4 +43,5 @@ public class ShipTrack {
     public LocalDateTime getReadingTime() {
         return readingTime;
     }
+
 }
