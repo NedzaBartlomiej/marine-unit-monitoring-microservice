@@ -1,10 +1,11 @@
 package pl.bartlomiej.apiservice.shiptracking.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mongodb.client.MongoCollection;
+import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.ChangeStreamEvent;
-import org.springframework.data.mongodb.core.ChangeStreamOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
@@ -33,7 +34,7 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.matc
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 
 @Service
-public class ShipTrackServiceImpl implements ShipTrackService {
+class ShipTrackServiceImpl implements ShipTrackService {
 
     private static final Logger log = LoggerFactory.getLogger(ShipTrackServiceImpl.class);
     private final AisService aisService;
@@ -60,8 +61,9 @@ public class ShipTrackServiceImpl implements ShipTrackService {
 
     // TRACK HISTORY - operations
 
-    @Override // todo how to do change streams java non-reactive way
     public Flux<ShipTrack> getShipTrackHistory(String userId, LocalDateTime from, LocalDateTime to) {
+
+
         return trackedShipService.getTrackedShips(userId)
                 .map(TrackedShip::mmsi)
                 .collectList()
@@ -92,14 +94,6 @@ public class ShipTrackServiceImpl implements ShipTrackService {
                         }
                         Aggregation pipeline = newAggregation(match);
 
-                        Flux<ChangeStreamEvent<ShipTrack>> changeStream = mongoTemplate.changeStream(
-                                ShipTrackConstants.SHIP_TRACKS_COLLECTION,
-                                ChangeStreamOptions.builder()
-                                        .filter(pipeline)
-                                        .build(),
-                                ShipTrack.class
-                        );
-
                         Flux<ShipTrack> shipTrackStream = changeStream
                                 .mapNotNull(ChangeStreamEvent::getBody)
                                 .doOnNext(shipTrack ->
@@ -126,14 +120,10 @@ public class ShipTrackServiceImpl implements ShipTrackService {
     }
 
     private void saveNoStationaryTrack(ShipTrack shipTrack) {
-        try {
-            ShipTrack latest = customShipTrackRepository.getLatest(shipTrack.getMmsi());
-            if ((latest.getX().equals(shipTrack.getX()) && latest.getY().equals(shipTrack.getY()))) {
-                log.warn("The ship did not change its position - saving canceled");
-            } else {
-                mongoShipTrackRepository.save(shipTrack);
-            }
-        } catch (Exception e) {
+        ShipTrack latest = customShipTrackRepository.getLatest(shipTrack.getMmsi());
+        if ((latest.getX().equals(shipTrack.getX()) && latest.getY().equals(shipTrack.getY()))) {
+            log.warn("Ship hasn't changed its position - saving canceled");
+        } else {
             mongoShipTrackRepository.save(shipTrack);
         }
     }
@@ -148,7 +138,7 @@ public class ShipTrackServiceImpl implements ShipTrackService {
 
     // GET SHIP TRACKS TO SAVE - operations
     private Stream<ShipTrack> getShipTracks() {
-        return aisService.fetchShipsByIdentifiers(this.getShipMmsisToTrack())
+        return aisService.fetchShipsByMmsis(this.getShipMmsisToTrack())
                 .stream()
                 .map(this::mapToShipTrack);
     }

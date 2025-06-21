@@ -15,7 +15,7 @@ import static org.springframework.data.domain.Sort.by;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @Repository
-public class CustomShipTrackRepositoryImpl implements CustomShipTrackRepository {
+class CustomShipTrackRepositoryImpl implements CustomShipTrackRepository {
 
     private final MongoTemplate mongoTemplate;
 

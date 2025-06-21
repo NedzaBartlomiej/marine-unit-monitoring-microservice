@@ -8,5 +8,5 @@ import java.util.List;
 public interface AisService {
     List<AisShip> fetchLatestShips();
 
-    List<JsonNode> fetchShipsByIdentifiers(List<String> identifiers);
+    List<JsonNode> fetchShipsByMmsis(List<String> mmsis);
 }

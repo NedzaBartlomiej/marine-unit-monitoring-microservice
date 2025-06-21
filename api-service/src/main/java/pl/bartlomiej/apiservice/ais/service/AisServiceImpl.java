@@ -45,11 +45,11 @@ public class AisServiceImpl implements AisService {
     }
 
     @Override
-    public List<JsonNode> fetchShipsByIdentifiers(List<String> identifiers) {
+    public List<JsonNode> fetchShipsByMmsis(List<String> mmsis) {
         return restClient
                 .post()
                 .uri(apiFetchByMmsiUri)
-                .body(of(CommonShipFields.MMSI, identifiers.toArray()))
+                .body(of(CommonShipFields.MMSI, mmsis.toArray()))
                 .retrieve()
                 .body(new ParameterizedTypeReference<>() {
                 });

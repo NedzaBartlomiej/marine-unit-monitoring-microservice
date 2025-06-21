@@ -4,8 +4,10 @@ import pl.bartlomiej.apiservice.user.nested.trackedship.TrackedShip;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 public interface TrackedShipService {
-    Flux<TrackedShip> getTrackedShips(String id);
+    List<TrackedShip> getTrackedShips(String id);
 
     Mono<TrackedShip> addTrackedShip(String id, String mmsi);
 
