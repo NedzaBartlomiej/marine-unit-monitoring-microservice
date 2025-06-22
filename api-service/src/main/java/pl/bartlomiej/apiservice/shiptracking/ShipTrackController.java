@@ -1,9 +1,11 @@
 package pl.bartlomiej.apiservice.shiptracking;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import pl.bartlomiej.apiservice.common.seeemission.SseEmissionManager;
 import pl.bartlomiej.apiservice.shiptracking.service.ShipTrackService;
 import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
 import reactor.core.publisher.Flux;
@@ -19,9 +21,12 @@ import static org.springframework.http.HttpStatus.OK;
 public class ShipTrackController {
 
     private final ShipTrackService shipTrackService;
+    private final SseEmissionManager sseEmissionManager;
 
-    public ShipTrackController(ShipTrackService shipTrackService) {
+    public ShipTrackController(ShipTrackService shipTrackService,
+                               @Qualifier("shipTrackInMemorySseEmissionManager") SseEmissionManager sseEmissionManager) {
         this.shipTrackService = shipTrackService;
+        this.sseEmissionManager = sseEmissionManager;
     }
 
     @PreAuthorize("hasRole(T(pl.bartlomiej.apiservice.user.domain.UserKeycloakRole).API_PREMIUM_USER.getRole())")
@@ -58,8 +63,9 @@ public class ShipTrackController {
 
     @PreAuthorize("hasRole(T(pl.bartlomiej.apiservice.user.domain.UserKeycloakRole).API_PREMIUM_USER.getRole())")
     @GetMapping("/stream")
-    public SseEmitter getShipTrackStream(@RequestHeader("x-api-key") String xApiKey,
-                                         Principal principal) {
-
+    public SseEmitter getShipTrackStream(@RequestHeader("x-api-key") String xApiKey) {
+        return this.sseEmissionManager.getOrCreateEmitter(xApiKey);
     }
+
+    // disconnect from stream;
 }

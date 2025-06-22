@@ -16,13 +16,13 @@ import static pl.bartlomiej.apiservice.ais.nested.Geometry.Y_COORDINATE_INDEX;
 import static pl.bartlomiej.apiservice.common.config.RedisCacheConfig.POINTS_CACHE_NAME;
 
 @Service
-public class PointServiceImpl implements PointService {
+public class DefaultPointService implements PointService {
 
     public static final String UNKNOWN_NOT_REPORTED = "UNKNOWN (NOT REPORTED)";
     private final AisService aisService;
     private final GeocodeService geocodeService;
 
-    public PointServiceImpl(AisService aisService, GeocodeService geocodeService) {
+    public DefaultPointService(AisService aisService, GeocodeService geocodeService) {
         this.aisService = aisService;
         this.geocodeService = geocodeService;
     }

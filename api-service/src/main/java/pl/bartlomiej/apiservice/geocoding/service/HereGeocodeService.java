@@ -18,19 +18,19 @@ import java.util.Objects;
 import static pl.bartlomiej.apiservice.common.config.RedisCacheConfig.ADDRESS_COORDS_CACHE_NAME;
 
 @Service
-public class HereGeocodeServiceImpl implements GeocodeService {
+public class HereGeocodeService implements GeocodeService {
 
     private static final String LAT = "lat";
     private static final String LNG = "lng";
     private static final int FIRST_GEOCODE_SUGGESTION = 0;
-    private static final Logger log = LoggerFactory.getLogger(HereGeocodeServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(HereGeocodeService.class);
     private final RestClient restClient;
     private final String geocodeApiKey;
     private final String geocodeApiBaseUrl;
 
-    public HereGeocodeServiceImpl(@Qualifier("defaultRestClient") RestClient restClient,
-                                  @Value("${geocode-api.api-key}") String geocodeApiKey,
-                                  @Value("${geocode-api.api-base-url}") String geocodeApiBaseUrl) {
+    public HereGeocodeService(@Qualifier("defaultRestClient") RestClient restClient,
+                              @Value("${geocode-api.api-key}") String geocodeApiKey,
+                              @Value("${geocode-api.api-base-url}") String geocodeApiBaseUrl) {
         this.restClient = restClient;
         this.geocodeApiKey = geocodeApiKey;
         this.geocodeApiBaseUrl = geocodeApiBaseUrl;

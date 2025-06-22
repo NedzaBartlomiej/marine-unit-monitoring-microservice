@@ -1,8 +1,6 @@
 package pl.bartlomiej.apiservice.shiptracking.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mongodb.client.MongoCollection;
-import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.ChangeStreamEvent;
@@ -34,17 +32,16 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.matc
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 
 @Service
-class ShipTrackServiceImpl implements ShipTrackService {
+class DefaultShipTrackService implements ShipTrackService {
 
-    private static final Logger log = LoggerFactory.getLogger(ShipTrackServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultShipTrackService.class);
     private final AisService aisService;
     private final TrackedShipService trackedShipService;
     private final MongoShipTrackRepository mongoShipTrackRepository;
     private final CustomShipTrackRepository customShipTrackRepository;
-    private final MongoTemplate mongoTemplate;
     private final ActivePointService activePointService;
 
-    public ShipTrackServiceImpl(
+    public DefaultShipTrackService(
             AisService aisService, TrackedShipService trackedShipService,
             MongoShipTrackRepository mongoShipTrackRepository,
             CustomShipTrackRepository customShipTrackRepository,
@@ -54,7 +51,6 @@ class ShipTrackServiceImpl implements ShipTrackService {
         this.trackedShipService = trackedShipService;
         this.mongoShipTrackRepository = mongoShipTrackRepository;
         this.customShipTrackRepository = customShipTrackRepository;
-        this.mongoTemplate = mongoTemplate;
         this.activePointService = activePointService;
     }
 
