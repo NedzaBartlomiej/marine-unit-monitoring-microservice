@@ -1,4 +1,4 @@
-package pl.bartlomiej.apiservice.common.seeemission;
+package pl.bartlomiej.apiservice.common.sseemission.emissionmanager;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

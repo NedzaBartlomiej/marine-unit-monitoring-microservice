@@ -1,4 +1,4 @@
-package pl.bartlomiej.apiservice.shiptracking.helper;
+package pl.bartlomiej.apiservice.common.helper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

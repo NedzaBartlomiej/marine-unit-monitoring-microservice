@@ -15,17 +15,17 @@ import java.util.Objects;
 import static java.util.Map.of;
 
 @Service
-public class AisServiceImpl implements AisService {
+public class DefaultAisService implements AisService {
 
     private final RestClient restClient;
     private final long resultLimit;
     private final String apiFetchLatestUri;
     private final String apiFetchByMmsiUri;
 
-    public AisServiceImpl(@Qualifier("aisApiAuthorizedRestClient") RestClient restClient,
-                          @Value("${project-properties.external-apis.ais-api.result-limit}") long resultLimit,
-                          @Value("${ais-api.latest-ais-url}") String apiFetchLatestUri,
-                          @Value("${ais-api.latest-ais-bymmsi-url}") String apiFetchByMmsiUri) {
+    public DefaultAisService(@Qualifier("aisApiAuthorizedRestClient") RestClient restClient,
+                             @Value("${project-properties.external-apis.ais-api.result-limit}") long resultLimit,
+                             @Value("${ais-api.latest-ais-url}") String apiFetchLatestUri,
+                             @Value("${ais-api.latest-ais-bymmsi-url}") String apiFetchByMmsiUri) {
         this.restClient = restClient;
         this.resultLimit = resultLimit;
         this.apiFetchLatestUri = apiFetchLatestUri;

@@ -16,13 +16,13 @@ import java.util.List;
 import static pl.bartlomiej.apiservice.common.exception.apiexception.MmsiConflictException.Message.INVALID_SHIP;
 
 @Service
-public class ActivePointServiceImpl implements ActivePointService {
+public class DefaultActivePointService implements ActivePointService {
 
-    private static final Logger log = LoggerFactory.getLogger(ActivePointServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultActivePointService.class);
     private final MongoActivePointRepository activePointRepository;
     private final AisService aisService;
 
-    public ActivePointServiceImpl(MongoActivePointRepository activePointRepository, AisService aisService) {
+    public DefaultActivePointService(MongoActivePointRepository activePointRepository, AisService aisService) {
         this.activePointRepository = activePointRepository;
         this.aisService = aisService;
     }

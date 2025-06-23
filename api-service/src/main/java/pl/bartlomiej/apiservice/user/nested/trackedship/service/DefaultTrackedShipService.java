@@ -17,14 +17,14 @@ import static pl.bartlomiej.apiservice.common.exception.apiexception.MmsiConflic
 import static pl.bartlomiej.apiservice.common.exception.apiexception.MmsiConflictException.Message.SHIP_IS_ALREADY_TRACKED;
 
 @Service
-public class TrackedShipServiceImpl implements TrackedShipService {
+public class DefaultTrackedShipService implements TrackedShipService {
 
-    private static final Logger log = LoggerFactory.getLogger(TrackedShipServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultTrackedShipService.class);
     private final UserService userService;
     private final CustomUserRepository customUserRepository;
     private final ActivePointService activePointService;
 
-    public TrackedShipServiceImpl(
+    public DefaultTrackedShipService(
             UserService userService,
             CustomUserRepository customUserRepository,
             ActivePointService activePointService) {

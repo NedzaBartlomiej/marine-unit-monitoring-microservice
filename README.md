@@ -7,7 +7,7 @@ This file contains common environment variables used across multiple services.
 
 ```.env
 # Eureka Discovery Configuration
-eureka.client.service-url.defaultZone=
+eureka.client.service-url.defaultZone=http://eureka-discovery:8761/eureka/
 ```
 
 ### `<service-name>.env` - Environment File for Particular Service
@@ -18,6 +18,8 @@ These files contain service-specific environment variables for individual servic
 ```gateway.env
 # Eureka Discovery Configuration
 eureka.instance.hostname=gateway
+# Debug Configuration
+_JAVA_OPTIONS:"-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
 ```
 
 #### `api-service.env`
@@ -26,7 +28,7 @@ eureka.instance.hostname=gateway
 # Eureka Discovery Configuration
 eureka.instance.hostname=api-service
 # Debug Configuration
-_JAVA_OPTIONS:"-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:PORT"
+_JAVA_OPTIONS:"-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006"
 ```
 
 #### `dev-service.env`
@@ -35,7 +37,25 @@ _JAVA_OPTIONS:"-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,add
 # Eureka Discovery Configuration
 eureka.instance.hostname=dev-service
 # Debug Configuration
-_JAVA_OPTIONS:"-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:PORT"
+_JAVA_OPTIONS:"-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007"
+```
+
+#### `protection-service.env`
+
+```protection-service.env
+# Eureka Discovery Configuration
+eureka.instance.hostname=protection-service
+# Debug Configuration
+_JAVA_OPTIONS:"-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008"
+```
+
+#### `email-service.env`
+
+```email-service.env
+# Eureka Discovery Configuration
+eureka.instance.hostname=email-service
+# Debug Configuration
+_JAVA_OPTIONS:"-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009"
 ```
 
 ### `keycloak.env` - Environment File for Keycloak Configuration and Keycloak Database Values
@@ -105,9 +125,9 @@ keycloak:
 
 --- 
 
-### Secrets file for dev-service (default location from api-service catalog -> ./src/main/resources/secrets.yaml)
+### Secrets file for dev-service (default location from dev-service catalog -> ./src/main/resources/secrets.yaml)
 
-This file contains secrets and API-related configurations for the api-service.
+This file contains secrets and API-related configurations for the dev-service.
 
 ```secrets.yaml
 # Keycloak Configuration
@@ -119,15 +139,33 @@ keycloak:
 
 --- 
 
-### Secrets file for email-service (default location from api-service catalog -> ./src/main/resources/secrets.yaml)
+### Secrets file for email-service (default location from email-service catalog -> ./src/main/resources/secrets.yaml)
 
-This file contains secrets and API-related configurations for the api-service.
+This file contains secrets and API-related configurations for the email-service.
 
 ```secrets.yaml
 # Mail Configuration
 mail:
   username=
   password=
+```
+
+---
+
+--- 
+
+### Secrets file for protection-service (default location from protection-service catalog -> ./src/main/resources/secrets.yaml)
+
+This file contains secrets and API-related configurations for the protection-service.
+
+```secrets.yaml
+# Keycloak Configuration
+keycloak:
+  client-secret: 
+
+# IPInfo API Configuration
+ip-info-api:
+  access-token: 
 ```
 
 ---

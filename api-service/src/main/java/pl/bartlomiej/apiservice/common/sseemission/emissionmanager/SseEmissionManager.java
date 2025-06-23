@@ -1,4 +1,4 @@
-package pl.bartlomiej.apiservice.common.seeemission;
+package pl.bartlomiej.apiservice.common.sseemission.emissionmanager;
 
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -8,6 +8,4 @@ public interface SseEmissionManager {
     Collection<SseEmitter> getEmitters();
 
     SseEmitter getOrCreateEmitter(String identifier);
-
-    void deleteEmitter(String identifier);
 }

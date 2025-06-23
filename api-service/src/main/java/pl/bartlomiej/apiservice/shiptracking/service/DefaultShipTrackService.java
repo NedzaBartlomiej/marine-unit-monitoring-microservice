@@ -3,52 +3,36 @@ package pl.bartlomiej.apiservice.shiptracking.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.mongodb.core.ChangeStreamEvent;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pl.bartlomiej.apiservice.ais.service.AisService;
 import pl.bartlomiej.apiservice.common.exception.apiexception.RecordNotFoundException;
-import pl.bartlomiej.apiservice.common.util.MongoDBConstants;
+import pl.bartlomiej.apiservice.common.helper.DateRangeHelper;
 import pl.bartlomiej.apiservice.point.activepoint.service.ActivePointService;
 import pl.bartlomiej.apiservice.shiptracking.ShipTrack;
 import pl.bartlomiej.apiservice.shiptracking.ShipTrackConstants;
-import pl.bartlomiej.apiservice.shiptracking.helper.DateRangeHelper;
 import pl.bartlomiej.apiservice.shiptracking.repository.CustomShipTrackRepository;
 import pl.bartlomiej.apiservice.shiptracking.repository.MongoShipTrackRepository;
-import pl.bartlomiej.apiservice.user.nested.trackedship.TrackedShip;
-import pl.bartlomiej.apiservice.user.nested.trackedship.service.TrackedShipService;
-import reactor.core.publisher.Flux;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
-
-import static java.time.LocalDateTime.now;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 
 @Service
 class DefaultShipTrackService implements ShipTrackService {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultShipTrackService.class);
     private final AisService aisService;
-    private final TrackedShipService trackedShipService;
     private final MongoShipTrackRepository mongoShipTrackRepository;
     private final CustomShipTrackRepository customShipTrackRepository;
     private final ActivePointService activePointService;
 
     public DefaultShipTrackService(
-            AisService aisService, TrackedShipService trackedShipService,
+            AisService aisService,
             MongoShipTrackRepository mongoShipTrackRepository,
             CustomShipTrackRepository customShipTrackRepository,
-            MongoTemplate mongoTemplate,
             ActivePointService activePointService) {
         this.aisService = aisService;
-        this.trackedShipService = trackedShipService;
         this.mongoShipTrackRepository = mongoShipTrackRepository;
         this.customShipTrackRepository = customShipTrackRepository;
         this.activePointService = activePointService;
@@ -56,52 +40,6 @@ class DefaultShipTrackService implements ShipTrackService {
 
 
     // TRACK HISTORY - operations
-
-    public Flux<ShipTrack> getShipTrackHistory(String userId, LocalDateTime from, LocalDateTime to) {
-
-
-        return trackedShipService.getTrackedShips(userId)
-                .map(TrackedShip::mmsi)
-                .collectList()
-                .flatMapMany(mmsis -> {
-
-                    // PROCESS DATE RANGE
-                    DateRangeHelper dateRangeHelper = new DateRangeHelper(from, to);
-
-                    // DB RESULT STREAM
-                    Flux<ShipTrack> dbStream = customShipTrackRepository
-                            .findByMmsiInAndReadingTimeBetween(mmsis, dateRangeHelper.from(), dateRangeHelper.to());
-
-                    // CHANGE STREAM - used when the client wants to track the future
-                    if (dateRangeHelper.to().isAfter(now()) || to == null) {
-
-                        AggregationOperation match;
-                        if (to == null) {
-                            match = match(
-                                    Criteria.where(MongoDBConstants.OPERATION_TYPE).is(MongoDBConstants.INSERT)
-                                            .and(ShipTrackConstants.MMSI).in(mmsis)
-                            );
-                        } else {
-                            match = match(
-                                    Criteria.where(MongoDBConstants.OPERATION_TYPE).is(MongoDBConstants.INSERT)
-                                            .and(ShipTrackConstants.MMSI).in(mmsis)
-                                            .and(ShipTrackConstants.READING_TIME).lte(dateRangeHelper.to())
-                            );
-                        }
-                        Aggregation pipeline = newAggregation(match);
-
-                        Flux<ShipTrack> shipTrackStream = changeStream
-                                .mapNotNull(ChangeStreamEvent::getBody)
-                                .doOnNext(shipTrack ->
-                                        log.info("New ShipTrack returning... mmsi: {}", shipTrack.getMmsi())
-                                );
-                        return dbStream.concatWith(shipTrackStream);
-                    } else {
-                        return dbStream;
-                    }
-                });
-    }
-
     @Scheduled(initialDelay = 0, fixedDelayString = "${project-properties.scheduling-delays.in-ms.ship-tracking.saving}")
     public void saveTracksForTrackedShips() {
         this.getShipTracks()
@@ -122,6 +60,14 @@ class DefaultShipTrackService implements ShipTrackService {
         } else {
             mongoShipTrackRepository.save(shipTrack);
         }
+    }
+
+    @Override
+    public List<ShipTrack> getShipTracks(List<String> mmsis, LocalDateTime from, LocalDateTime to) {
+        DateRangeHelper validDateRange = new DateRangeHelper(from, to);
+        return this.customShipTrackRepository
+                .findByMmsiInAndReadingTimeBetween(mmsis,
+                        validDateRange.from(), validDateRange.to());
     }
 
     public void clearShipHistory(String mmsi) {
