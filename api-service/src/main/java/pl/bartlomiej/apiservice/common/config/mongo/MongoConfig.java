@@ -1,4 +1,4 @@
-package pl.bartlomiej.apiservice.common.config;
+package pl.bartlomiej.apiservice.common.config.mongo;
 
 import com.mongodb.ConnectionString;
 import org.springframework.beans.factory.annotation.Value;
