@@ -50,7 +50,7 @@ public class InMemorySseEmissionManager implements SseEmissionManager {
         if (previous != null) previous.complete();
 
         if (this.streamRunning.compareAndSet(false, true)) {
-            this.streamerObjectProvider.getObject().startStream();
+            this.streamerObjectProvider.getObject().initStream();
         }
 
         return newEmitter;

@@ -1,5 +1,5 @@
 print("#### RS.INIT.SH - apiServiceDBRS ####")
-
+// todo: left only one replica
 print("-- Initializing replica set. --");
 rs.initiate({
     "_id": "apiServiceDBRS",

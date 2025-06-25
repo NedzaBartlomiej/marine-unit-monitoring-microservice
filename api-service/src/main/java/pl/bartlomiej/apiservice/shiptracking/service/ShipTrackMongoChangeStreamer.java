@@ -1,18 +1,23 @@
 package pl.bartlomiej.apiservice.shiptracking.service;
 
+import com.mongodb.client.model.changestream.ChangeStreamDocument;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.messaging.ChangeStreamRequest;
+import org.springframework.data.mongodb.core.messaging.MessageListener;
 import org.springframework.data.mongodb.core.messaging.MessageListenerContainer;
+import org.springframework.data.mongodb.core.messaging.Subscription;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Component;
 import pl.bartlomiej.apiservice.common.sseemission.broadcaster.SseBroadcaster;
 import pl.bartlomiej.apiservice.common.sseemission.streamer.AbstractMongoChangeStreamer;
 import pl.bartlomiej.apiservice.common.util.MongoDBConstants;
-
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
+import pl.bartlomiej.apiservice.shiptracking.ShipTrack;
 
 @Component("shipTrackMongoChangeStreamer")
-public class ShipTrackMongoChangeStreamer extends AbstractMongoChangeStreamer {
+public final class ShipTrackMongoChangeStreamer extends AbstractMongoChangeStreamer {
     private final SseBroadcaster sseBroadcaster;
 
     public ShipTrackMongoChangeStreamer(@Qualifier("shipTrackInMemorySseBroadcaster") SseBroadcaster sseBroadcaster,
@@ -22,10 +27,25 @@ public class ShipTrackMongoChangeStreamer extends AbstractMongoChangeStreamer {
     }
 
     @Override
-    protected void registerListeningSubscription(MessageListenerContainer messageListenerContainer) {
-        AggregationOperation match = match(
+    protected Subscription registerListeningSubscription(MessageListenerContainer messageListenerContainer) {
+        return messageListenerContainer.register(
+                new ChangeStreamRequest<>(this.getListener(), this.getOptions()),
+                ShipTrack.class
+        );
+    }
+
+    private MessageListener<ChangeStreamDocument<Document>, ShipTrack> getListener() {
+        return this.sseBroadcaster::emitForAll;
+    }
+
+    private ChangeStreamRequest.ChangeStreamRequestOptions getOptions() {
+        AggregationOperation pipeline = Aggregation.match(
                 Criteria.where(MongoDBConstants.OPERATION_TYPE).is(MongoDBConstants.INSERT)
         );
-        // todo implement pipeline and register it in the container
+        Aggregation aggregation = Aggregation.newAggregation(pipeline);
+        return ChangeStreamRequest.builder()
+                .filter(aggregation)
+                .build()
+                .getRequestOptions();
     }
 }
