@@ -43,6 +43,7 @@ class DefaultDeveloperService extends AbstractIDMService<AppDeveloperEntity> imp
         return appDeveloperEntity;
     }
 
+    // todo: trustedIpAddresses set instead of list
     @Override
     public void trustIp(String id, String ipAddress) {
         AppDeveloperEntity developer = super.getEntity(id);

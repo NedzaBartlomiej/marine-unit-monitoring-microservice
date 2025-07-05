@@ -41,8 +41,8 @@ class DefaultShipTrackService implements ShipTrackService {
 
     // TRACK HISTORY - operations
     @Scheduled(initialDelay = 0, fixedDelayString = "${project-properties.scheduling-delays.in-ms.ship-tracking.saving}")
-    public void saveTracksForTrackedShips() {
-        this.getShipTracks()
+    public void saveShipTracks() {
+        this.shipTrackSaveSource()
                 .forEach(shipTrack -> {
                     try {
                         this.saveNoStationaryTrack(shipTrack);
@@ -79,14 +79,10 @@ class DefaultShipTrackService implements ShipTrackService {
     }
 
     // GET SHIP TRACKS TO SAVE - operations
-    private Stream<ShipTrack> getShipTracks() {
-        return aisService.fetchShipsByMmsis(this.getShipMmsisToTrack())
+    private Stream<ShipTrack> shipTrackSaveSource() {
+        return aisService.fetchShipsByMmsis(activePointService.getMmsis())
                 .stream()
                 .map(this::mapToShipTrack);
-    }
-
-    private List<String> getShipMmsisToTrack() {
-        return activePointService.getMmsis();
     }
 
     private ShipTrack mapToShipTrack(JsonNode ship) {

@@ -1,19 +1,15 @@
 package pl.bartlomiej.apiservice.user.repository;
 
 import pl.bartlomiej.apiservice.user.nested.trackedship.TrackedShip;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 public interface CustomUserRepository {
 
-    Mono<TrackedShip> pushTrackedShip(String id, TrackedShip trackedShip);
+    TrackedShip pushTrackedShip(String id, TrackedShip trackedShip);
 
-    Mono<Void> pullTrackedShip(String id, String mmsi);
+    void pullTrackedShip(String id, String mmsi);
 
-    Mono<Void> pullTrackedShip(String mmsi);
-
-    Flux<TrackedShip> getTrackedShips(String id);
-
-    Flux<TrackedShip> getTrackedShips();
+    List<TrackedShip> getTrackedShips(String id);
 
 }

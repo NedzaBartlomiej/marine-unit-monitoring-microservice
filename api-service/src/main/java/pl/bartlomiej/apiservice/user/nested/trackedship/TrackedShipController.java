@@ -3,18 +3,16 @@ package pl.bartlomiej.apiservice.user.nested.trackedship;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pl.bartlomiej.apiservice.user.domain.ApiUserEntity;
 import pl.bartlomiej.apiservice.user.nested.trackedship.service.TrackedShipService;
 import pl.bartlomiej.apiservice.user.service.UserService;
 import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import java.security.Principal;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.ResponseEntity.ok;
-import static reactor.core.publisher.Mono.just;
 
 @RestController
 @RequestMapping("/v1/tracked-ships")
@@ -34,15 +32,14 @@ public class TrackedShipController {
             ")"
     )
     @GetMapping
-    public ResponseEntity<Flux<ResponseModel<TrackedShip>>> getTrackedShips(Principal principal) {
-        return ok(userService.getEntity(principal.getName())
-                .flatMapMany(user -> trackedShipService.getTrackedShips(user.getId())
-                        .map(trackedShip -> new ResponseModel.Builder<TrackedShip>(OK, true)
-                                .body(trackedShip)
-                                .build()
-                        )
-                )
-        );
+    public ResponseEntity<ResponseModel<List<TrackedShip>>> getTrackedShips(Principal principal) {
+        ApiUserEntity user = userService.getEntity(principal.getName());
+        List<TrackedShip> trackedShips = trackedShipService.getTrackedShips(user.getId());
+        return ResponseEntity.status(OK)
+                .body(new ResponseModel.Builder<List<TrackedShip>>(OK, true)
+                        .body(trackedShips)
+                        .build()
+                );
     }
 
     @PreAuthorize("hasRole(" +
@@ -51,16 +48,14 @@ public class TrackedShipController {
             ")"
     )
     @PostMapping("/{mmsi}")
-    public Mono<ResponseEntity<ResponseModel<TrackedShip>>> addTrackedShip(Principal principal, @PathVariable String mmsi) {
-        return userService.getEntity(principal.getName())
-                .flatMap(user -> trackedShipService.addTrackedShip(user.getId(), mmsi)
-                        .map(trackedShip -> ResponseEntity.status(CREATED)
-                                .body(new ResponseModel.Builder<TrackedShip>(CREATED, true)
-                                        .message("ADDED_TO_LIST")
-                                        .body(trackedShip)
-                                        .build()
-                                )
-                        )
+    public ResponseEntity<ResponseModel<TrackedShip>> addTrackedShip(Principal principal, @PathVariable String mmsi) {
+        ApiUserEntity user = userService.getEntity(principal.getName());
+        TrackedShip trackedShip = trackedShipService.addTrackedShip(user.getId(), mmsi);
+        return ResponseEntity.status(CREATED)
+                .body(new ResponseModel.Builder<TrackedShip>(CREATED, true)
+                        .message("ADDED_TO_LIST")
+                        .body(trackedShip)
+                        .build()
                 );
     }
 
@@ -70,15 +65,13 @@ public class TrackedShipController {
             ")"
     )
     @DeleteMapping("/{mmsi}")
-    public Mono<ResponseEntity<ResponseModel<Void>>> removeTrackedShip(Principal principal, @PathVariable String mmsi) {
-        return userService.getEntity(principal.getName())
-                .flatMap(user -> trackedShipService.removeTrackedShip(user.getId(), mmsi)
-                        .then(just(ResponseEntity.status(OK)
-                                .body(new ResponseModel.Builder<Void>(OK, true)
-                                        .message("REMOVED_FROM_LIST")
-                                        .build()
-                                )
-                        ))
+    public ResponseEntity<ResponseModel<Void>> removeTrackedShip(Principal principal, @PathVariable String mmsi) {
+        ApiUserEntity user = userService.getEntity(principal.getName());
+        trackedShipService.removeTrackedShip(user.getId(), mmsi);
+        return ResponseEntity.status(OK)
+                .body(new ResponseModel.Builder<Void>(OK, true)
+                        .message("REMOVED_FROM_LIST")
+                        .build()
                 );
     }
 }

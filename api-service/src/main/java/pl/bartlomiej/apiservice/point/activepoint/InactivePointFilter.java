@@ -58,7 +58,7 @@ public class InactivePointFilter {
                 log.info("From the ShipTracking history.");
                 shipTrackService.clearShipHistory(inactiveMmsi);
             } catch (RecordNotFoundException e) {
-                log.info(e.getMessage());
+                log.warn(e.getMessage());
             }
         });
     }

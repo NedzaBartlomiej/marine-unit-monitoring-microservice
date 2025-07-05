@@ -1,16 +1,13 @@
 package pl.bartlomiej.apiservice.user.service;
 
 import pl.bartlomiej.apiservice.user.domain.ApiUserEntity;
-import pl.bartlomiej.mumcommons.globalidmservice.idm.external.serviceidm.reactor.ReactiveIDMServiceTemplate;
-import reactor.core.publisher.Mono;
+import pl.bartlomiej.mumcommons.globalidmservice.idm.external.serviceidm.servlet.IDMServiceTemplate;
 
-public interface UserService extends ReactiveIDMServiceTemplate<ApiUserEntity> {
+public interface UserService extends IDMServiceTemplate<ApiUserEntity> {
 
-    Mono<ApiUserEntity> create(String id, String ipAddress);
+    ApiUserEntity create(String id, String ipAddress);
 
-    Mono<Void> handleUserDoesNotExists(String id);
+    void trustIp(String id, String ipAddress);
 
-    Mono<Void> trustIp(String id, String ipAddress);
-
-    Mono<Boolean> verifyIp(String id, String ipAddress);
+    boolean verifyIp(String id, String ipAddress);
 }
