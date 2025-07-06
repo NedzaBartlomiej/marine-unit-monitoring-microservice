@@ -5,10 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import pl.bartlomiej.apiservice.ais.service.AisService;
+import pl.bartlomiej.apiservice.aisapi.service.AisService;
 import pl.bartlomiej.apiservice.common.exception.apiexception.RecordNotFoundException;
 import pl.bartlomiej.apiservice.common.helper.DateRangeHelper;
-import pl.bartlomiej.apiservice.point.activepoint.service.ActivePointService;
+import pl.bartlomiej.apiservice.shippoint.ShipMapManager;
 import pl.bartlomiej.apiservice.shiptracking.ShipTrack;
 import pl.bartlomiej.apiservice.shiptracking.ShipTrackConstants;
 import pl.bartlomiej.apiservice.shiptracking.repository.CustomShipTrackRepository;
@@ -25,17 +25,17 @@ class DefaultShipTrackService implements ShipTrackService {
     private final AisService aisService;
     private final MongoShipTrackRepository mongoShipTrackRepository;
     private final CustomShipTrackRepository customShipTrackRepository;
-    private final ActivePointService activePointService;
+    private final ShipMapManager shipMapManager;
 
     public DefaultShipTrackService(
             AisService aisService,
             MongoShipTrackRepository mongoShipTrackRepository,
             CustomShipTrackRepository customShipTrackRepository,
-            ActivePointService activePointService) {
+            ShipMapManager shipMapManager) {
         this.aisService = aisService;
         this.mongoShipTrackRepository = mongoShipTrackRepository;
         this.customShipTrackRepository = customShipTrackRepository;
-        this.activePointService = activePointService;
+        this.shipMapManager = shipMapManager;
     }
 
 
@@ -80,7 +80,7 @@ class DefaultShipTrackService implements ShipTrackService {
 
     // GET SHIP TRACKS TO SAVE - operations
     private Stream<ShipTrack> shipTrackSaveSource() {
-        return aisService.fetchShipsByMmsis(activePointService.getMmsis())
+        return aisService.fetchShipsByMmsis(shipMapManager.getActiveShipMmsis())
                 .stream()
                 .map(this::mapToShipTrack);
     }

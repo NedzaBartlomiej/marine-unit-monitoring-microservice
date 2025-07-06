@@ -1,4 +1,4 @@
-package pl.bartlomiej.apiservice.ais.nested;
+package pl.bartlomiej.apiservice.aisapi.nested;
 
 import java.util.Date;
 

@@ -28,10 +28,3 @@ print("-- Executing init operations for: shipTracks collection. --");
 
 print("Creating shipTracks collection.");
 db.createCollection('shipTracks');
-
-
-// ACTIVE POINTS COLLECTION
-print("-- Executing init operations for: activePoints collection. --");
-
-print("Creating activePoints collection.");
-db.createCollection('activePoints');

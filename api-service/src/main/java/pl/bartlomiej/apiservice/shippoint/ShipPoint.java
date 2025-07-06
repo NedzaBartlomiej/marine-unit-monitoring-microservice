@@ -1,8 +1,8 @@
-package pl.bartlomiej.apiservice.point;
+package pl.bartlomiej.apiservice.shippoint;
 
 import java.io.Serializable;
 
-public record Point(
+public record ShipPoint(
 
         String mmsi,
         String name,

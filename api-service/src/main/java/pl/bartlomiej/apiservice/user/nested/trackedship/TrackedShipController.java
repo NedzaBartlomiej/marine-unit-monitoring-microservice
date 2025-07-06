@@ -32,11 +32,11 @@ public class TrackedShipController {
             ")"
     )
     @GetMapping
-    public ResponseEntity<ResponseModel<List<TrackedShip>>> getTrackedShips(Principal principal) {
+    public ResponseEntity<ResponseModel<List<TrackedShipResponseDto>>> getTrackedShips(Principal principal) {
         ApiUserEntity user = userService.getEntity(principal.getName());
-        List<TrackedShip> trackedShips = trackedShipService.getTrackedShips(user.getId());
+        List<TrackedShipResponseDto> trackedShips = trackedShipService.getTrackedShipsResponse(user.getId());
         return ResponseEntity.status(OK)
-                .body(new ResponseModel.Builder<List<TrackedShip>>(OK, true)
+                .body(new ResponseModel.Builder<List<TrackedShipResponseDto>>(OK, true)
                         .body(trackedShips)
                         .build()
                 );

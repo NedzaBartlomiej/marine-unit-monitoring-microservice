@@ -1,4 +1,4 @@
-package pl.bartlomiej.apiservice.ais.service;
+package pl.bartlomiej.apiservice.aisapi.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import pl.bartlomiej.apiservice.ais.AisShip;
+import pl.bartlomiej.apiservice.aisapi.AisShip;
 import pl.bartlomiej.apiservice.common.util.CommonShipFields;
 
 import java.util.List;

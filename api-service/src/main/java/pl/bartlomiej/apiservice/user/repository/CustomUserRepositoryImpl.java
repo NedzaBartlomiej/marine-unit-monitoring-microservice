@@ -31,8 +31,9 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
     @Override
     public TrackedShip pushTrackedShip(String id, TrackedShip trackedShip) {
         boolean pushed = this.push(id, UserConstants.TRACKED_SHIPS, trackedShip);
-        if (pushed) return trackedShip;
-        else
+        if (pushed) {
+            return trackedShip;
+        } else
             throw new RuntimeException("Failed to push tracked ship: " + trackedShip.mmsi() + " to user with id: " + id);
     }
 

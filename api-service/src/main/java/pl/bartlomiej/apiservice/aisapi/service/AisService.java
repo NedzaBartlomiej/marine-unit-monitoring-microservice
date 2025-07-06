@@ -1,7 +1,7 @@
-package pl.bartlomiej.apiservice.ais.service;
+package pl.bartlomiej.apiservice.aisapi.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import pl.bartlomiej.apiservice.ais.AisShip;
+import pl.bartlomiej.apiservice.aisapi.AisShip;
 
 import java.util.List;
 

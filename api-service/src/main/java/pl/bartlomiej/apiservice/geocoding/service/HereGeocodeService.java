@@ -15,7 +15,7 @@ import pl.bartlomiej.apiservice.geocoding.Position;
 
 import java.util.Objects;
 
-import static pl.bartlomiej.apiservice.common.config.RedisCacheConfig.ADDRESS_COORDS_CACHE_NAME;
+import static pl.bartlomiej.apiservice.common.config.redis.RedisCacheConfig.ADDRESS_COORDS_CACHE_NAME;
 
 @Service
 public class HereGeocodeService implements GeocodeService {

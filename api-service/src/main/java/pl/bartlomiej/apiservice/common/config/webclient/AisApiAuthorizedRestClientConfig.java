@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestClient;
-import pl.bartlomiej.apiservice.ais.AisApiAuthorizedInterceptorTokenProvider;
+import pl.bartlomiej.apiservice.aisapi.AisApiAuthorizedInterceptorTokenProvider;
 import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.servlet.AuthorizedInterceptorTokenManager;
 import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.servlet.AuthorizedRequestInterceptor;
 import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.servlet.MemoryAuthorizedInterceptorTokenManager;

@@ -1,4 +1,4 @@
-package pl.bartlomiej.apiservice.ais;
+package pl.bartlomiej.apiservice.aisapi;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
