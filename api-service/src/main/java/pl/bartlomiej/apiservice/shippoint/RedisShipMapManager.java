@@ -1,5 +1,6 @@
 package pl.bartlomiej.apiservice.shippoint;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.redis.core.HashOperations;
@@ -8,21 +9,26 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import pl.bartlomiej.apiservice.common.exception.apiexception.MmsiConflictException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public final class RedisShipMapManager implements ShipMapManager {
 
     private static final String SHIP_POINTS_RH = "shipPoints";
     private final AisApiShipPointAdapter aisApiShipPointAdapter;
+    private final RedisTemplate<String, ShipPoint> redisTemplate;
     private final HashOperations<String, String, ShipPoint> hashOperations;
+    private volatile LocalDateTime lastRefreshed;
 
     RedisShipMapManager(AisApiShipPointAdapter aisApiShipPointAdapter, RedisTemplate<String, ShipPoint> redisTemplate) {
         this.aisApiShipPointAdapter = aisApiShipPointAdapter;
+        this.redisTemplate = redisTemplate;
         this.hashOperations = redisTemplate.opsForHash();
     }
 
@@ -54,15 +60,23 @@ public final class RedisShipMapManager implements ShipMapManager {
                 );
     }
 
+    // todo: shipPoints is not being created - nothing appears in Redis after this method invocation
     @Override
     public void refreshMap() {
+        log.info("Refreshing Redis ShipPoints Map.");
         Map<String, ShipPoint> shipPointMap = aisApiShipPointAdapter.getShipPoints().stream()
                 .collect(Collectors.toMap(
                         ShipPoint::mmsi,
                         Function.identity()
                 ));
-        hashOperations.delete(SHIP_POINTS_RH);
+        redisTemplate.delete(SHIP_POINTS_RH);
         hashOperations.putAll(SHIP_POINTS_RH, shipPointMap);
+        this.lastRefreshed = LocalDateTime.now();
+    }
+
+    @Override
+    public LocalDateTime lastRefreshed() {
+        return this.lastRefreshed;
     }
 
     @EventListener(ApplicationStartedEvent.class)
@@ -70,7 +84,7 @@ public final class RedisShipMapManager implements ShipMapManager {
         this.refreshMap();
     }
 
-    @Scheduled() // todo - plug in properties and consider time
+    @Scheduled(initialDelay = 360000, fixedDelayString = "${project-properties.scheduling-delays.in-ms.ship-point-map-refreshment}")
     public void scheduledRefreshMap() {
         this.refreshMap();
     }

@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 import pl.bartlomiej.apiservice.user.domain.ApiUserEntity;
 import pl.bartlomiej.apiservice.user.repository.MongoUserRepository;
 import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.model.KeycloakUserRepresentation;
-import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.servlet.KeycloakService;
-import pl.bartlomiej.mumcommons.globalidmservice.idm.internal.serviceidm.servlet.AbstractIDMService;
+import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.KeycloakService;
+import pl.bartlomiej.mumcommons.globalidmservice.idm.internal.serviceidm.AbstractIDMService;
 
 import java.util.Collections;
 

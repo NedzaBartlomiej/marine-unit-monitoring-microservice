@@ -1,14 +1,20 @@
 package pl.bartlomiej.apiservice.user.nested.trackedship;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pl.bartlomiej.apiservice.common.helper.CacheControlHelper;
+import pl.bartlomiej.apiservice.shippoint.ShipMapManager;
 import pl.bartlomiej.apiservice.user.domain.ApiUserEntity;
 import pl.bartlomiej.apiservice.user.nested.trackedship.service.TrackedShipService;
 import pl.bartlomiej.apiservice.user.service.UserService;
 import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
 
 import java.security.Principal;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -20,10 +26,17 @@ public class TrackedShipController {
 
     private final TrackedShipService trackedShipService;
     private final UserService userService;
+    private final ShipMapManager shipMapManager;
+    private final long shipPointMapRefreshment;
 
-    public TrackedShipController(TrackedShipService trackedShipService, UserService userService) {
+    public TrackedShipController(TrackedShipService trackedShipService,
+                                 UserService userService,
+                                 ShipMapManager shipMapManager,
+                                 @Value("${project-properties.scheduling-delays.in-ms.ship-point-map-refreshment}") long shipPointMapRefreshment) {
         this.trackedShipService = trackedShipService;
         this.userService = userService;
+        this.shipMapManager = shipMapManager;
+        this.shipPointMapRefreshment = shipPointMapRefreshment;
     }
 
     @PreAuthorize("hasAnyRole(" +
@@ -35,7 +48,18 @@ public class TrackedShipController {
     public ResponseEntity<ResponseModel<List<TrackedShipResponseDto>>> getTrackedShips(Principal principal) {
         ApiUserEntity user = userService.getEntity(principal.getName());
         List<TrackedShipResponseDto> trackedShips = trackedShipService.getTrackedShipsResponse(user.getId());
+        Duration timeElapsedFromLastMapRefreshment = Duration.between(shipMapManager.lastRefreshed(), LocalDateTime.now());
+        Duration maxAge = Duration.ofMillis(this.shipPointMapRefreshment).minus(timeElapsedFromLastMapRefreshment);
         return ResponseEntity.status(OK)
+                .cacheControl(CacheControl
+                        .maxAge(CacheControlHelper.getSafeMaxAge(
+                                        maxAge,
+                                        Duration.ofSeconds(15)
+                                )
+                        )
+                        .mustRevalidate()
+                        .cachePrivate()
+                )
                 .body(new ResponseModel.Builder<List<TrackedShipResponseDto>>(OK, true)
                         .body(trackedShips)
                         .build()

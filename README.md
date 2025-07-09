@@ -115,11 +115,13 @@ keycloak:
   client-secret:
 ```
 
+[//]: # (todo: change these API references to valid links)
+
 ### External API References for API Service
 
-- **AIS API**: [AIS API Documentation](https://appDeveloperEntity.barentswatch.no/)
+- **AIS API**: [AIS API Documentation](https://barentswatch.no/)
 - **HERE Geocode and Search API
-  **: [HERE API Documentation](https://www.here.com/docs/bundle/geocoding-and-search-api-appDeveloperEntity-guide/page/topics-api/code-geocode-examples.html)
+  **: [HERE API Documentation](https://www.here.com/docs/bundle/code-geocode-examples.html)
 
 ---
 

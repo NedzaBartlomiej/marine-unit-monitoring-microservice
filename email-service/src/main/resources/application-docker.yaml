@@ -2,9 +2,9 @@ mum-commons:
   core:
     exception-handling:
       enabled: true
-      type: servlet
-  global-idm-service:
-    type: servlet
+  keycloak:
+    auth-conversion:
+      enabled: true
 logging:
   level:
     root: debug

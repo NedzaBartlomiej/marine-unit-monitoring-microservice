@@ -1,6 +1,7 @@
 package pl.bartlomiej.apiservice.aisapi.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -14,6 +15,7 @@ import java.util.Objects;
 
 import static java.util.Map.of;
 
+@Slf4j
 @Service
 public class DefaultAisService implements AisService {
 

@@ -1,7 +1,7 @@
 package pl.bartlomiej.apiservice.user.service;
 
 import pl.bartlomiej.apiservice.user.domain.ApiUserEntity;
-import pl.bartlomiej.mumcommons.globalidmservice.idm.external.serviceidm.servlet.IDMServiceTemplate;
+import pl.bartlomiej.mumcommons.globalidmservice.idm.external.serviceidm.IDMServiceTemplate;
 
 public interface UserService extends IDMServiceTemplate<ApiUserEntity> {
 

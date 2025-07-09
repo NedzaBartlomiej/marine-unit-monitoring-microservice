@@ -8,11 +8,11 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import pl.bartlomiej.apiservice.common.apiaccess.ApiKeyWebFilter;
-import pl.bartlomiej.mumcommons.core.exceptionhandling.external.servlet.DefaultResponseModelAccessDeniedHandler;
-import pl.bartlomiej.mumcommons.core.exceptionhandling.external.servlet.DefaultResponseModelAuthEntryPoint;
-import pl.bartlomiej.mumcommons.globalidmservice.authconversion.external.servlet.KeycloakJwtGrantedAuthoritiesConverter;
+import pl.bartlomiej.mumcommons.core.exceptionhandling.external.DefaultResponseModelAccessDeniedHandler;
+import pl.bartlomiej.mumcommons.core.exceptionhandling.external.DefaultResponseModelAuthEntryPoint;
+import pl.bartlomiej.mumcommons.globalidmservice.authconversion.external.KeycloakJwtGrantedAuthoritiesConverter;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class SecurityConfig {
             "*/users"
     );
     private final List<String> getOpenEndpoints = List.of(
-            "*/points"
+            "*/shipPoints"
     );
 
     @Bean
@@ -58,7 +58,7 @@ public class SecurityConfig {
                                 .authenticationEntryPoint(authEntryPoint)
                                 .accessDeniedHandler(accessDeniedHandler)
                 )
-                .addFilterAfter(apiKeyWebFilter, AuthenticationFilter.class)
+                .addFilterBefore(apiKeyWebFilter, BasicAuthenticationFilter.class)
                 .build();
     }
 

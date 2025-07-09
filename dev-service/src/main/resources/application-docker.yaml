@@ -2,20 +2,21 @@ mum-commons:
   core:
     exception-handling:
       enabled: true
-      type: servlet
   email-integration:
     enabled: true
     email-service-url: http://email-service:8084
-  global-idm-service:
-    type: servlet
-    auth-conversion:
-      keycloak-client-id: dev-service-client
-    keycloak:
+  keycloak:
+    enabled: true
+    server-url: http://keycloak.pl:8080
+    realm-name: marine-unit-monitoring-master
+    client-id: dev-service-client
+    client-secret: ${keycloak.client-secret}
+    global-idm-service:
       enabled: true
-      server-url: http://keycloak.pl:8080
-      realm-name: marine-unit-monitoring-master
-      client-id: dev-service-client
-      client-secret: ${keycloak.client-secret}
+    auth-conversion:
+      enabled: true
+      keycloak-client-id: dev-service-client
+
 logging:
   level:
     root: debug

@@ -1,6 +1,8 @@
 package pl.bartlomiej.apiservice.shiptracking.repository;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
@@ -9,10 +11,10 @@ import pl.bartlomiej.apiservice.shiptracking.ShipTrackConstants;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
-import static org.springframework.data.domain.Sort.Direction.DESC;
-import static org.springframework.data.domain.Sort.by;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Repository
 class CustomShipTrackRepositoryImpl implements CustomShipTrackRepository {
@@ -34,11 +36,17 @@ class CustomShipTrackRepositoryImpl implements CustomShipTrackRepository {
     }
 
     @Override
-    public ShipTrack getLatest(String mmsi) {
-        Query q = new Query();
-        q.addCriteria(where(ShipTrackConstants.MMSI).is(mmsi));
-        q.with(by(DESC, ShipTrackConstants.READING_TIME));
-        q.limit(1);
-        return mongoTemplate.find(q, ShipTrack.class).getFirst();
+    public Map<String, ShipTrack> getLatestShipTracksForMmsis(Set<String> mmsis) {
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where(ShipTrackConstants.MMSI).in(mmsis)),
+                Aggregation.sort(Sort.Direction.DESC, ShipTrackConstants.READING_TIME),
+                Aggregation.group(ShipTrackConstants.MMSI).first(Aggregation.ROOT).as("latestShipTrack"),
+                Aggregation.replaceRoot("latestShipTrack")
+        );
+
+        List<ShipTrack> results = mongoTemplate.aggregate(aggregation, "shipTrack", ShipTrack.class).getMappedResults();
+
+        return results.stream()
+                .collect(Collectors.toMap(ShipTrack::getMmsi, Function.identity()));
     }
 }

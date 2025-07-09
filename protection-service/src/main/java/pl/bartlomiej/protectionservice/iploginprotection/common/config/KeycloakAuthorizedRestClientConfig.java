@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestClient;
-import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.servlet.*;
+import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.*;
 
 @Configuration
 public class KeycloakAuthorizedRestClientConfig {

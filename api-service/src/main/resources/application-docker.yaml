@@ -2,17 +2,18 @@ mum-commons:
   core:
     exception-handling:
       enabled: true
-      type: reactor
-  global-idm-service:
-    type: reactor
-    auth-conversion:
-      keycloak-client-id: api-service-client
-    keycloak:
+  keycloak:
+    enabled: true
+    server-url: http://keycloak.pl:8080
+    realm-name: marine-unit-monitoring-master
+    client-id: api-service-client
+    client-secret: ${keycloak.client-secret}
+    global-idm-service:
       enabled: true
-      server-url: http://keycloak.pl:8080
-      realm-name: marine-unit-monitoring-master
-      client-id: api-service-client
-      client-secret: ${keycloak.client-secret}
+    auth-conversion:
+      enabled: true
+      keycloak-client-id: api-service-client
+
 logging:
   level:
     root: debug
@@ -25,7 +26,7 @@ spring:
       port: 6379
     mongodb:
       database: apiServiceDB
-      uri: mongodb://api-service-mongodb-primary,api-service-mongodb2,api-service-mongodb3/${spring.data.mongodb.database}?replicaSet=apiServiceDBRS
+      uri: mongodb://api-service-mongodb-primary/${spring.data.mongodb.database}?replicaSet=apiServiceDBRS
   security:
     oauth2:
       resourceserver:
@@ -33,7 +34,8 @@ spring:
           issuer-uri: http://keycloak.pl:8080/realms/marine-unit-monitoring-master
           jwk-set-uri: http://keycloak.pl:8080/realms/marine-unit-monitoring-master/protocol/openid-connect/certs
 
-
+# todo: add synced and dependent initialDelays for the scheduled tasks (cause they can be optimized by setting its dependent times on applicationStartedEvent - for example: firstly load Redis map and then do first ShipTrack saving)
+# todo: add logging in api-service - there's a tragically logging in this service! I can't check anything! It must be improved
 project-properties:
   external-apis:
     ais-api:
@@ -42,3 +44,4 @@ project-properties:
     in-ms:
       ship-tracking:
         saving: 300000 # 5min
+      ship-point-map-refreshment: 1800000 # 30min

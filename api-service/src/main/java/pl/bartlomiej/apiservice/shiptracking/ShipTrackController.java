@@ -1,6 +1,7 @@
 package pl.bartlomiej.apiservice.shiptracking;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +14,7 @@ import pl.bartlomiej.apiservice.user.nested.trackedship.service.TrackedShipServi
 import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
 
 import java.security.Principal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,10 +33,8 @@ public class ShipTrackController {
         this.sseEmissionManager = sseEmissionManager;
     }
 
-    // todo - for getShipTracks - implement cacheable information mechanism
-    //  (I need to look how ActivePoint logic treat them).
     @PreAuthorize("hasRole(T(pl.bartlomiej.apiservice.user.domain.UserKeycloakRole).API_PREMIUM_USER.getRole())")
-    @GetMapping
+    @GetMapping("/me")
     public ResponseEntity<ResponseModel<List<ShipTrack>>> getShipTracks(@RequestParam(required = false) LocalDateTime from,
                                                                         @RequestParam(required = false) LocalDateTime to,
                                                                         Principal principal) {
@@ -43,6 +43,11 @@ public class ShipTrackController {
                 .toList();
         List<ShipTrack> shipTracks = this.shipTrackService.getShipTracks(principalTrackedShipsMmsis, from, to);
         return ResponseEntity.status(HttpStatus.OK)
+                .cacheControl(CacheControl
+                        .maxAge(Duration.ofDays(7))
+                        .cachePublic()
+                        .immutable()
+                )
                 .body(new ResponseModel.Builder<List<ShipTrack>>(HttpStatus.OK, true)
                         .body(shipTracks)
                         .build()
@@ -56,6 +61,11 @@ public class ShipTrackController {
                                                                         @RequestBody List<String> mmsis) {
         List<ShipTrack> shipTracks = this.shipTrackService.getShipTracks(mmsis, from, to);
         return ResponseEntity.status(HttpStatus.OK)
+                .cacheControl(CacheControl
+                        .maxAge(Duration.ofDays(7))
+                        .cachePublic()
+                        .immutable()
+                )
                 .body(new ResponseModel.Builder<List<ShipTrack>>(HttpStatus.OK, true)
                         .body(shipTracks)
                         .build()

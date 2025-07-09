@@ -16,7 +16,7 @@ import pl.bartlomiej.devservice.developer.domain.AppDeveloperEntity;
 import pl.bartlomiej.devservice.developer.service.DeveloperService;
 import pl.bartlomiej.mumcommons.emailintegration.external.EmailHttpService;
 import pl.bartlomiej.mumcommons.emailintegration.external.model.StandardEmail;
-import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.servlet.KeycloakService;
+import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.KeycloakService;
 
 import java.util.List;
 

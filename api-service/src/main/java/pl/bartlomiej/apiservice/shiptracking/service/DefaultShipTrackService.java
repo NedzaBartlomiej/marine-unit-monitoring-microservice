@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pl.bartlomiej.apiservice.aisapi.service.AisService;
-import pl.bartlomiej.apiservice.common.exception.apiexception.RecordNotFoundException;
 import pl.bartlomiej.apiservice.common.helper.DateRangeHelper;
 import pl.bartlomiej.apiservice.shippoint.ShipMapManager;
 import pl.bartlomiej.apiservice.shiptracking.ShipTrack;
@@ -16,7 +15,9 @@ import pl.bartlomiej.apiservice.shiptracking.repository.MongoShipTrackRepository
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 class DefaultShipTrackService implements ShipTrackService {
@@ -38,28 +39,33 @@ class DefaultShipTrackService implements ShipTrackService {
         this.shipMapManager = shipMapManager;
     }
 
-
     // TRACK HISTORY - operations
-    @Scheduled(initialDelay = 0, fixedDelayString = "${project-properties.scheduling-delays.in-ms.ship-tracking.saving}")
+    @Scheduled(initialDelay = 20000, fixedDelayString = "${project-properties.scheduling-delays.in-ms.ship-tracking.saving}")
     public void saveShipTracks() {
-        this.shipTrackSaveSource()
-                .forEach(shipTrack -> {
-                    try {
-                        this.saveNoStationaryTrack(shipTrack);
-                    } catch (Exception e) {
-                        log.error("Error saving ship track: {}", shipTrack.getMmsi(), e);
-                    }
-                });
-        log.info("Successfully saved tracked ships coordinates.");
+        log.info("Starting saving ShipTracks process.");
+        try {
+            this.saveNoStationaryShipTracks(this.getActualShipTracks());
+            log.info("Saving ShipTracks succeed.");
+        } catch (Exception e) {
+            log.error("Something went wrong during saving ShipTracks.", e);
+        }
     }
 
-    private void saveNoStationaryTrack(ShipTrack shipTrack) {
-        ShipTrack latest = customShipTrackRepository.getLatest(shipTrack.getMmsi());
-        if ((latest.getX().equals(shipTrack.getX()) && latest.getY().equals(shipTrack.getY()))) {
-            log.warn("Ship hasn't changed its position - saving canceled");
-        } else {
-            mongoShipTrackRepository.save(shipTrack);
-        }
+    private void saveNoStationaryShipTracks(List<ShipTrack> shipTracksToSave) {
+        Set<String> shipTrackToSaveMmsis = shipTracksToSave.stream()
+                .map(ShipTrack::getMmsi)
+                .collect(Collectors.toSet());
+        Map<String, ShipTrack> latestShipTracksForMmsis = this.customShipTrackRepository.getLatestShipTracksForMmsis(shipTrackToSaveMmsis);
+
+        List<ShipTrack> noStationaryShipTracks = shipTracksToSave.stream()
+                .filter(shipTrackToSave -> {
+                    ShipTrack latestShipTrackForMmsi = latestShipTracksForMmsis.get(shipTrackToSave.getMmsi());
+                    return latestShipTrackForMmsi == null ||
+                            !(latestShipTrackForMmsi.getX().equals(shipTrackToSave.getX())
+                                    && latestShipTrackForMmsi.getY().equals(shipTrackToSave.getY())
+                            );
+                }).toList();
+        mongoShipTrackRepository.saveAll(noStationaryShipTracks);
     }
 
     @Override
@@ -70,19 +76,15 @@ class DefaultShipTrackService implements ShipTrackService {
                         validDateRange.from(), validDateRange.to());
     }
 
-    public void clearShipHistory(String mmsi) {
-        if (mongoShipTrackRepository.existsById(mmsi)) {
-            mongoShipTrackRepository.deleteAllByMmsi(mmsi);
-        } else {
-            throw new RecordNotFoundException("ShipTrack by mmsi not found.");
-        }
-    }
-
     // GET SHIP TRACKS TO SAVE - operations
-    private Stream<ShipTrack> shipTrackSaveSource() {
-        return aisService.fetchShipsByMmsis(shipMapManager.getActiveShipMmsis())
+    private List<ShipTrack> getActualShipTracks() {
+        List<String> activeShipMmsis = shipMapManager.getActiveShipMmsis();
+        if (activeShipMmsis.isEmpty()) activeShipMmsis = List.of("0");
+        // todo: refactor^^^ - just don't make a call to api
+        return aisService.fetchShipsByMmsis(activeShipMmsis)
                 .stream()
-                .map(this::mapToShipTrack);
+                .map(this::mapToShipTrack)
+                .toList();
     }
 
     private ShipTrack mapToShipTrack(JsonNode ship) {

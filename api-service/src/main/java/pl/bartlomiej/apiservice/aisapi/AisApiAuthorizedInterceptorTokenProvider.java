@@ -9,11 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
-import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.servlet.AuthorizedInterceptorTokenProvider;
+import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.AuthorizedInterceptorTokenProvider;
 
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
-import static org.springframework.web.reactive.function.BodyInserters.fromFormData;
 
 @Service
 public class AisApiAuthorizedInterceptorTokenProvider implements AuthorizedInterceptorTokenProvider {
@@ -67,7 +66,7 @@ public class AisApiAuthorizedInterceptorTokenProvider implements AuthorizedInter
                 .post()
                 .uri(accessTokenApiUrl)
                 .header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE)
-                .body(fromFormData(buildAuthBody()))
+                .body(buildAuthBody())
                 .retrieve()
                 .body(JsonNode.class);
     }

@@ -86,9 +86,6 @@ services:
       - "27017"
     networks:
       - api-service-network
-    depends_on:
-      - api-service-mongodb2
-      - api-service-mongodb3
     command:
       - bin/sh
       - -c
@@ -99,38 +96,6 @@ services:
       - ./api-service/db-init:/db-init
       - ./docker-deploy/script/db-init/rs-init:/db-init/rs-init
       - api-service-mongodb-primary-db:/usr/db
-
-  api-service-mongodb2:
-    container_name: api-service-mongodb2
-    image: mongo:latest
-    expose:
-      - "27017"
-    networks:
-      - api-service-network
-    command:
-      - bin/sh
-      - -c
-      - |
-        /db-init/rs-init/mongo-keyfile-init.sh
-        mongod --replSet apiServiceDBRS --bind_ip_all
-    volumes:
-      - api-service-mongodb2-db:/usr/db
-
-  api-service-mongodb3:
-    container_name: api-service-mongodb3
-    image: mongo:latest
-    expose:
-      - "27017"
-    networks:
-      - api-service-network
-    command:
-      - bin/sh
-      - -c
-      - |
-        /db-init/rs-init/mongo-keyfile-init.sh
-        mongod --replSet apiServiceDBRS --bind_ip_all
-    volumes:
-      - api-service-mongodb3-db:/usr/db
 
   # DEV SERVICE
   dev-service:
@@ -236,8 +201,6 @@ services:
 volumes:
   keycloak-postgres-db:
   api-service-mongodb-primary-db:
-  api-service-mongodb2-db:
-  api-service-mongodb3-db:
   dev-service-mongodb-primary-db:
   protection-service-mongodb-primary-db:
   cache:
