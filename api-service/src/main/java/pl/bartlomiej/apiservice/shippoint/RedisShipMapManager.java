@@ -1,8 +1,8 @@
 package pl.bartlomiej.apiservice.shippoint;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.event.EventListener;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,23 +25,33 @@ public final class RedisShipMapManager implements ShipMapManager {
     private final RedisTemplate<String, ShipPoint> redisTemplate;
     private final HashOperations<String, String, ShipPoint> hashOperations;
     private volatile LocalDateTime lastRefreshed;
+    private final long shipPointMapRefreshmentDelay;
 
-    RedisShipMapManager(AisApiShipPointAdapter aisApiShipPointAdapter, RedisTemplate<String, ShipPoint> redisTemplate) {
+    RedisShipMapManager(AisApiShipPointAdapter aisApiShipPointAdapter,
+                        @Qualifier("shipPointRedisTemplate") RedisTemplate<String, ShipPoint> redisTemplate,
+                        @Value("${project-properties.scheduling-delays.in-ms.ship-point-map-refreshment.refreshing}") long shipPointMapRefreshmentDelay) {
         this.aisApiShipPointAdapter = aisApiShipPointAdapter;
         this.redisTemplate = redisTemplate;
         this.hashOperations = redisTemplate.opsForHash();
+        this.shipPointMapRefreshmentDelay = shipPointMapRefreshmentDelay;
     }
 
     @Override
-    public List<ShipPoint> getActiveShipPoints() {
-        return hashOperations.values(SHIP_POINTS_RH);
+    public Optional<List<ShipPoint>> getActiveShipPoints() {
+        List<ShipPoint> shipPoints = hashOperations.values(SHIP_POINTS_RH);
+        return shipPoints.isEmpty()
+                ? Optional.empty()
+                : Optional.of(shipPoints);
     }
 
     @Override
-    public List<String> getActiveShipMmsis() {
-        return hashOperations.values(SHIP_POINTS_RH).stream()
+    public Optional<List<String>> getActiveShipMmsis() {
+        List<String> shipPointsMmsis = hashOperations.values(SHIP_POINTS_RH).stream()
                 .map(ShipPoint::mmsi)
                 .toList();
+        return shipPointsMmsis.isEmpty()
+                ? Optional.empty()
+                : Optional.of(shipPointsMmsis);
     }
 
     @Override
@@ -60,7 +70,6 @@ public final class RedisShipMapManager implements ShipMapManager {
                 );
     }
 
-    // todo: shipPoints is not being created - nothing appears in Redis after this method invocation
     @Override
     public void refreshMap() {
         log.info("Refreshing Redis ShipPoints Map.");
@@ -75,16 +84,16 @@ public final class RedisShipMapManager implements ShipMapManager {
     }
 
     @Override
-    public LocalDateTime lastRefreshed() {
+    public LocalDateTime getLastRefreshed() {
         return this.lastRefreshed;
     }
 
-    @EventListener(ApplicationStartedEvent.class)
-    public void refreshOnApplicationStart() {
-        this.refreshMap();
+    @Override
+    public long getShipPointMapRefreshmentDelay() {
+        return this.shipPointMapRefreshmentDelay;
     }
 
-    @Scheduled(initialDelay = 360000, fixedDelayString = "${project-properties.scheduling-delays.in-ms.ship-point-map-refreshment}")
+    @Scheduled(initialDelayString = "${project-properties.scheduling-delays.in-ms.ship-point-map-refreshment.initialDelay}", fixedDelayString = "${project-properties.scheduling-delays.in-ms.ship-point-map-refreshment.refreshing}")
     public void scheduledRefreshMap() {
         this.refreshMap();
     }

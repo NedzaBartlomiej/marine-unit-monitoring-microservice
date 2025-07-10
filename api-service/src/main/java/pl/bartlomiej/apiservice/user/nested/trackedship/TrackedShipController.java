@@ -1,6 +1,5 @@
 package pl.bartlomiej.apiservice.user.nested.trackedship;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,16 +26,13 @@ public class TrackedShipController {
     private final TrackedShipService trackedShipService;
     private final UserService userService;
     private final ShipMapManager shipMapManager;
-    private final long shipPointMapRefreshment;
 
     public TrackedShipController(TrackedShipService trackedShipService,
                                  UserService userService,
-                                 ShipMapManager shipMapManager,
-                                 @Value("${project-properties.scheduling-delays.in-ms.ship-point-map-refreshment}") long shipPointMapRefreshment) {
+                                 ShipMapManager shipMapManager) {
         this.trackedShipService = trackedShipService;
         this.userService = userService;
         this.shipMapManager = shipMapManager;
-        this.shipPointMapRefreshment = shipPointMapRefreshment;
     }
 
     @PreAuthorize("hasAnyRole(" +
@@ -48,8 +44,8 @@ public class TrackedShipController {
     public ResponseEntity<ResponseModel<List<TrackedShipResponseDto>>> getTrackedShips(Principal principal) {
         ApiUserEntity user = userService.getEntity(principal.getName());
         List<TrackedShipResponseDto> trackedShips = trackedShipService.getTrackedShipsResponse(user.getId());
-        Duration timeElapsedFromLastMapRefreshment = Duration.between(shipMapManager.lastRefreshed(), LocalDateTime.now());
-        Duration maxAge = Duration.ofMillis(this.shipPointMapRefreshment).minus(timeElapsedFromLastMapRefreshment);
+        Duration timeElapsedFromLastMapRefreshment = Duration.between(shipMapManager.getLastRefreshed(), LocalDateTime.now());
+        Duration maxAge = Duration.ofMillis(shipMapManager.getShipPointMapRefreshmentDelay()).minus(timeElapsedFromLastMapRefreshment);
         return ResponseEntity.status(OK)
                 .cacheControl(CacheControl
                         .maxAge(CacheControlHelper.getSafeMaxAge(

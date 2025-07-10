@@ -50,7 +50,7 @@ public class ApplicationController {
     }
 
     @PreAuthorize("hasRole(T(pl.bartlomiej.devservice.developer.domain.DeveloperKeycloakRole).DEVELOPER.getRole())")
-    @GetMapping("/dev-id")
+    @GetMapping("/me")
     public ResponseEntity<ResponseModel<List<Application>>> getApplications(Principal principal) {
         return ResponseEntity.ok(
                 new ResponseModel.Builder<List<Application>>(HttpStatus.OK, true)
@@ -83,7 +83,7 @@ public class ApplicationController {
         );
     }
 
-    @PreAuthorize("hasRole(T(pl.bartlomiej.devservice.application.domain.ApplicationRole).APP_TOKEN_CHECKER.name())")
+    @PreAuthorize("hasRole(T(pl.bartlomiej.devservice.developer.domain.DeveloperKeycloakRole).DEVELOPER.getRole())")
     @PatchMapping("/{id}/app-token")
     public ResponseEntity<ResponseModel<String>> replaceCurrentAppToken(@PathVariable final String id) {
         return ResponseEntity.ok(

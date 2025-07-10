@@ -1,5 +1,5 @@
 package pl.bartlomiej.apiservice.common.sseemission.broadcaster;
 
-public interface SseBroadcaster {
-    void emitForAll(Object eventObject);
+public interface SseBroadcaster<T> {
+    void emitForAll(T eventObject);
 }

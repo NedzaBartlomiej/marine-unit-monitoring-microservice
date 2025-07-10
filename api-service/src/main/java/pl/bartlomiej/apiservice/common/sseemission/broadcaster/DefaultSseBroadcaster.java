@@ -7,7 +7,7 @@ import pl.bartlomiej.apiservice.common.sseemission.emissionmanager.SseEmissionMa
 import java.io.IOException;
 
 @Slf4j
-public class DefaultSseBroadcaster implements SseBroadcaster {
+public class DefaultSseBroadcaster<T> implements SseBroadcaster<T> {
 
     private final SseEmissionManager sseEmissionManager;
 
@@ -16,7 +16,7 @@ public class DefaultSseBroadcaster implements SseBroadcaster {
     }
 
     @Override
-    public void emitForAll(Object eventObject) {
+    public void emitForAll(T eventObject) {
         log.info("Emitting a new event to all subscribers.");
         for (SseEmitter emitter : this.sseEmissionManager.getEmitters()) {
             Thread.startVirtualThread(() -> {

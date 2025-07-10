@@ -16,6 +16,7 @@ import pl.bartlomiej.apiservice.shiptracking.repository.MongoShipTrackRepository
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,14 +41,20 @@ class DefaultShipTrackService implements ShipTrackService {
     }
 
     // TRACK HISTORY - operations
-    @Scheduled(initialDelay = 20000, fixedDelayString = "${project-properties.scheduling-delays.in-ms.ship-tracking.saving}")
+    @Scheduled(initialDelayString = "${project-properties.scheduling-delays.in-ms.ship-tracking.initialDelay}", fixedDelayString = "${project-properties.scheduling-delays.in-ms.ship-tracking.saving}")
     public void saveShipTracks() {
-        log.info("Starting saving ShipTracks process.");
+        log.info("Starting ShipTracks saving process.");
         try {
-            this.saveNoStationaryShipTracks(this.getActualShipTracks());
-            log.info("Saving ShipTracks succeed.");
+            this.getCurrentShipTracks()
+                    .ifPresentOrElse(
+                            currentShipTracks -> {
+                                this.saveNoStationaryShipTracks(currentShipTracks);
+                                log.info("Saving ShipTracks succeed.");
+                            },
+                            () -> log.info("The ShipPoint map is empty - there are no ships to track, so all operations are skipped.")
+                    );
         } catch (Exception e) {
-            log.error("Something went wrong during saving ShipTracks.", e);
+            log.error("An error has been occurred during saving ShipTracks.", e);
         }
     }
 
@@ -77,14 +84,14 @@ class DefaultShipTrackService implements ShipTrackService {
     }
 
     // GET SHIP TRACKS TO SAVE - operations
-    private List<ShipTrack> getActualShipTracks() {
-        List<String> activeShipMmsis = shipMapManager.getActiveShipMmsis();
-        if (activeShipMmsis.isEmpty()) activeShipMmsis = List.of("0");
-        // todo: refactor^^^ - just don't make a call to api
-        return aisService.fetchShipsByMmsis(activeShipMmsis)
-                .stream()
-                .map(this::mapToShipTrack)
-                .toList();
+    private Optional<List<ShipTrack>> getCurrentShipTracks() {
+        return shipMapManager.getActiveShipMmsis()
+                .map(activeShipPointsMmsis ->
+                        aisService.fetchShipsByMmsis(activeShipPointsMmsis)
+                                .stream()
+                                .map(this::mapToShipTrack)
+                                .toList()
+                );
     }
 
     private ShipTrack mapToShipTrack(JsonNode ship) {
