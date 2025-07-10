@@ -369,8 +369,8 @@
           "attributes": {}
         },
         {
-          "id": "4d9406bd-859d-4f6a-a4c4-49997a7ccddf",
-          "name": "DEF_API_USER",
+          "id": "292b45c3-544e-434d-b3e9-365f0fe624b2",
+          "name": "API_USER",
           "description": "",
           "composite": false,
           "clientRole": true,
@@ -393,8 +393,8 @@
       "account-console": [],
       "dev-service-client": [
         {
-          "id": "74be45b7-80fd-47ae-8db2-42b6b5ad1e7b",
-          "name": "DEF_DEVELOPER",
+          "id": "e0322728-d93c-4de9-8635-820cff64bc28",
+          "name": "DEVELOPER",
           "description": "",
           "composite": false,
           "clientRole": true,
@@ -745,8 +745,8 @@
       "defaultClientScopes": [
         "web-origins",
         "acr",
-        "profile",
         "roles",
+        "profile",
         "basic",
         "email"
       ],
@@ -891,11 +891,11 @@
         }
       ],
       "defaultClientScopes": [
-        "service_account",
         "web-origins",
+        "service_account",
         "acr",
-        "profile",
         "roles",
+        "profile",
         "basic",
         "email"
       ],
@@ -1038,11 +1038,11 @@
         }
       ],
       "defaultClientScopes": [
-        "service_account",
         "web-origins",
+        "service_account",
         "acr",
-        "profile",
         "roles",
+        "profile",
         "basic",
         "email"
       ],
@@ -1142,8 +1142,8 @@
         }
       ],
       "defaultClientScopes": [
-        "service_account",
         "web-origins",
+        "service_account",
         "acr",
         "profile",
         "roles",
@@ -1245,8 +1245,8 @@
         }
       ],
       "defaultClientScopes": [
-        "service_account",
         "web-origins",
+        "service_account",
         "acr",
         "profile",
         "roles",
@@ -1456,8 +1456,8 @@
         }
       ],
       "defaultClientScopes": [
-        "service_account",
         "web-origins",
+        "service_account",
         "acr",
         "profile",
         "roles",
