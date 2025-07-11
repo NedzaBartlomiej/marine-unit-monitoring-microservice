@@ -17,15 +17,16 @@ public class DefaultSseBroadcaster<T> implements SseBroadcaster<T> {
 
     @Override
     public void emitForAll(T eventObject) {
-        log.info("Emitting a new event to all subscribers.");
+        log.trace("Emitting a new event to all subscribers.");
         for (SseEmitter emitter : this.sseEmissionManager.getEmitters()) {
             Thread.startVirtualThread(() -> {
                 try {
                     emitter.send(eventObject);
                 } catch (IOException e) {
-                    log.error("Something go wrong during emitting an event. Event details: {}.", eventObject, e);
+                    log.error("Something went wrong during emitting an event. Event object: {}.", eventObject, e);
                 }
             });
         }
+        log.trace("Successfully emitted a new event to all subscribers.");
     }
 }

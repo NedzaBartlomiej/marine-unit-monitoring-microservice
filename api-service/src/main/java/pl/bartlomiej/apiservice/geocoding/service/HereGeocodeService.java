@@ -27,7 +27,6 @@ public class HereGeocodeService implements GeocodeService {
     private final RestClient restClient;
     private final String geocodeApiKey;
     private final String geocodeApiBaseUrl;
-
     public HereGeocodeService(@Qualifier("defaultRestClient") RestClient restClient,
                               @Value("${geocode-api.api-key}") String geocodeApiKey,
                               @Value("${geocode-api.api-base-url}") String geocodeApiBaseUrl) {
@@ -62,7 +61,7 @@ public class HereGeocodeService implements GeocodeService {
             JsonNode position = response.get("items").get(FIRST_GEOCODE_SUGGESTION).get("position");
             return new Position(position.get(LNG).asDouble(), position.get(LAT).asDouble());
         } catch (NullPointerException e) {
-            log.error("Geocode not found for: {}", address);
+            log.warn("Geocode not found for: {}", address);
             return new Position(0.0, 0.0);
         }
     }

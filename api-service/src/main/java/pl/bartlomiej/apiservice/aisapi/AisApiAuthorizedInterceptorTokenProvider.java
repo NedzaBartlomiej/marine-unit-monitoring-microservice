@@ -55,23 +55,37 @@ public class AisApiAuthorizedInterceptorTokenProvider implements AuthorizedInter
 
     @Override
     public String getValidToken() {
-        log.info("Access token has refreshed now.");
+        log.debug("Obtaining valid access token.");
         return this.extractTokenFromApiResponse(
                 this.fetchAuthTokenFromApi()
         );
     }
 
     private JsonNode fetchAuthTokenFromApi() {
-        return restClient
+        log.debug("Fetching access token from AIS API.");
+        JsonNode response = restClient
                 .post()
                 .uri(accessTokenApiUrl)
                 .header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE)
                 .body(buildAuthBody())
                 .retrieve()
                 .body(JsonNode.class);
+        if (response == null || response.isNull() || response.isEmpty()) {
+            log.error("AIS API access token response is invalid. Response object: {}", response);
+            throw new IllegalStateException("Failed to fetch access token from AIS API.");
+        }
+        log.debug("Successfully fetched access token from AIS API, returning valid response.");
+        return response;
     }
 
     private String extractTokenFromApiResponse(JsonNode response) {
-        return response.get("access_token").asText();
+        log.debug("Extracting AIS API access token from valid response.");
+        String accessToken = response.get("access_token").asText();
+        if (accessToken == null || accessToken.isBlank()) {
+            log.error("AIS API access token is invalid. Token object: {}", accessToken);
+            throw new IllegalStateException("Failed to extract valid token from AIS API response.");
+        }
+        log.debug("Successfully extracted AIS API access token from the response, returning.");
+        return accessToken;
     }
 }

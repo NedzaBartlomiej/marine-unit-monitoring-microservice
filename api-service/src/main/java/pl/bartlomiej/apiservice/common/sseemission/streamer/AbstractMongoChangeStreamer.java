@@ -18,16 +18,19 @@ public abstract class AbstractMongoChangeStreamer implements SseStreamer {
     @Override
     public final void initStream() {
         if (this.subscription != null) {
-            log.info("There's an active subscription in requested SseStreamer.");
+            log.debug("There's an active subscription in requested SseStreamer.");
             return;
         }
 
         synchronized (this) {
-            if (this.subscription != null) return;
+            if (this.subscription != null) {
+                log.debug("There's an active subscription in requested SseStreamer.");
+                return;
+            }
 
             if (!this.messageListenerContainer.isRunning()) {
                 this.messageListenerContainer.start();
-                log.info("Starting MongoDB Change Stream Message Listener Container.");
+                log.debug("Starting MongoDB Change Stream Message Listener Container.");
             }
 
             this.subscription = this.registerListeningSubscription(this.messageListenerContainer);

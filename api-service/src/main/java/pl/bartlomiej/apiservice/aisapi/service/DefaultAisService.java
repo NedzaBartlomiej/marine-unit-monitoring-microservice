@@ -11,7 +11,7 @@ import pl.bartlomiej.apiservice.aisapi.AisShip;
 import pl.bartlomiej.apiservice.common.util.CommonShipFields;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 import static java.util.Map.of;
 
@@ -35,25 +35,51 @@ public class DefaultAisService implements AisService {
     }
 
     @Override
-    public List<AisShip> fetchLatestShips() {
-        List<AisShip> aisShips = restClient
+    public Optional<List<AisShip>> fetchLatestShips() {
+        log.debug("Fetching latest ships from AIS API.");
+        List<AisShip> response = restClient
                 .get()
                 .uri(apiFetchLatestUri)
                 .retrieve()
                 .body(new ParameterizedTypeReference<>() {
                 });
-        return Objects.requireNonNull(aisShips, "AisShip list from the API is null.")
-                .stream().limit(resultLimit).toList();
+        if (response == null || response.isEmpty()) {
+            log.warn("Fetched latest ships list from AIS API is null or empty, returning Optional.empty().");
+            return Optional.empty();
+        }
+        log.debug("Successfully fetched latest ships from AIS API, returning.");
+        return Optional.of(this.limitLatestShipsResponse(response, this.resultLimit));
+    }
+
+    /**
+     *
+     * @param aisShips List that contains AIS Ships from the AIS API response.
+     * @return Limited by limit established in the properties file,
+     * list that contains AIS Ships from the AIS API response,
+     * due to the Geocoding API free requests limits.
+     */
+    private List<AisShip> limitLatestShipsResponse(List<AisShip> aisShips, long resultLimit) {
+        log.debug("Limiting AIS Ships response.");
+        return aisShips.stream()
+                .limit(resultLimit)
+                .toList();
     }
 
     @Override
-    public List<JsonNode> fetchShipsByMmsis(List<String> mmsis) {
-        return restClient
+    public Optional<List<JsonNode>> fetchShipsByMmsis(List<String> mmsis) {
+        log.debug("Fetching ships by passed mmsi list from AIS API.");
+        List<JsonNode> response = restClient
                 .post()
                 .uri(apiFetchByMmsiUri)
                 .body(of(CommonShipFields.MMSI, mmsis.toArray()))
                 .retrieve()
                 .body(new ParameterizedTypeReference<>() {
                 });
+        if (response == null || response.isEmpty()) {
+            log.warn("Fetched ships by passed mmsi list, list is null or empty, returning Optional.empty().");
+            return Optional.empty();
+        }
+        log.debug("Successfully fetched ships by passed mmsi list from AIS API, returning.");
+        return Optional.of(response);
     }
 }

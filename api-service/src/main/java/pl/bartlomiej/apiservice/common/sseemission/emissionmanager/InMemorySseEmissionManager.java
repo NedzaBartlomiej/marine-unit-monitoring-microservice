@@ -45,30 +45,36 @@ public class InMemorySseEmissionManager implements SseEmissionManager {
      */
     @Override
     public SseEmitter getOrCreateEmitter(String identifier) {
+        log.trace("Obtaining SSE connection for the user with id: {}", identifier);
         SseEmitter newEmitter = this.create(identifier);
         SseEmitter previous = this.storage.put(identifier, newEmitter);
-        if (previous != null) previous.complete();
+        if (previous != null) {
+            log.trace("The user with id: {}, already has opened stream connection, completing the previous one, and returning a new one.", identifier);
+            previous.complete();
+        }
 
         if (this.streamRunning.compareAndSet(false, true)) {
-            this.streamerObjectProvider.getObject().initStream();
+            SseStreamer sseStreamer = this.streamerObjectProvider.getObject();
+            log.debug("Lazily initializing SSE stream – the first subscriber has just appeared for {}.", sseStreamer.getClass().getPackageName());
+            sseStreamer.initStream();
         }
 
         return newEmitter;
     }
 
     private SseEmitter create(String identifier) {
-        log.info("Creating a new SseEmitter.");
+        log.trace("Creating a new SseEmitter.");
         SseEmitter sseEmitter = new SseEmitter(this.emissionTimeout);
         sseEmitter.onCompletion(() -> {
-            log.info("SseEmitter connection completed - deleting SseEmitter.");
+            log.trace("SseEmitter connection completed - deleting SseEmitter.");
             this.storage.remove(identifier);
         });
         sseEmitter.onError(throwable -> {
-            log.error("An error occurred on the SseEmitter connection: {} - deleting SseEmitter.", throwable.toString());
+            log.trace("An error occurred on the SseEmitter connection: {} - deleting SseEmitter.", throwable.toString());
             this.storage.remove(identifier);
         });
         sseEmitter.onTimeout(() -> {
-            log.info("SseEmitter connection timed out - deleting SeeEmitter.");
+            log.trace("SseEmitter connection timed out - deleting SeeEmitter.");
             this.storage.remove(identifier);
         });
 

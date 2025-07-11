@@ -4,9 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import pl.bartlomiej.apiservice.aisapi.AisShip;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AisService {
-    List<AisShip> fetchLatestShips();
+    Optional<List<AisShip>> fetchLatestShips();
 
-    List<JsonNode> fetchShipsByMmsis(List<String> mmsis);
+    Optional<List<JsonNode>> fetchShipsByMmsis(List<String> mmsis);
 }
