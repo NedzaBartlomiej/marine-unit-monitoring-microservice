@@ -1,9 +1,6 @@
 package pl.bartlomiej.apiservice.geocoding.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,9 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import pl.bartlomiej.apiservice.geocoding.Position;
+import pl.bartlomiej.apiservice.common.helper.Position;
 
-import java.util.Objects;
+import java.util.Optional;
 
 import static pl.bartlomiej.apiservice.common.config.redis.RedisCacheConfig.ADDRESS_COORDS_CACHE_NAME;
 
@@ -27,6 +24,7 @@ public class HereGeocodeService implements GeocodeService {
     private final RestClient restClient;
     private final String geocodeApiKey;
     private final String geocodeApiBaseUrl;
+
     public HereGeocodeService(@Qualifier("defaultRestClient") RestClient restClient,
                               @Value("${geocode-api.api-key}") String geocodeApiKey,
                               @Value("${geocode-api.api-base-url}") String geocodeApiBaseUrl) {
@@ -36,46 +34,67 @@ public class HereGeocodeService implements GeocodeService {
     }
 
     @Cacheable(cacheNames = ADDRESS_COORDS_CACHE_NAME)
-    public Position getAddressCoordinates(String address) {
-        JsonNode response = this.retrieveGeocodeFromApi(address);
-        return this.createPositionFromResponse(response, address);
+    public Optional<Position> getAddressCoordinates(String address) {
+        log.trace("Obtaining coordinates for address='{}'", address);
+        if (address == null || address.isBlank()) {
+            log.trace("An empty address='{}' occurred during geocoding. Skipping geocoding process.", address);
+            return Optional.empty();
+        }
+        log.trace("Returning a Position object for the address='{}'", address);
+        return this.geocodeAddress(address)
+                .flatMap(geocodeResponse -> this.mapAddress(geocodeResponse, address));
     }
 
     // todo - use the Spring Retry instead of webClient retry mechanism
     //  (I'm deleting now, the WebClient retry for tooManyReq... approach)
-    @NonNull
-    private JsonNode retrieveGeocodeFromApi(String address) {
-        if (address == null || address.isBlank()) {
-            log.error("Null address, skipping request sending.");
-            return this.createDefaultPositionNode();
-        }
-        return Objects.requireNonNull(restClient
+    private Optional<JsonNode> geocodeAddress(String address) {
+        log.trace("Requesting geocoding API for the address='{}' geocode", address);
+        JsonNode response = restClient
                 .get()
-                .uri(this.buildGeocodeApiUrl(address))
+                .uri(this.getGeocodeApiUrl(address))
                 .retrieve()
-                .body(JsonNode.class), "Geocode dat from API is null.");
-    }
-
-    private Position createPositionFromResponse(JsonNode response, String address) {
-        try {
-            JsonNode position = response.get("items").get(FIRST_GEOCODE_SUGGESTION).get("position");
-            return new Position(position.get(LNG).asDouble(), position.get(LAT).asDouble());
-        } catch (NullPointerException e) {
-            log.warn("Geocode not found for: {}", address);
-            return new Position(0.0, 0.0);
+                .body(JsonNode.class);
+        if (response == null || response.isNull() || response.isEmpty()) {
+            log.error("Received invalid response from geocoding API.");
+            return Optional.empty();
         }
+        log.trace("Successfully received geocoding info from the API about the address='{}'", address);
+        return Optional.of(response);
     }
 
-    private String buildGeocodeApiUrl(String address) {
+    private Optional<Position> mapAddress(JsonNode response, String address) {
+        JsonNode itemsNode = response.get("items");
+
+        if (itemsNode == null || itemsNode.isNull()) {
+            log.error("Unexpected behavior from Geocoding API – missing 'items' field in response for address='{}'. Raw response: {}", address, response.toPrettyString());
+            return Optional.empty();
+        }
+
+        if (!itemsNode.isArray()) {
+            log.error("Invalid response structure from Geocoding API – 'items' is not an array for address='{}'. Raw response: {}", address, response.toPrettyString());
+            return Optional.empty();
+        }
+
+        if (itemsNode.isEmpty()) {
+            log.trace("No geocode suggestions returned for address='{}'.", address);
+            return Optional.empty();
+        }
+
+        JsonNode positionNode = itemsNode.get(FIRST_GEOCODE_SUGGESTION).get("position");
+        if (positionNode == null || !positionNode.has(LNG) || !positionNode.has(LAT)) {
+            log.error("Missing 'position' or coordinates in Geocoding API response for address='{}'. Raw response: {}", address, response.toPrettyString());
+            return Optional.empty();
+        }
+
+        return Optional.of(
+                new Position(positionNode.get(LNG).asDouble(), positionNode.get(LAT).asDouble())
+        );
+    }
+
+
+    private String getGeocodeApiUrl(String address) {
         return this.geocodeApiBaseUrl +
                 "?q=" + address +
                 "&apiKey=" + geocodeApiKey;
-    }
-
-    private JsonNode createDefaultPositionNode() {
-        ObjectNode positionNode = JsonNodeFactory.instance.objectNode();
-        positionNode.put(LNG, 0.0);
-        positionNode.put(LAT, 0.0);
-        return positionNode;
     }
 }

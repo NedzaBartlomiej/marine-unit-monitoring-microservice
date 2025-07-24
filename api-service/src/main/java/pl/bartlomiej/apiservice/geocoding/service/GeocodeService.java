@@ -1,7 +1,9 @@
 package pl.bartlomiej.apiservice.geocoding.service;
 
-import pl.bartlomiej.apiservice.geocoding.Position;
+import pl.bartlomiej.apiservice.common.helper.Position;
+
+import java.util.Optional;
 
 public interface GeocodeService {
-    Position getAddressCoordinates(String address);
+    Optional<Position> getAddressCoordinates(String address);
 }

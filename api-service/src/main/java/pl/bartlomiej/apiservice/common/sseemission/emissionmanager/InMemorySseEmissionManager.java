@@ -45,7 +45,7 @@ public class InMemorySseEmissionManager implements SseEmissionManager {
      */
     @Override
     public SseEmitter getOrCreateEmitter(String identifier) {
-        log.trace("Obtaining SSE connection for the user with id: {}", identifier);
+        log.debug("Obtaining SSE connection for the user with id: {}", identifier);
         SseEmitter newEmitter = this.create(identifier);
         SseEmitter previous = this.storage.put(identifier, newEmitter);
         if (previous != null) {

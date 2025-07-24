@@ -37,7 +37,6 @@ spring:
           issuer-uri: http://keycloak.pl:8080/realms/marine-unit-monitoring-master
           jwk-set-uri: http://keycloak.pl:8080/realms/marine-unit-monitoring-master/protocol/openid-connect/certs
 
-# todo: add logging in api-service - there's a tragical logging in this service! I can't check anything! It must be improved
 project-properties:
   external-apis:
     ais-api:

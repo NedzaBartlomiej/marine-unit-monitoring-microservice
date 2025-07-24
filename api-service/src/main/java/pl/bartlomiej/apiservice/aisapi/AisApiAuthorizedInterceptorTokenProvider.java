@@ -44,15 +44,6 @@ public class AisApiAuthorizedInterceptorTokenProvider implements AuthorizedInter
         this.accessTokenApiUrl = accessTokenApiUrl;
     }
 
-    private MultiValueMap<String, String> buildAuthBody() {
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("client_id", clientId);
-        body.add("scope", scope);
-        body.add("client_secret", clientSecret);
-        body.add("grant_type", grantType);
-        return body;
-    }
-
     @Override
     public String getValidToken() {
         log.debug("Obtaining valid access token.");
@@ -87,5 +78,14 @@ public class AisApiAuthorizedInterceptorTokenProvider implements AuthorizedInter
         }
         log.debug("Successfully extracted AIS API access token from the response, returning.");
         return accessToken;
+    }
+
+    private MultiValueMap<String, String> buildAuthBody() {
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("client_id", clientId);
+        body.add("scope", scope);
+        body.add("client_secret", clientSecret);
+        body.add("grant_type", grantType);
+        return body;
     }
 }

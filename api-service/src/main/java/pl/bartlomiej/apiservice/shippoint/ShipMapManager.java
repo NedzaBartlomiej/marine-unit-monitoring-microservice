@@ -12,7 +12,7 @@ public interface ShipMapManager {
 
     boolean isShipPointActive(String mmsi);
 
-    String getShipPointName(String mmsi);
+    Optional<String> getShipPointName(String mmsi);
 
     void refreshMap();
 

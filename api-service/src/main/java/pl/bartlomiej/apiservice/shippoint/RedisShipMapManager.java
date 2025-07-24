@@ -7,7 +7,6 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import pl.bartlomiej.apiservice.common.exception.apiexception.MmsiConflictException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -62,25 +61,28 @@ public final class RedisShipMapManager implements ShipMapManager {
     // To keep in mind: hashOperations.get(H key, Object hashKey)
     // also returns null if `H key` doesn't exist.
     @Override
-    public String getShipPointName(String mmsi) {
+    public Optional<String> getShipPointName(String mmsi) {
         return Optional.ofNullable(hashOperations.get(SHIP_POINTS_RH, mmsi))
-                .map(ShipPoint::destinationName)
-                .orElseThrow(() ->
-                        new MmsiConflictException(MmsiConflictException.Message.INVALID_SHIP.message)
-                );
+                .map(ShipPoint::name);
     }
 
     @Override
     public void refreshMap() {
-        log.info("Refreshing Redis ShipPoints Map.");
-        Map<String, ShipPoint> shipPointMap = aisApiShipPointAdapter.getShipPoints().stream()
-                .collect(Collectors.toMap(
-                        ShipPoint::mmsi,
-                        Function.identity()
-                ));
-        redisTemplate.delete(SHIP_POINTS_RH);
-        hashOperations.putAll(SHIP_POINTS_RH, shipPointMap);
-        this.lastRefreshed = LocalDateTime.now();
+        aisApiShipPointAdapter.getLatestShipPoints()
+                .ifPresentOrElse(shipPoints -> {
+                            log.info("Refreshing ShipPoints map.");
+                            Map<String, ShipPoint> shipPointMap = shipPoints.stream()
+                                    .collect(Collectors.toMap(
+                                                    ShipPoint::mmsi,
+                                                    Function.identity()
+                                            )
+                                    );
+                            redisTemplate.delete(SHIP_POINTS_RH);
+                            hashOperations.putAll(SHIP_POINTS_RH, shipPointMap);
+                            this.lastRefreshed = LocalDateTime.now();
+                        },
+                        () -> log.info("Lack of the latest ships, the state of the ShipPoints map remains unchanged.")
+                );
     }
 
     @Override

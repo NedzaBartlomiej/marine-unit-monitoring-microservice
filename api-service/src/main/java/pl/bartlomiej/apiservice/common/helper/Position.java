@@ -1,4 +1,4 @@
-package pl.bartlomiej.apiservice.geocoding;
+package pl.bartlomiej.apiservice.common.helper;
 
 import java.io.Serializable;
 

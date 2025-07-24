@@ -1,4 +1,4 @@
-package pl.bartlomiej.apiservice.user.controller;
+package pl.bartlomiej.apiservice.user;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

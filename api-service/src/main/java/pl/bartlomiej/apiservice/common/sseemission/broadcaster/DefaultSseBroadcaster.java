@@ -17,7 +17,7 @@ public class DefaultSseBroadcaster<T> implements SseBroadcaster<T> {
 
     @Override
     public void emitForAll(T eventObject) {
-        log.trace("Emitting a new event to all subscribers.");
+        log.debug("Emitting a new event to all subscribers.");
         for (SseEmitter emitter : this.sseEmissionManager.getEmitters()) {
             Thread.startVirtualThread(() -> {
                 try {
@@ -27,6 +27,6 @@ public class DefaultSseBroadcaster<T> implements SseBroadcaster<T> {
                 }
             });
         }
-        log.trace("Successfully emitted a new event to all subscribers.");
+        log.debug("Successfully emitted a new event to all subscribers.");
     }
 }

@@ -17,13 +17,13 @@ public abstract class AbstractMongoChangeStreamer implements SseStreamer {
 
     @Override
     public final void initStream() {
-        if (this.subscription != null) {
+        if (this.subscription != null && this.subscription.isActive()) {
             log.debug("There's an active subscription in requested SseStreamer.");
             return;
         }
 
         synchronized (this) {
-            if (this.subscription != null) {
+            if (this.subscription != null && this.subscription.isActive()) {
                 log.debug("There's an active subscription in requested SseStreamer.");
                 return;
             }
@@ -33,6 +33,7 @@ public abstract class AbstractMongoChangeStreamer implements SseStreamer {
                 log.debug("Starting MongoDB Change Stream Message Listener Container.");
             }
 
+            log.debug("Registering listening subscription for '{}'.", this.getClass().getSimpleName());
             this.subscription = this.registerListeningSubscription(this.messageListenerContainer);
         }
     }

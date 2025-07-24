@@ -1,7 +1,11 @@
 package pl.bartlomiej.apiservice.shippoint;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import pl.bartlomiej.apiservice.common.helper.Position;
+
 import java.io.Serializable;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record ShipPoint(
 
         String mmsi,
@@ -9,6 +13,5 @@ public record ShipPoint(
         Double pointX,
         Double pointY,
         String destinationName,
-        Double destinationX,
-        Double destinationY) implements Serializable {
+        Position destinationPosition) implements Serializable {
 }

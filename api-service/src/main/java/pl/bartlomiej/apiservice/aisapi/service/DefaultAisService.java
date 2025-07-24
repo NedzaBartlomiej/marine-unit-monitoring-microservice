@@ -59,7 +59,7 @@ public class DefaultAisService implements AisService {
      * due to the Geocoding API free requests limits.
      */
     private List<AisShip> limitLatestShipsResponse(List<AisShip> aisShips, long resultLimit) {
-        log.debug("Limiting AIS Ships response.");
+        log.trace("Limiting AIS Ships response.");
         return aisShips.stream()
                 .limit(resultLimit)
                 .toList();
@@ -67,7 +67,11 @@ public class DefaultAisService implements AisService {
 
     @Override
     public Optional<List<JsonNode>> fetchShipsByMmsis(List<String> mmsis) {
-        log.debug("Fetching ships by passed mmsi list from AIS API.");
+        log.debug("Trying to fetch ships by passed mmsi list from AIS API.");
+        if (mmsis == null || mmsis.isEmpty()) {
+            log.warn("Method fetchShipsByMmsis called with null or empty mmsi list - returning Optional.empty().");
+            return Optional.empty();
+        }
         List<JsonNode> response = restClient
                 .post()
                 .uri(apiFetchByMmsiUri)
@@ -76,7 +80,7 @@ public class DefaultAisService implements AisService {
                 .body(new ParameterizedTypeReference<>() {
                 });
         if (response == null || response.isEmpty()) {
-            log.warn("Fetched ships by passed mmsi list, list is null or empty, returning Optional.empty().");
+            log.warn("Fetched ships by passed mmsi list, list is null or empty - returning Optional.empty().");
             return Optional.empty();
         }
         log.debug("Successfully fetched ships by passed mmsi list from AIS API, returning.");

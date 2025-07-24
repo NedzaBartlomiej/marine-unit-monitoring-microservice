@@ -1,10 +1,10 @@
 package pl.bartlomiej.apiservice.shiptracking.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import pl.bartlomiej.apiservice.aisapi.AisApiConstants;
 import pl.bartlomiej.apiservice.aisapi.service.AisService;
 import pl.bartlomiej.apiservice.common.helper.DateRangeHelper;
 import pl.bartlomiej.apiservice.shippoint.ShipMapManager;
@@ -20,10 +20,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 class DefaultShipTrackService implements ShipTrackService {
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultShipTrackService.class);
     private final AisService aisService;
     private final MongoShipTrackRepository mongoShipTrackRepository;
     private final CustomShipTrackRepository customShipTrackRepository;
@@ -40,7 +40,15 @@ class DefaultShipTrackService implements ShipTrackService {
         this.shipMapManager = shipMapManager;
     }
 
-    // TRACK HISTORY - operations
+    @Override
+    public List<ShipTrack> getShipTracks(List<String> mmsis, LocalDateTime from, LocalDateTime to) {
+        log.info("Returning tracking history for passed mmsis.");
+        DateRangeHelper validDateRange = new DateRangeHelper(from, to);
+        return this.customShipTrackRepository
+                .findByMmsiInAndReadingTimeBetween(mmsis,
+                        validDateRange.from(), validDateRange.to());
+    }
+
     @Scheduled(initialDelayString = "${project-properties.scheduling-delays.in-ms.ship-tracking.initialDelay}", fixedDelayString = "${project-properties.scheduling-delays.in-ms.ship-tracking.saving}")
     public void saveShipTracks() {
         log.info("Starting ShipTracks saving process.");
@@ -51,13 +59,14 @@ class DefaultShipTrackService implements ShipTrackService {
                                 this.saveNoStationaryShipTracks(currentShipTracks);
                                 log.info("Saving ShipTracks succeed.");
                             },
-                            () -> log.info("The ShipPoint map is empty - there are no ships to track, so all operations are skipped.")
+                            () -> log.info("There are no ships to track, so all operations are skipped.")
                     );
         } catch (Exception e) {
             log.error("An error has been occurred during saving ShipTracks.", e);
         }
     }
 
+    // todo - check the EPSILON comparison instead of Double#equals
     private void saveNoStationaryShipTracks(List<ShipTrack> shipTracksToSave) {
         Set<String> shipTrackToSaveMmsis = shipTracksToSave.stream()
                 .map(ShipTrack::getMmsi)
@@ -75,34 +84,24 @@ class DefaultShipTrackService implements ShipTrackService {
         mongoShipTrackRepository.saveAll(noStationaryShipTracks);
     }
 
-    @Override
-    public List<ShipTrack> getShipTracks(List<String> mmsis, LocalDateTime from, LocalDateTime to) {
-        DateRangeHelper validDateRange = new DateRangeHelper(from, to);
-        return this.customShipTrackRepository
-                .findByMmsiInAndReadingTimeBetween(mmsis,
-                        validDateRange.from(), validDateRange.to());
-    }
-
-    // GET SHIP TRACKS TO SAVE - operations
     private Optional<List<ShipTrack>> getCurrentShipTracks() {
         return shipMapManager.getActiveShipMmsis()
-                .map(activeShipPointsMmsis ->
-                        aisService.fetchShipsByMmsis(activeShipPointsMmsis)
-                                .stream()
+                .flatMap(mmsis -> aisService.fetchShipsByMmsis(mmsis)
+                        .map(currentShips -> currentShips.stream()
                                 .map(this::mapToShipTrack)
-                                .toList()
+                                .toList())
+                        .or(() -> {
+                            log.error("Critical: received no ships from AIS API despite passing active MMSIs='{}' from the ShipPoints map.", mmsis);
+                            return Optional.empty();
+                        })
                 );
     }
 
     private ShipTrack mapToShipTrack(JsonNode ship) {
-
-        final String LONGITUDE = "longitude";
-        final String LATITUDE = "latitude";
-
         return new ShipTrack(
                 ship.get(ShipTrackConstants.MMSI).asText(),
-                ship.get(LONGITUDE).asDouble(),
-                ship.get(LATITUDE).asDouble()
+                ship.get(AisApiConstants.LONGITUDE).asDouble(),
+                ship.get(AisApiConstants.LATITUDE).asDouble()
         );
     }
 

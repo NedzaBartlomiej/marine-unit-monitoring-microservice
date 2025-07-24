@@ -1,14 +1,16 @@
 package pl.bartlomiej.apiservice.user.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.bartlomiej.apiservice.user.domain.ApiUserEntity;
 import pl.bartlomiej.apiservice.user.repository.MongoUserRepository;
-import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.model.KeycloakUserRepresentation;
 import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.KeycloakService;
+import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.model.KeycloakUserRepresentation;
 import pl.bartlomiej.mumcommons.globalidmservice.idm.internal.serviceidm.AbstractIDMService;
 
 import java.util.Collections;
 
+@Slf4j
 @Service
 class DefaultUserService extends AbstractIDMService<ApiUserEntity> implements UserService {
 
@@ -32,6 +34,7 @@ class DefaultUserService extends AbstractIDMService<ApiUserEntity> implements Us
 
     @Override
     public ApiUserEntity create(String id, String ipAddress) {
+        log.info("Creating user with id='{}'", id);
         return this.mongoUserRepository.save(
                 this.createApiUserEntity(id, ipAddress)
         );
@@ -44,8 +47,10 @@ class DefaultUserService extends AbstractIDMService<ApiUserEntity> implements Us
     }
 
     // todo: trustedIpAddresses set instead of list
+    // todo: to check if this #save invocation can be replaced by dirty-checking
     @Override
     public void trustIp(String id, String ipAddress) {
+        log.info("Saving a new trusted IP address for the user with id='{}'", id);
         ApiUserEntity user = super.getEntity(id);
         user.getTrustedIpAddresses().add(ipAddress);
         this.mongoUserRepository.save(user);
@@ -53,6 +58,7 @@ class DefaultUserService extends AbstractIDMService<ApiUserEntity> implements Us
 
     @Override
     public boolean verifyIp(String id, String ipAddress) {
+        log.info("Verifying if the given IP address is trusted by the user with id='{}'.", id);
         return super.getEntity(id).getTrustedIpAddresses().contains(ipAddress);
     }
 }
