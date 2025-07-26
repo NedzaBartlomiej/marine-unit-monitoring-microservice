@@ -1,24 +1,27 @@
 package pl.bartlomiej.apiservice.user.domain;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 import pl.bartlomiej.apiservice.user.nested.trackedship.TrackedShip;
 
-import java.util.List;
+import java.util.Collections;
+import java.util.Set;
 
-@Setter
 @Getter
-@NoArgsConstructor
 @Document(collection = "users")
 public class ApiUserEntity {
 
-    private String id;
-    private List<TrackedShip> trackedShips;
-    private List<String> trustedIpAddresses;
+    private final String id;
+    private final Set<TrackedShip> trackedShips;
+    private final Set<String> trustedIpAddresses;
 
-    public ApiUserEntity(String id) {
+    public ApiUserEntity(String id, Set<TrackedShip> trackedShips, Set<String> trustedIpAddresses) {
         this.id = id;
+        this.trackedShips = trackedShips == null
+                ? Collections.emptySet()
+                : Collections.unmodifiableSet(trackedShips);
+        this.trustedIpAddresses = trustedIpAddresses == null
+                ? Collections.emptySet()
+                : Collections.unmodifiableSet(trustedIpAddresses);
     }
 }

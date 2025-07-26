@@ -14,7 +14,7 @@ import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
 import java.security.Principal;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
@@ -41,9 +41,9 @@ public class TrackedShipController {
             ")"
     )
     @GetMapping
-    public ResponseEntity<ResponseModel<List<TrackedShipResponseDto>>> getTrackedShips(Principal principal) {
+    public ResponseEntity<ResponseModel<Set<TrackedShipResponseDto>>> getTrackedShips(Principal principal) {
         ApiUserEntity user = userService.getEntity(principal.getName());
-        List<TrackedShipResponseDto> trackedShips = trackedShipService.getTrackedShipsResponse(user.getId());
+        Set<TrackedShipResponseDto> trackedShips = trackedShipService.getTrackedShipsResponse(user.getId());
         Duration timeElapsedFromLastMapRefreshment = Duration.between(shipMapManager.getLastRefreshed(), LocalDateTime.now());
         Duration maxAge = Duration.ofMillis(shipMapManager.getShipPointMapRefreshmentDelay()).minus(timeElapsedFromLastMapRefreshment);
         return ResponseEntity.status(OK)
@@ -56,7 +56,7 @@ public class TrackedShipController {
                         .mustRevalidate()
                         .cachePrivate()
                 )
-                .body(new ResponseModel.Builder<List<TrackedShipResponseDto>>(OK, true)
+                .body(new ResponseModel.Builder<Set<TrackedShipResponseDto>>(OK, true)
                         .body(trackedShips)
                         .build()
                 );

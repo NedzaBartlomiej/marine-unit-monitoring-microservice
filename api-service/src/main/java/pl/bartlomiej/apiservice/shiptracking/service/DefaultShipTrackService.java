@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 @Service
 class DefaultShipTrackService implements ShipTrackService {
 
+    private static final double POSITION_EPSILON = 0.0001;
     private final AisService aisService;
     private final MongoShipTrackRepository mongoShipTrackRepository;
     private final CustomShipTrackRepository customShipTrackRepository;
@@ -41,7 +42,7 @@ class DefaultShipTrackService implements ShipTrackService {
     }
 
     @Override
-    public List<ShipTrack> getShipTracks(List<String> mmsis, LocalDateTime from, LocalDateTime to) {
+    public List<ShipTrack> getShipTracks(Set<String> mmsis, LocalDateTime from, LocalDateTime to) {
         log.info("Returning tracking history for passed mmsis.");
         DateRangeHelper validDateRange = new DateRangeHelper(from, to);
         return this.customShipTrackRepository
@@ -66,7 +67,6 @@ class DefaultShipTrackService implements ShipTrackService {
         }
     }
 
-    // todo - check the EPSILON comparison instead of Double#equals
     private void saveNoStationaryShipTracks(List<ShipTrack> shipTracksToSave) {
         Set<String> shipTrackToSaveMmsis = shipTracksToSave.stream()
                 .map(ShipTrack::getMmsi)
@@ -76,12 +76,26 @@ class DefaultShipTrackService implements ShipTrackService {
         List<ShipTrack> noStationaryShipTracks = shipTracksToSave.stream()
                 .filter(shipTrackToSave -> {
                     ShipTrack latestShipTrackForMmsi = latestShipTracksForMmsis.get(shipTrackToSave.getMmsi());
-                    return latestShipTrackForMmsi == null ||
-                            !(latestShipTrackForMmsi.getX().equals(shipTrackToSave.getX())
-                                    && latestShipTrackForMmsi.getY().equals(shipTrackToSave.getY())
-                            );
+                    return latestShipTrackForMmsi != null && positionChanged(
+                            latestShipTrackForMmsi.getX(), shipTrackToSave.getX(),
+                            latestShipTrackForMmsi.getY(), shipTrackToSave.getY()
+                    );
                 }).toList();
         mongoShipTrackRepository.saveAll(noStationaryShipTracks);
+    }
+
+    private boolean positionChanged(Double prevX, Double postX, Double prevY, Double postY) {
+        if (prevX == null || prevX.isNaN() ||
+                postX == null || postX.isNaN() ||
+                prevY == null || prevY.isNaN() ||
+                postY == null || postY.isNaN()
+        ) {
+            log.warn("Skipping ship tracking position comparison due to invalid coordinates: prevX={}, postX={}, prevY={}, postY={}. The processed ShipTrack won't be saved.",
+                    prevX, postX, prevY, postY);
+            return false;
+        }
+        return Math.abs(prevX - postX) > POSITION_EPSILON
+                || Math.abs(prevY - postY) > POSITION_EPSILON;
     }
 
     private Optional<List<ShipTrack>> getCurrentShipTracks() {

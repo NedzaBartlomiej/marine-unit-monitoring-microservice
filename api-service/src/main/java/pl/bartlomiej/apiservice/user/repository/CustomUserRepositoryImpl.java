@@ -11,8 +11,8 @@ import pl.bartlomiej.apiservice.user.domain.UserConstants;
 import pl.bartlomiej.apiservice.user.nested.trackedship.TrackedShip;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
@@ -47,11 +47,11 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
     }
 
     @Override
-    public List<TrackedShip> getTrackedShips(String id) {
+    public Set<TrackedShip> getTrackedShips(String id) {
         ApiUserEntity apiUser = mongoTemplate.findById(id, ApiUserEntity.class);
         if (apiUser != null) {
             return Optional.ofNullable(apiUser.getTrackedShips())
-                    .orElse(Collections.emptyList());
+                    .orElse(Collections.emptySet());
         } else {
             throw new RecordNotFoundException("User with id: " + id + "not found.");
         }

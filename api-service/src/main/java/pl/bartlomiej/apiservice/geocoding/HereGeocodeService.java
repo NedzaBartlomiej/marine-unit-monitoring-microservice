@@ -1,4 +1,4 @@
-package pl.bartlomiej.apiservice.geocoding.service;
+package pl.bartlomiej.apiservice.geocoding;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
@@ -6,7 +6,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import pl.bartlomiej.apiservice.common.helper.Position;
 
@@ -24,16 +28,20 @@ public class HereGeocodeService implements GeocodeService {
     private final RestClient restClient;
     private final String geocodeApiKey;
     private final String geocodeApiBaseUrl;
+    private final HereGeocodeService self;
 
     public HereGeocodeService(@Qualifier("defaultRestClient") RestClient restClient,
                               @Value("${geocode-api.api-key}") String geocodeApiKey,
-                              @Value("${geocode-api.api-base-url}") String geocodeApiBaseUrl) {
+                              @Value("${geocode-api.api-base-url}") String geocodeApiBaseUrl,
+                              @Lazy HereGeocodeService self) {
         this.restClient = restClient;
         this.geocodeApiKey = geocodeApiKey;
         this.geocodeApiBaseUrl = geocodeApiBaseUrl;
+        this.self = self;
     }
 
     @Cacheable(cacheNames = ADDRESS_COORDS_CACHE_NAME)
+    @Override
     public Optional<Position> getAddressCoordinates(String address) {
         log.trace("Obtaining coordinates for address='{}'", address);
         if (address == null || address.isBlank()) {
@@ -41,13 +49,20 @@ public class HereGeocodeService implements GeocodeService {
             return Optional.empty();
         }
         log.trace("Returning a Position object for the address='{}'", address);
-        return this.geocodeAddress(address)
+        return self.geocodeAddress(address)
                 .flatMap(geocodeResponse -> this.mapAddress(geocodeResponse, address));
     }
 
-    // todo - use the Spring Retry instead of webClient retry mechanism
-    //  (I'm deleting now, the WebClient retry for tooManyReq... approach)
-    private Optional<JsonNode> geocodeAddress(String address) {
+    @Retryable(
+            retryFor = {HttpClientErrorException.TooManyRequests.class},
+            maxAttemptsExpression = "${project-properties.retry.max-attempts.too-many-requests}",
+            backoff = @Backoff(
+                    delayExpression = "${project-properties.retry.delays.canonical.too-many-requests}",
+                    maxDelayExpression = "${project-properties.retry.delays.max.too-many-requests}",
+                    multiplierExpression = "${project-properties.retry.delays.multiplier.too-many-requests}"
+            )
+    )
+    protected Optional<JsonNode> geocodeAddress(String address) {
         log.trace("Requesting geocoding API for the address='{}' geocode", address);
         JsonNode response = restClient
                 .get()

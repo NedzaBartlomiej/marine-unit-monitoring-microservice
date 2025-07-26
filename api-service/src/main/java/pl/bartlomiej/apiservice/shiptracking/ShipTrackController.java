@@ -17,6 +17,8 @@ import java.security.Principal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/v1/ship-tracks")
@@ -38,9 +40,9 @@ public class ShipTrackController {
     public ResponseEntity<ResponseModel<List<ShipTrack>>> getShipTracks(@RequestParam(required = false) LocalDateTime from,
                                                                         @RequestParam(required = false) LocalDateTime to,
                                                                         Principal principal) {
-        List<String> principalTrackedShipsMmsis = this.trackedShipService.getTrackedShips(principal.getName()).stream()
+        Set<String> principalTrackedShipsMmsis = this.trackedShipService.getTrackedShips(principal.getName()).stream()
                 .map(TrackedShip::mmsi)
-                .toList();
+                .collect(Collectors.toUnmodifiableSet());
         List<ShipTrack> shipTracks = this.shipTrackService.getShipTracks(principalTrackedShipsMmsis, from, to);
         return ResponseEntity.status(HttpStatus.OK)
                 .cacheControl(CacheControl
@@ -58,7 +60,7 @@ public class ShipTrackController {
     @GetMapping
     public ResponseEntity<ResponseModel<List<ShipTrack>>> getShipTracks(@RequestParam(required = false) LocalDateTime from,
                                                                         @RequestParam(required = false) LocalDateTime to,
-                                                                        @RequestBody List<String> mmsis) {
+                                                                        @RequestBody Set<String> mmsis) {
         List<ShipTrack> shipTracks = this.shipTrackService.getShipTracks(mmsis, from, to);
         return ResponseEntity.status(HttpStatus.OK)
                 .cacheControl(CacheControl

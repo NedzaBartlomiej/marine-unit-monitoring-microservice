@@ -1,4 +1,4 @@
-package pl.bartlomiej.apiservice.common.config.webclient;
+package pl.bartlomiej.apiservice.common.config.httpclient;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;

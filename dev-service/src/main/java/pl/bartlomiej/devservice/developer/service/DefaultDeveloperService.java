@@ -3,11 +3,11 @@ package pl.bartlomiej.devservice.developer.service;
 import org.springframework.stereotype.Service;
 import pl.bartlomiej.devservice.developer.domain.AppDeveloperEntity;
 import pl.bartlomiej.devservice.developer.repository.DeveloperMongoRepository;
-import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.model.KeycloakUserRepresentation;
 import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.KeycloakService;
+import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.model.KeycloakUserRepresentation;
 import pl.bartlomiej.mumcommons.globalidmservice.idm.internal.serviceidm.AbstractIDMService;
 
-import java.util.Collections;
+import java.util.Set;
 
 @Service
 class DefaultDeveloperService extends AbstractIDMService<AppDeveloperEntity> implements DeveloperService {
@@ -38,12 +38,9 @@ class DefaultDeveloperService extends AbstractIDMService<AppDeveloperEntity> imp
     }
 
     private AppDeveloperEntity createAppDeveloperEntity(String id, String email, String ipAddress) {
-        AppDeveloperEntity appDeveloperEntity = new AppDeveloperEntity(id, email);
-        appDeveloperEntity.setTrustedIpAddresses(Collections.singletonList(ipAddress));
-        return appDeveloperEntity;
+        return new AppDeveloperEntity(id, email, Set.of(ipAddress));
     }
 
-    // todo: trustedIpAddresses set instead of list
     @Override
     public void trustIp(String id, String ipAddress) {
         AppDeveloperEntity developer = super.getEntity(id);

@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 public interface CustomShipTrackRepository {
-    List<ShipTrack> findByMmsiInAndReadingTimeBetween(List<String> mmsis, LocalDateTime from, LocalDateTime to);
+    List<ShipTrack> findByMmsiInAndReadingTimeBetween(Set<String> mmsis, LocalDateTime from, LocalDateTime to);
 
     Map<String, ShipTrack> getLatestShipTracksForMmsis(Set<String> mmsis);
 }

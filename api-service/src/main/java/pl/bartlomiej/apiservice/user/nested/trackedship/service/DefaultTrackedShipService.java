@@ -9,7 +9,8 @@ import pl.bartlomiej.apiservice.user.nested.trackedship.TrackedShip;
 import pl.bartlomiej.apiservice.user.nested.trackedship.TrackedShipResponseDto;
 import pl.bartlomiej.apiservice.user.repository.CustomUserRepository;
 
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class DefaultTrackedShipService implements TrackedShipService {
@@ -25,17 +26,17 @@ public class DefaultTrackedShipService implements TrackedShipService {
     }
 
     @Override
-    public List<TrackedShipResponseDto> getTrackedShipsResponse(String id) {
+    public Set<TrackedShipResponseDto> getTrackedShipsResponse(String id) {
         log.info("Returning tracked ship DTOs with active status for user with id='{}'.", id);
         return customUserRepository.getTrackedShips(id).stream()
                 .map(trackedShip -> {
                     boolean shipPointActive = shipMapManager.isShipPointActive(trackedShip.mmsi());
                     return new TrackedShipResponseDto(trackedShip.mmsi(), trackedShip.name(), shipPointActive);
-                }).toList();
+                }).collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
-    public List<TrackedShip> getTrackedShips(String id) {
+    public Set<TrackedShip> getTrackedShips(String id) {
         log.info("Returning raw tracked ships from repository for user with id='{}'.", id);
         return customUserRepository.getTrackedShips(id);
     }

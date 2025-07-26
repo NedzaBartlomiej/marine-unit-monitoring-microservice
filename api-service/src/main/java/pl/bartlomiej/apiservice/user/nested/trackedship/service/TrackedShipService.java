@@ -3,12 +3,12 @@ package pl.bartlomiej.apiservice.user.nested.trackedship.service;
 import pl.bartlomiej.apiservice.user.nested.trackedship.TrackedShip;
 import pl.bartlomiej.apiservice.user.nested.trackedship.TrackedShipResponseDto;
 
-import java.util.List;
+import java.util.Set;
 
 public interface TrackedShipService {
-    List<TrackedShipResponseDto> getTrackedShipsResponse(String id);
+    Set<TrackedShipResponseDto> getTrackedShipsResponse(String id);
 
-    List<TrackedShip> getTrackedShips(String id);
+    Set<TrackedShip> getTrackedShips(String id);
 
     TrackedShip addTrackedShip(String id, String mmsi);
 

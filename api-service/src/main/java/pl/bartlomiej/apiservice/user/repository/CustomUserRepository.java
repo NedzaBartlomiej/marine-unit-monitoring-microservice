@@ -2,7 +2,7 @@ package pl.bartlomiej.apiservice.user.repository;
 
 import pl.bartlomiej.apiservice.user.nested.trackedship.TrackedShip;
 
-import java.util.List;
+import java.util.Set;
 
 public interface CustomUserRepository {
 
@@ -10,6 +10,6 @@ public interface CustomUserRepository {
 
     void pullTrackedShip(String id, String mmsi);
 
-    List<TrackedShip> getTrackedShips(String id);
+    Set<TrackedShip> getTrackedShips(String id);
 
 }

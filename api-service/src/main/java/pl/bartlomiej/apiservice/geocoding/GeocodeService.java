@@ -1,4 +1,4 @@
-package pl.bartlomiej.apiservice.geocoding.service;
+package pl.bartlomiej.apiservice.geocoding;
 
 import pl.bartlomiej.apiservice.common.helper.Position;
 

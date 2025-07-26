@@ -8,7 +8,7 @@ import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.Keyclo
 import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.model.KeycloakUserRepresentation;
 import pl.bartlomiej.mumcommons.globalidmservice.idm.internal.serviceidm.AbstractIDMService;
 
-import java.util.Collections;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -41,13 +41,9 @@ class DefaultUserService extends AbstractIDMService<ApiUserEntity> implements Us
     }
 
     private ApiUserEntity createApiUserEntity(String id, String ipAddress) {
-        ApiUserEntity apiUserEntity = new ApiUserEntity(id);
-        apiUserEntity.setTrustedIpAddresses(Collections.singletonList(ipAddress));
-        return apiUserEntity;
+        return new ApiUserEntity(id, null, Set.of(ipAddress));
     }
 
-    // todo: trustedIpAddresses set instead of list
-    // todo: to check if this #save invocation can be replaced by dirty-checking
     @Override
     public void trustIp(String id, String ipAddress) {
         log.info("Saving a new trusted IP address for the user with id='{}'", id);

@@ -26,7 +26,7 @@ class CustomShipTrackRepositoryImpl implements CustomShipTrackRepository {
     }
 
     @Override
-    public List<ShipTrack> findByMmsiInAndReadingTimeBetween(List<String> mmsis, LocalDateTime from, LocalDateTime to) {
+    public List<ShipTrack> findByMmsiInAndReadingTimeBetween(Set<String> mmsis, LocalDateTime from, LocalDateTime to) {
         Query q = new Query().addCriteria(
                 Criteria
                         .where(ShipTrackConstants.MMSI).in(mmsis)

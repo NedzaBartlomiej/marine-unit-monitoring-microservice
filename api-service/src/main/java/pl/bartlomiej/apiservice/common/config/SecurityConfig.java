@@ -27,7 +27,7 @@ public class SecurityConfig {
             "*/users"
     );
     private final List<String> getOpenEndpoints = List.of(
-            "*/shipPoints"
+            "*/ship-points"
     );
 
     @Bean

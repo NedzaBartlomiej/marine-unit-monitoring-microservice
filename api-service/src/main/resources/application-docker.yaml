@@ -16,9 +16,8 @@ mum-commons:
 
 logging:
   level:
-    pl.bartlomiej.apiservice: DEBUG
-    org.springframework.data.redis: DEBUG
-    io.lettuce.core: DEBUG
+    pl.bartlomiej.apiservice: TRACE
+    org.springframework.retry: DEBUG
 
 spring:
   config:
@@ -38,6 +37,16 @@ spring:
           jwk-set-uri: http://keycloak.pl:8080/realms/marine-unit-monitoring-master/protocol/openid-connect/certs
 
 project-properties:
+  retry:
+    delays:
+      canonical:
+        too-many-requests: 250
+      max:
+        too-many-requests: 1000
+      multiplier:
+        too-many-requests: 1.2
+    max-attempts:
+      too-many-requests: 5
   external-apis:
     ais-api:
       result-limit: 5

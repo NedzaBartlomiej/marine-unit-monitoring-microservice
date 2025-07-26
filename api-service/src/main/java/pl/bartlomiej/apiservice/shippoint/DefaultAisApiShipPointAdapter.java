@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import pl.bartlomiej.apiservice.aisapi.AisShip;
 import pl.bartlomiej.apiservice.aisapi.service.AisService;
 import pl.bartlomiej.apiservice.common.helper.Position;
-import pl.bartlomiej.apiservice.geocoding.service.GeocodeService;
+import pl.bartlomiej.apiservice.geocoding.GeocodeService;
 
 import java.util.List;
 import java.util.Objects;

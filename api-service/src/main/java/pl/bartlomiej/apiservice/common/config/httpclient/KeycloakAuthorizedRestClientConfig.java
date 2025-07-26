@@ -1,4 +1,4 @@
-package pl.bartlomiej.apiservice.common.config.webclient;
+package pl.bartlomiej.apiservice.common.config.httpclient;
 
 import org.keycloak.admin.client.Keycloak;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -8,7 +8,6 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestClient;
 import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.*;
 
-// todo - check possible duplication with the mum-commons/email-integrations
 @Configuration
 public class KeycloakAuthorizedRestClientConfig {
     @Bean
