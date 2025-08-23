@@ -22,10 +22,11 @@ public class DeveloperController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ResponseModel<AppDeveloperEntity>> register(@RequestBody @Valid final DeveloperRegisterDto developerRegisterDto) {
+    public ResponseEntity<ResponseModel<AppDeveloperEntity>> register(@RequestBody @Valid final DeveloperRegisterDto developerRegisterDto,
+                                                                      @RequestHeader(name = "X-Real-IP") String xRealIp) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseModel.Builder<AppDeveloperEntity>(HttpStatus.CREATED, true)
-                        .body(developerService.register(developerRegisterDto, "127.0.0.1"))
+                        .body(developerService.register(developerRegisterDto, xRealIp))
                         .build()
                 );
     }

@@ -35,7 +35,7 @@ spring:
 project-properties:
   times:
     in-ms:
-      default-suspect-logins:
+      suspect-logins:
         cleaning-time-count-before-actual: 259200000 # 72h
   scheduling-delays:
     in-ms:

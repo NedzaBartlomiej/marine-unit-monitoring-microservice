@@ -37,10 +37,11 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ResponseModel<ApiUserEntity>> register(@RequestBody @Valid UserRegisterDto userRegisterDto) {
+    public ResponseEntity<ResponseModel<ApiUserEntity>> register(@RequestBody @Valid UserRegisterDto userRegisterDto,
+                                                                 @RequestHeader(name = "X-Real-IP") String xRealIp) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseModel.Builder<ApiUserEntity>(HttpStatus.CREATED, true)
-                        .body(userService.register(userRegisterDto, "127.0.0.1"))
+                        .body(userService.register(userRegisterDto, xRealIp))
                         .build()
                 );
     }

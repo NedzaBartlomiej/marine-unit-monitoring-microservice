@@ -21,7 +21,7 @@ public class DefaultSuspectLoginService implements SuspectLoginService {
 
     public DefaultSuspectLoginService(MongoSuspectLoginRepository mongoSuspectLoginRepository,
                                       IPinfo ipInfo,
-                                      @Value("${project-properties.times.in-ms.default-suspect-logins.cleaning-time-count-before-actual}")
+                                      @Value("${project-properties.times.in-ms.suspect-logins.cleaning-time-count-before-actual}")
                                       long cleaningTimeCountBeforeActual) {
         this.mongoSuspectLoginRepository = mongoSuspectLoginRepository;
         this.ipInfo = ipInfo;
@@ -70,8 +70,9 @@ public class DefaultSuspectLoginService implements SuspectLoginService {
         return suspectLogin;
     }
 
-    @Scheduled(initialDelay = 0, fixedDelayString = "${project-properties.scheduling-delays.in-ms.default-suspect-logins.cleaning}")
+    @Scheduled(initialDelay = 0, fixedDelayString = "${project-properties.scheduling-delays.in-ms.suspect-logins.cleaning}")
     public void clean() {
+        log.debug("Cleaning dangling Suspect Login reports.");
         long timeBeforeMs = System.currentTimeMillis() - this.cleaningTimeCountBeforeActual;
         Date timeBeforeDate = new Date(timeBeforeMs);
         mongoSuspectLoginRepository.deleteAllByTimeBefore(timeBeforeDate);
