@@ -44,6 +44,7 @@ class DefaultUserService extends AbstractIDMService<ApiUserEntity> implements Us
         return new ApiUserEntity(id, null, Set.of(ipAddress));
     }
 
+    // TODO: if add(ipAddress) returns false do not execute the save operation
     @Override
     public void trustIp(String id, String ipAddress) {
         log.info("Saving a new trusted IP address for the user with id='{}'", id);

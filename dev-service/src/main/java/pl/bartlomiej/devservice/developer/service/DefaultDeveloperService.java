@@ -41,6 +41,7 @@ class DefaultDeveloperService extends AbstractIDMService<AppDeveloperEntity> imp
         return new AppDeveloperEntity(id, email, Set.of(ipAddress));
     }
 
+    // TODO: if add(ipAddress) returns false do not execute the save operation
     @Override
     public void trustIp(String id, String ipAddress) {
         AppDeveloperEntity developer = super.getEntity(id);

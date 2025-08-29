@@ -24,6 +24,12 @@ public class SuspectLogin {
     private String loc;
     private LocalDateTime time = LocalDateTime.now();
 
+    public SuspectLogin(String uid, String ipAddress, String idmServiceClientId) {
+        this.uid = uid;
+        this.ipAddress = ipAddress;
+        this.idmServiceClientId = idmServiceClientId;
+    }
+
     public SuspectLogin(String uid, String ipAddress, String idmServiceClientId, String hostname, String city, String region, String country, String loc) {
         this.uid = uid;
         this.ipAddress = ipAddress;

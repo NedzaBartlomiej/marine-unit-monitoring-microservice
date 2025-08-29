@@ -1,5 +1,14 @@
 package pl.bartlomiej.idmservicesreps;
 
+/**
+ * A representation of an Identity Management (IdM) service.
+ * <p>
+ * This class models a service that acts as an identity manager.
+ * Such a service stores user-related data required to access and
+ * use its features. It closely cooperates with the authorization server
+ * in the context of managing and validating users.
+ * </p>
+ */
 public class IdmServiceRepresentation {
 
     private String hostname;
@@ -57,5 +66,16 @@ public class IdmServiceRepresentation {
 
     public void setClientId(String clientId) {
         this.clientId = clientId;
+    }
+
+    @Override
+    public String toString() {
+        return "IdmServiceRepresentation{" +
+                "hostname='" + hostname + '\'' +
+                ", port=" + port +
+                ", resourceApiVersion='" + resourceApiVersion + '\'' +
+                ", idmResourceIdentifier='" + idmResourceIdentifier + '\'' +
+                ", clientId='" + clientId + '\'' +
+                '}';
     }
 }
