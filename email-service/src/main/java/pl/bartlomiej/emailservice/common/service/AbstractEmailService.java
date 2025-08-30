@@ -30,6 +30,7 @@ public abstract class AbstractEmailService<T extends Email> implements EmailServ
     protected abstract String buildHtmlMessage(final T email);
 
     protected MimeMessage buildMimeMessage(final T email) throws MessagingException {
+        log.trace("Building Mime Message for emailHashcode='@{}'", email.hashCode());
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
 
@@ -45,6 +46,13 @@ public abstract class AbstractEmailService<T extends Email> implements EmailServ
     }
 
     protected void processEmailSending(final T email) {
+        log.trace("Processing email sending for emailHashcode='@{}'", email.hashCode());
+        if (email.getReceiverEmail() == null || email.getReceiverEmail().isBlank() ||
+                email.getTitle() == null || email.getTitle().isBlank()
+        ) {
+            log.error("BUG: Processed email has null or blank required field(s)! emailHashcode='@{}'", email.hashCode());
+            throw new IllegalStateException("Email missing required fields: " + email);
+        }
         try {
             javaMailSender.send(this.buildMimeMessage(email));
             log.info("Successfully processed email sending. Email sent.");

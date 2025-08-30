@@ -1,5 +1,7 @@
 package pl.bartlomiej.emailservice.linkedemail;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.thymeleaf.TemplateEngine;
@@ -11,6 +13,7 @@ import pl.bartlomiej.mumcommons.emailintegration.external.model.LinkedEmail;
 @EmailServiceImpl
 public class LinkedEmailService extends AbstractEmailService<LinkedEmail> {
 
+    private static final Logger log = LoggerFactory.getLogger(LinkedEmailService.class);
     private final TemplateEngine templateEngine;
 
     protected LinkedEmailService(JavaMailSender javaMailSender, ResourceLoader resourceLoader, TemplateEngine templateEngine) {
@@ -33,6 +36,10 @@ public class LinkedEmailService extends AbstractEmailService<LinkedEmail> {
 
     @Override
     public LinkedEmail send(LinkedEmail email) {
+        log.debug("Sending LinkedEmail.");
+        if (email == null) {
+            throw new IllegalArgumentException("LinkedEmail argument is null.");
+        }
         super.processEmailSending(email);
         return email;
     }

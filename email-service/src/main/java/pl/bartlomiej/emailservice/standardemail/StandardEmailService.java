@@ -1,5 +1,7 @@
 package pl.bartlomiej.emailservice.standardemail;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.thymeleaf.TemplateEngine;
@@ -11,6 +13,7 @@ import pl.bartlomiej.mumcommons.emailintegration.external.model.StandardEmail;
 @EmailServiceImpl
 public class StandardEmailService extends AbstractEmailService<StandardEmail> {
 
+    private static final Logger log = LoggerFactory.getLogger(StandardEmailService.class);
     private final TemplateEngine templateEngine;
 
     protected StandardEmailService(JavaMailSender javaMailSender, ResourceLoader resourceLoader, TemplateEngine templateEngine) {
@@ -31,6 +34,10 @@ public class StandardEmailService extends AbstractEmailService<StandardEmail> {
 
     @Override
     public StandardEmail send(StandardEmail email) {
+        log.debug("Sending StandardEmail.");
+        if (email == null) {
+            throw new IllegalArgumentException("StandardEmail argument is null.");
+        }
         super.processEmailSending(email);
         return email;
     }
