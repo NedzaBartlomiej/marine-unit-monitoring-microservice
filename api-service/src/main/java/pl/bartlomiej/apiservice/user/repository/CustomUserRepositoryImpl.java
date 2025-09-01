@@ -1,14 +1,17 @@
 package pl.bartlomiej.apiservice.user.repository;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 import pl.bartlomiej.apiservice.common.exception.apiexception.RecordNotFoundException;
-import pl.bartlomiej.apiservice.common.helper.repository.CustomRepository;
 import pl.bartlomiej.apiservice.common.util.CommonShipFields;
 import pl.bartlomiej.apiservice.user.domain.ApiUserEntity;
 import pl.bartlomiej.apiservice.user.domain.UserConstants;
 import pl.bartlomiej.apiservice.user.nested.trackedship.TrackedShip;
+import pl.bartlomiej.mumcommons.coreutils.constants.MongoDBCommonConstants;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -17,30 +20,26 @@ import java.util.Set;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
+@Slf4j
 @Repository
 public class CustomUserRepositoryImpl implements CustomUserRepository {
 
     private final MongoTemplate mongoTemplate;
-    private final CustomRepository customRepository;
 
-    public CustomUserRepositoryImpl(MongoTemplate mongoTemplate, CustomRepository customRepository) {
+    public CustomUserRepositoryImpl(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
-        this.customRepository = customRepository;
     }
 
     @Override
     public TrackedShip pushTrackedShip(String id, TrackedShip trackedShip) {
-        boolean pushed = this.push(id, UserConstants.TRACKED_SHIPS, trackedShip);
-        if (pushed) {
-            return trackedShip;
-        } else
-            throw new RuntimeException("Failed to push tracked ship: " + trackedShip.mmsi() + " to user with id: " + id);
+        this.addToSet(id, UserConstants.TRACKED_SHIPS, trackedShip);
+        return trackedShip;
     }
 
     @Override
     public void pullTrackedShip(String id, String mmsi) {
         mongoTemplate.updateFirst(
-                customRepository.getIdValidQuery(id),
+                this.getIdValidQuery(id),
                 new Update().pull(UserConstants.TRACKED_SHIPS, query(where(CommonShipFields.MMSI).is(mmsi))),
                 ApiUserEntity.class
         );
@@ -57,12 +56,21 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
         }
     }
 
-    private boolean push(String id, String updatedFieldName, Object pushedValue) {
-        return mongoTemplate
+    @Override
+    public void pushTrustedIpAddress(String id, String ipAddress) {
+        this.addToSet(id, UserConstants.TRUSTED_IP_ADDRESSES, ipAddress);
+    }
+
+    private void addToSet(String id, String updatedFieldName, Object pushedValue) {
+        mongoTemplate
                 .updateFirst(
-                        customRepository.getIdValidQuery(id),
-                        new Update().push(updatedFieldName, pushedValue),
+                        this.getIdValidQuery(id),
+                        new Update().addToSet(updatedFieldName, pushedValue),
                         ApiUserEntity.class
-                ).getModifiedCount() > 0;
+                );
+    }
+
+    private Query getIdValidQuery(String id) {
+        return new Query(Criteria.where(MongoDBCommonConstants.ID).is(id));
     }
 }

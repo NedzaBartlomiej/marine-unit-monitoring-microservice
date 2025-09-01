@@ -11,7 +11,7 @@ import org.springframework.security.authentication.AuthenticationCredentialsNotF
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
+import pl.bartlomiej.mumcommons.coreutils.model.response.ResponseModel;
 
 import java.io.IOException;
 

@@ -1,5 +1,5 @@
 mum-commons:
-  core:
+  coreutils:
     exception-handling:
       enabled: true
   email-integration:
@@ -11,12 +11,13 @@ mum-commons:
     realm-name: marine-unit-monitoring-master
     client-id: dev-service-client
     client-secret: ${keycloak.client-secret}
-    global-idm-service:
+    idm:
       enabled: true
     auth-conversion:
       enabled: true
       keycloak-client-id: dev-service-client
 
+# TODO: set pattern to make mum-commons MDC works and test if it works.
 logging:
   level:
     root: debug

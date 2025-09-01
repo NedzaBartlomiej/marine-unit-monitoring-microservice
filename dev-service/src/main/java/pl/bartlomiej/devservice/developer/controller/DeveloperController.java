@@ -9,7 +9,7 @@ import pl.bartlomiej.devservice.developer.domain.AppDeveloperEntity;
 import pl.bartlomiej.devservice.developer.domain.dto.DeveloperRegisterDto;
 import pl.bartlomiej.devservice.developer.service.DeveloperService;
 import pl.bartlomiej.idmservicesreps.IdmServiceRepUserCreationDto;
-import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
+import pl.bartlomiej.mumcommons.coreutils.model.response.ResponseModel;
 
 @RestController
 @RequestMapping("/v1/developers")

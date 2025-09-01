@@ -1,5 +1,5 @@
 mum-commons:
-  core:
+  coreutils:
     exception-handling:
       enabled: true
   email-integration:
@@ -14,6 +14,8 @@ mum-commons:
     auth-conversion:
       enabled: true
       keycloak-client-id: protection-service-client
+
+# TODO: set pattern to make mum-commons MDC works and test if it works.
 logging:
   level:
     root: debug

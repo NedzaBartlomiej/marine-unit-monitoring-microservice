@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.bartlomiej.idmservicesreps.IdmServiceRepResolver;
 import pl.bartlomiej.idmservicesreps.IdmServiceRepresentation;
-import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
+import pl.bartlomiej.mumcommons.coreutils.model.response.ResponseModel;
 import pl.bartlomiej.mumcommons.emailintegration.external.EmailHttpService;
 import pl.bartlomiej.mumcommons.emailintegration.external.model.LinkedEmail;
 import pl.bartlomiej.protectionservice.iploginprotection.controller.IdmServiceHttpService;

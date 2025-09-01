@@ -1,7 +1,7 @@
 package pl.bartlomiej.devservice.developer.service;
 
 import pl.bartlomiej.devservice.developer.domain.AppDeveloperEntity;
-import pl.bartlomiej.mumcommons.globalidmservice.idm.external.serviceidm.IDMServiceTemplate;
+import pl.bartlomiej.mumcommons.keycloakintegration.idm.external.serviceidm.IDMServiceTemplate;
 
 public interface DeveloperService extends IDMServiceTemplate<AppDeveloperEntity> {
     AppDeveloperEntity create(String id, String email, String ipAddress);

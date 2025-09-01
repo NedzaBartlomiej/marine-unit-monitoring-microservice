@@ -11,7 +11,7 @@ import pl.bartlomiej.devservice.application.domain.dto.ApplicationRequestDto;
 import pl.bartlomiej.devservice.application.domain.dto.ConsiderationDetails;
 import pl.bartlomiej.devservice.application.service.ApplicationService;
 import pl.bartlomiej.devservice.application.service.ApplicationTokenService;
-import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
+import pl.bartlomiej.mumcommons.coreutils.model.response.ResponseModel;
 
 import java.security.Principal;
 import java.util.List;

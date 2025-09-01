@@ -9,7 +9,7 @@ import pl.bartlomiej.apiservice.shippoint.ShipMapManager;
 import pl.bartlomiej.apiservice.user.domain.ApiUserEntity;
 import pl.bartlomiej.apiservice.user.nested.trackedship.service.TrackedShipService;
 import pl.bartlomiej.apiservice.user.service.UserService;
-import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
+import pl.bartlomiej.mumcommons.coreutils.model.response.ResponseModel;
 
 import java.security.Principal;
 import java.time.Duration;

@@ -7,9 +7,9 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import pl.bartlomiej.mumcommons.core.exceptionhandling.external.DefaultResponseModelAccessDeniedHandler;
-import pl.bartlomiej.mumcommons.core.exceptionhandling.external.DefaultResponseModelAuthEntryPoint;
-import pl.bartlomiej.mumcommons.globalidmservice.authconversion.external.KeycloakJwtGrantedAuthoritiesConverter;
+import pl.bartlomiej.mumcommons.coreutils.exceptionhandling.external.DefaultResponseModelAccessDeniedHandler;
+import pl.bartlomiej.mumcommons.coreutils.exceptionhandling.external.DefaultResponseModelAuthEntryPoint;
+import pl.bartlomiej.mumcommons.keycloakintegration.authconversion.external.KeycloakJwtGrantedAuthoritiesConverter;
 
 @Configuration
 public class SecurityConfig {

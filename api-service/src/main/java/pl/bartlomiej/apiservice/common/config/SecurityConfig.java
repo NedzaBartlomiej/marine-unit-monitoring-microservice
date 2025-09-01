@@ -10,9 +10,9 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import pl.bartlomiej.apiservice.common.apiaccess.ApiKeyWebFilter;
-import pl.bartlomiej.mumcommons.core.exceptionhandling.external.DefaultResponseModelAccessDeniedHandler;
-import pl.bartlomiej.mumcommons.core.exceptionhandling.external.DefaultResponseModelAuthEntryPoint;
-import pl.bartlomiej.mumcommons.globalidmservice.authconversion.external.KeycloakJwtGrantedAuthoritiesConverter;
+import pl.bartlomiej.mumcommons.coreutils.exceptionhandling.external.DefaultResponseModelAccessDeniedHandler;
+import pl.bartlomiej.mumcommons.coreutils.exceptionhandling.external.DefaultResponseModelAuthEntryPoint;
+import pl.bartlomiej.mumcommons.keycloakintegration.authconversion.external.KeycloakJwtGrantedAuthoritiesConverter;
 
 import java.util.List;
 

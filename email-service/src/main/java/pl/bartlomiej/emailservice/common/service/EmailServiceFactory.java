@@ -11,6 +11,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO: consider this class (why just not for injection of the specific EmailService in the controller?)
 @Component
 public class EmailServiceFactory {
 

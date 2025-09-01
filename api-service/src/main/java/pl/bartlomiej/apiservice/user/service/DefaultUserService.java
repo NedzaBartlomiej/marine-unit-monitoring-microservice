@@ -3,10 +3,11 @@ package pl.bartlomiej.apiservice.user.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.bartlomiej.apiservice.user.domain.ApiUserEntity;
+import pl.bartlomiej.apiservice.user.repository.CustomUserRepository;
 import pl.bartlomiej.apiservice.user.repository.MongoUserRepository;
-import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.KeycloakService;
-import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.model.KeycloakUserRepresentation;
-import pl.bartlomiej.mumcommons.globalidmservice.idm.internal.serviceidm.AbstractIDMService;
+import pl.bartlomiej.mumcommons.keycloakintegration.idm.external.keycloakidm.KeycloakService;
+import pl.bartlomiej.mumcommons.keycloakintegration.idm.external.keycloakidm.model.KeycloakUserRepresentation;
+import pl.bartlomiej.mumcommons.keycloakintegration.idm.internal.serviceidm.AbstractIDMService;
 
 import java.util.Set;
 
@@ -15,11 +16,13 @@ import java.util.Set;
 class DefaultUserService extends AbstractIDMService<ApiUserEntity> implements UserService {
 
     private final MongoUserRepository mongoUserRepository;
+    private final CustomUserRepository customUserRepository;
 
     public DefaultUserService(MongoUserRepository mongoUserRepository,
-                              KeycloakService keycloakService) {
+                              KeycloakService keycloakService, CustomUserRepository customUserRepository) {
         super(keycloakService, mongoUserRepository);
         this.mongoUserRepository = mongoUserRepository;
+        this.customUserRepository = customUserRepository;
     }
 
     @Override
@@ -44,13 +47,10 @@ class DefaultUserService extends AbstractIDMService<ApiUserEntity> implements Us
         return new ApiUserEntity(id, null, Set.of(ipAddress));
     }
 
-    // TODO: if add(ipAddress) returns false do not execute the save operation
     @Override
     public void trustIp(String id, String ipAddress) {
         log.info("Saving a new trusted IP address for the user with id='{}'", id);
-        ApiUserEntity user = super.getEntity(id);
-        user.getTrustedIpAddresses().add(ipAddress);
-        this.mongoUserRepository.save(user);
+        this.customUserRepository.pushTrustedIpAddress(id, ipAddress);
     }
 
     @Override

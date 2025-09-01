@@ -1,5 +1,5 @@
 mum-commons:
-  core:
+  coreutils:
     exception-handling:
       enabled: true
   keycloak:
@@ -8,12 +8,13 @@ mum-commons:
     realm-name: marine-unit-monitoring-master
     client-id: api-service-client
     client-secret: ${keycloak.client-secret}
-    global-idm-service:
+    idm:
       enabled: true
     auth-conversion:
       enabled: true
       keycloak-client-id: api-service-client
 
+# TODO: set pattern to make mum-commons MDC works and test if it works.
 logging:
   level:
     pl.bartlomiej.apiservice: TRACE

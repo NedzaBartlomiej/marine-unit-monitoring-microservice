@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestClient;
 import pl.bartlomiej.apiservice.aisapi.AisApiAuthorizedInterceptorTokenProvider;
-import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.AuthorizedInterceptorTokenManager;
-import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.AuthorizedRequestInterceptor;
-import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.MemoryAuthorizedInterceptorTokenManager;
+import pl.bartlomiej.mumcommons.coreutils.webtools.requesthandler.authorizedhandler.AuthorizedInterceptorTokenManager;
+import pl.bartlomiej.mumcommons.coreutils.webtools.requesthandler.authorizedhandler.AuthorizedRequestInterceptor;
+import pl.bartlomiej.mumcommons.coreutils.webtools.requesthandler.authorizedhandler.MemoryAuthorizedInterceptorTokenManager;
 
 @Configuration
 public class AisApiAuthorizedRestClientConfig {

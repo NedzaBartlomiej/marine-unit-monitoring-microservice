@@ -11,7 +11,7 @@ import pl.bartlomiej.apiservice.common.sseemission.emissionmanager.SseEmissionMa
 import pl.bartlomiej.apiservice.shiptracking.service.ShipTrackService;
 import pl.bartlomiej.apiservice.user.nested.trackedship.TrackedShip;
 import pl.bartlomiej.apiservice.user.nested.trackedship.service.TrackedShipService;
-import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
+import pl.bartlomiej.mumcommons.coreutils.model.response.ResponseModel;
 
 import java.security.Principal;
 import java.time.Duration;

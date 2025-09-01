@@ -1,10 +1,12 @@
 mum-commons:
-  core:
+  coreutils:
     exception-handling:
       enabled: true
   keycloak:
     auth-conversion:
       enabled: true
+
+# TODO: set pattern to make mum-commons MDC works and test if it works.
 logging:
   level:
     root: debug

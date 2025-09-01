@@ -3,8 +3,8 @@ package pl.bartlomiej.apiservice.user.domain.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import pl.bartlomiej.apiservice.user.domain.UserKeycloakRole;
-import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.model.KeycloakRole;
-import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.model.KeycloakUserRegistration;
+import pl.bartlomiej.mumcommons.keycloakintegration.idm.external.keycloakidm.model.KeycloakRole;
+import pl.bartlomiej.mumcommons.keycloakintegration.idm.external.keycloakidm.model.KeycloakUserRegistration;
 
 public record UserRegisterDto(@NotBlank(message = "EMPTY_USERNAME") String username,
                               @Email(message = "INVALID_EMAIL") String email,

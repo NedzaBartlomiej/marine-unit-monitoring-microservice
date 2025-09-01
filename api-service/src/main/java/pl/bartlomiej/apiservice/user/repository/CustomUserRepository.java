@@ -12,4 +12,6 @@ public interface CustomUserRepository {
 
     Set<TrackedShip> getTrackedShips(String id);
 
+    void pushTrustedIpAddress(String id, String ipAddress);
+
 }

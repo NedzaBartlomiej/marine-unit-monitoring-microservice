@@ -16,7 +16,6 @@ import pl.bartlomiej.devservice.developer.domain.AppDeveloperEntity;
 import pl.bartlomiej.devservice.developer.service.DeveloperService;
 import pl.bartlomiej.mumcommons.emailintegration.external.EmailHttpService;
 import pl.bartlomiej.mumcommons.emailintegration.external.model.StandardEmail;
-import pl.bartlomiej.mumcommons.globalidmservice.idm.external.keycloakidm.KeycloakService;
 
 import java.util.List;
 
@@ -29,14 +28,12 @@ class DefaultApplicationService implements ApplicationService {
     private final ApplicationTokenService applicationTokenService;
     private final EmailHttpService emailHttpService;
     private final DeveloperService developerService;
-    private final KeycloakService keycloakService;
 
-    DefaultApplicationService(ApplicationMongoRepository applicationMongoRepository, ApplicationTokenService applicationTokenService, EmailHttpService emailHttpService, DeveloperService developerService, KeycloakService keycloakService) {
+    DefaultApplicationService(ApplicationMongoRepository applicationMongoRepository, ApplicationTokenService applicationTokenService, EmailHttpService emailHttpService, DeveloperService developerService) {
         this.applicationMongoRepository = applicationMongoRepository;
         this.applicationTokenService = applicationTokenService;
         this.emailHttpService = emailHttpService;
         this.developerService = developerService;
-        this.keycloakService = keycloakService;
     }
 
     @Override

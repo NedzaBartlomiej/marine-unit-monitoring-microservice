@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
-import pl.bartlomiej.mumcommons.core.webtools.requesthandler.authorizedhandler.AuthorizedInterceptorTokenProvider;
+import pl.bartlomiej.mumcommons.coreutils.webtools.requesthandler.authorizedhandler.AuthorizedInterceptorTokenProvider;
 
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;

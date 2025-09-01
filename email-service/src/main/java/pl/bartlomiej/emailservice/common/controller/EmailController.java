@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.bartlomiej.emailservice.common.service.EmailService;
 import pl.bartlomiej.emailservice.common.service.EmailServiceFactory;
-import pl.bartlomiej.mumcommons.core.model.response.ResponseModel;
+import pl.bartlomiej.mumcommons.coreutils.model.response.ResponseModel;
 import pl.bartlomiej.mumcommons.emailintegration.external.model.LinkedEmail;
 import pl.bartlomiej.mumcommons.emailintegration.external.model.StandardEmail;
 
