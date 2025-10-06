@@ -119,9 +119,9 @@ keycloak:
 
 ### External API References for API Service
 
-- **AIS API**: [AIS API Documentation](https://barentswatch.no/)
-- **HERE Geocode and Search API
-  **: [HERE API Documentation](https://www.here.com/docs/bundle/code-geocode-examples.html)
+- **AIS API**: [AIS API Documentation](https://developer.barentswatch.no/docs/category/ais)
+- **IPinfo.io - Geolocation**: [IPinfo.io](https://ipinfo.io/developers) / [IPinfo Java GitHub - docs](https://github.com/ipinfo/java)
+- [...Geocoding API reference...]
 
 ---
 

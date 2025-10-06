@@ -24,7 +24,7 @@ import static org.springframework.http.HttpMethod.POST;
 public class SecurityConfig {
 
     private final List<String> postOpenEndpoints = List.of(
-            "*/users"
+            "*/users/register"
     );
     private final List<String> getOpenEndpoints = List.of(
             "*/ship-points"

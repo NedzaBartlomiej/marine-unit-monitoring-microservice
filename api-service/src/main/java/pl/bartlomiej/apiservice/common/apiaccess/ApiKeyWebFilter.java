@@ -25,6 +25,16 @@ public class ApiKeyWebFilter extends OncePerRequestFilter {
         this.devServiceHttpService = devServiceHttpService;
     }
 
+    // TODO - FIX: internal endpoints are being blocked by the lack of the xApiKey
+    //  (these are:
+    //      trustIp, verifyIp -> (IP_LOGIN_PROTECTOR);
+    //      create -> (USER_CREATION_AUTHENTICATOR);
+    //  )
+    // They are just all of the internal calls to the api-service
+    // Possible solutions:
+    // 1. separate internal endpoints ?(a little bit problem with idm-services-reps operations)
+    // 2. internal/technical xApiKey for the internal callers ?(I worry about hardcoding this apiKey and idk how to do it better for now)
+    // 3. pass requests with tokens that have appropriate roles ?(idk if it's possible)
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
         log.debug("Filtering the request for correctness of API KEY (x-api-key header).");

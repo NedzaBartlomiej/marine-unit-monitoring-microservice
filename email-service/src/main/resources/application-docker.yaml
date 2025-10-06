@@ -6,10 +6,12 @@ mum-commons:
     auth-conversion:
       enabled: true
 
-# TODO: set pattern to make mum-commons MDC works and test if it works.
 logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level traceId=[%X{traceId}] %logger{36} - %msg%n"
   level:
     root: debug
+
 spring:
   security:
     oauth2:
