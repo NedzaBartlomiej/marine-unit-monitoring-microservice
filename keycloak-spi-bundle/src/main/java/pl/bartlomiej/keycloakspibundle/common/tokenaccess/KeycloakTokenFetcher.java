@@ -20,7 +20,7 @@ public class KeycloakTokenFetcher {
     }
 
     public String fetchToken(final KeycloakSession keycloakSession) {
-        log.info("Fetching token.");
+        log.debug("Fetching token.");
         try {
             return SimpleHttp.doPost(this.keycloakTokenParams.tokenUrl(), keycloakSession)
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED)

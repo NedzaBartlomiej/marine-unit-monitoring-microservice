@@ -4,7 +4,9 @@ import org.keycloak.models.KeycloakSession;
 import org.keycloak.representations.AccessToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
+import java.util.UUID;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -19,22 +21,26 @@ public class KeycloakTokenStorage {
     }
 
     public String getValidToken(final KeycloakSession keycloakSession) {
-        String executorThreadName = Thread.currentThread().getName();
+        if (MDC.get("traceId") == null) {
+            MDC.put("traceId", UUID.randomUUID().toString());
+        }
+        log.debug("Obtaining valid access token");
         if (isTokenValid(keycloakSession)) {
-            log.debug("Token is valid, returning available token. Thread name: {}", executorThreadName);
+            log.trace("Token is valid, returning available token.");
             return this.token;
         }
-        log.debug("Token is invalid, attempting to lock and refresh. Thread name: {}", executorThreadName);
+        log.trace("Token is invalid, attempting to lock and refresh.");
         this.tokenLock.lock();
         try {
-            log.debug("Locked token resource. Executing resource operations. Thread name: {}", executorThreadName);
+            log.trace("Locked token resource. Executing resource operations.");
             if (!isTokenValid(keycloakSession)) {
                 this.refreshToken(keycloakSession);
             }
-            log.debug("Token has been refreshed by another thread, returning this valid token. Thread name: {}", executorThreadName);
+            log.trace("Token has been refreshed by another thread, returning this valid token.");
         } finally {
-            log.debug("Unlocking token resource. Thread name: {}", executorThreadName);
+            log.trace("Unlocking token resource.");
             this.tokenLock.unlock();
+            MDC.clear();
         }
         return this.token;
     }
@@ -48,7 +54,7 @@ public class KeycloakTokenStorage {
     }
 
     private void refreshToken(final KeycloakSession keycloakSession) {
-        log.debug("Refreshing token. Thread: {}", Thread.currentThread().getName());
+        log.trace("Refreshing token.");
         this.token = this.keycloakTokenFetcher.fetchToken(keycloakSession);
     }
 }

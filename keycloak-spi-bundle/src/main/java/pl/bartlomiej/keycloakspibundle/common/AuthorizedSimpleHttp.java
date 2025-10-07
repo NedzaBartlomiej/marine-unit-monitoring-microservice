@@ -20,8 +20,7 @@ public class AuthorizedSimpleHttp {
 
     public SimpleHttp.Response request(final SimpleHttp simpleHttp, final Object jsonBody, final KeycloakSession keycloakSession) {
         try {
-
-            log.info("Processing an authorized request.");
+            log.debug("Processing an authorized request.");
             return simpleHttp
                     .acceptJson()
                     .auth(keycloakTokenStorage.getValidToken(keycloakSession))

@@ -27,7 +27,7 @@ public class ConfigLoader {
     }
 
     private <T> T loadFromFile(final String configFileName, final Class<T> configClass) {
-        log.info("Loading config file named {}", configFileName);
+        log.debug("Loading config file named {}", configFileName);
         try (InputStream stream = this.getClass().getClassLoader().getResourceAsStream(configFileName)) {
             if (stream == null) {
                 throw new IllegalArgumentException("No config file found in path: " + configFileName + " when loading.");

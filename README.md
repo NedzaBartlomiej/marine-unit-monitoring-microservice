@@ -107,7 +107,7 @@ ais-api:
 
 # Geocode API Configuration
 geocode-api:
-  api-base-url=https://geocode.search.hereapi.com/v1/geocode
+  api-base-url=https://geocode.maps.co/search
   api-key=
   
 # Keycloak Configuration
@@ -115,13 +115,11 @@ keycloak:
   client-secret:
 ```
 
-[//]: # (todo: change these API references to valid links)
-
 ### External API References for API Service
 
 - **AIS API**: [AIS API Documentation](https://developer.barentswatch.no/docs/category/ais)
 - **IPinfo.io - Geolocation**: [IPinfo.io](https://ipinfo.io/developers) / [IPinfo Java GitHub - docs](https://github.com/ipinfo/java)
-- [...Geocoding API reference...]
+- **Geocoding API:** [Geocoding API Documentation](https://geocode.maps.co/docs/)
 
 ---
 
