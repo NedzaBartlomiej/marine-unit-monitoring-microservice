@@ -80,6 +80,8 @@ KC_DB=postgres
 KC_DB_URL=jdbc:postgresql://keycloak-postgres-db/${POSTGRES_DB}
 KC_DB_USERNAME=${POSTGRES_USER}
 KC_DB_PASSWORD=${POSTGRES_PASSWORD}
+KC_FEATURES=log-mdc:v1
+KC_LOG_MDC_ENABLED=true
 ```
 
 ---
