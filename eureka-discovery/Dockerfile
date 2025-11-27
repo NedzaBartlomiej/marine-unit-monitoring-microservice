@@ -1,12 +1,12 @@
-FROM openjdk:21
+FROM amazoncorretto:21-alpine-jdk
 
 LABEL author="Bartlomiej Nedza"
 
-RUN mkdir /usr/src/eureka-discovery
-WORKDIR /usr/src/eureka-discovery
+RUN mkdir -p /app
+WORKDIR /app
 
-COPY ./target/eureka-discovery.jar /usr/src/eureka-discovery
+COPY ./target/eureka-discovery.jar .
 
 EXPOSE 8761
 
-ENTRYPOINT ["java", "-jar", "/usr/src/eureka-discovery/eureka-discovery.jar"]
+ENTRYPOINT ["java", "-jar", "eureka-discovery.jar"]

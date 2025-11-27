@@ -1,12 +1,12 @@
-FROM openjdk:21
+FROM amazoncorretto:21-alpine-jdk
 
 LABEL author="Bartlomiej Nedza"
 
-RUN mkdir /usr/src/email-service
-WORKDIR /usr/src/email-service
+RUN mkdir -p /app
+WORKDIR /app
 
-COPY ./target/email-service.jar /usr/src/email-service
+COPY ./target/email-service.jar .
 
 EXPOSE 8084
 
-ENTRYPOINT ["java", "-jar", "/usr/src/email-service/email-service.jar"]
+ENTRYPOINT ["java", "-jar", "email-service.jar"]

@@ -1,12 +1,12 @@
-FROM openjdk:21
+FROM amazoncorretto:21-alpine-jdk
 
 LABEL author="Bartlomiej Nedza"
 
-RUN mkdir /usr/src/gateway
-WORKDIR /usr/src/gateway
+RUN mkdir -p /app
+WORKDIR /app
 
-COPY ./target/gateway.jar /usr/src/gateway
+COPY ./target/gateway.jar .
 
 EXPOSE 80
 
-ENTRYPOINT ["java", "-jar", "/usr/src/gateway/gateway.jar"]
+ENTRYPOINT ["java", "-jar", "gateway.jar"]

@@ -1,12 +1,12 @@
-FROM openjdk:21
+FROM amazoncorretto:21-alpine-jdk
 
 LABEL author="Bartlomiej Nedza"
 
-RUN mkdir /usr/src/protection-service
-WORKDIR /usr/src/protection-service
+RUN mkdir -p /app
+WORKDIR /app
 
-COPY ./target/protection-service.jar /usr/src/protection-service
+COPY ./target/protection-service.jar .
 
 EXPOSE 8085
 
-ENTRYPOINT ["java", "-jar", "/usr/src/protection-service/protection-service.jar"]
+ENTRYPOINT ["java", "-jar", "protection-service.jar"]

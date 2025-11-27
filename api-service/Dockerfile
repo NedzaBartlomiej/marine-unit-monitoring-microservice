@@ -1,12 +1,12 @@
-FROM openjdk:21
+FROM amazoncorretto:21-alpine-jdk
 
 LABEL author="Bartlomiej Nedza"
 
-RUN mkdir /usr/src/api-service
-WORKDIR /usr/src/api-service
+RUN mkdir -p /app
+WORKDIR /app
 
-COPY ./target/api-service.jar /usr/src/api-service
+COPY ./target/api-service.jar .
 
 EXPOSE 8081
 
-ENTRYPOINT ["java", "-jar", "/usr/src/api-service/api-service.jar"]
+ENTRYPOINT ["java", "-jar", "api-service.jar"]

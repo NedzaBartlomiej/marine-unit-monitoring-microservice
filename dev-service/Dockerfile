@@ -1,12 +1,12 @@
-FROM openjdk:21
+FROM amazoncorretto:21-alpine-jdk
 
 LABEL author="Bartlomiej Nedza"
 
-RUN mkdir /usr/src/dev-service
-WORKDIR /usr/src/dev-service
+RUN mkdir -p /app
+WORKDIR /app
 
-COPY ./target/dev-service.jar /usr/src/dev-service
+COPY ./target/dev-service.jar .
 
 EXPOSE 8083
 
-ENTRYPOINT ["java", "-jar", "/usr/src/dev-service/dev-service.jar"]
+ENTRYPOINT ["java", "-jar", "dev-service.jar"]

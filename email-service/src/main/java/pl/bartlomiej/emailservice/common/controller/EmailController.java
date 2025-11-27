@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.bartlomiej.emailservice.common.service.EmailService;
-import pl.bartlomiej.emailservice.common.service.EmailServiceFactory;
 import pl.bartlomiej.mumcommons.coreutils.model.response.ResponseModel;
 import pl.bartlomiej.mumcommons.emailintegration.external.model.LinkedEmail;
 import pl.bartlomiej.mumcommons.emailintegration.external.model.StandardEmail;
@@ -18,15 +17,17 @@ import pl.bartlomiej.mumcommons.emailintegration.external.model.StandardEmail;
 public class EmailController {
 
     private static final String SUCCESSFUL_EMAIL_SENT = "A successful email has been sent.";
-    private final EmailServiceFactory emailServiceFactory;
+    private final EmailService<StandardEmail> standardEmailService;
+    private final EmailService<LinkedEmail> linkedEmailService;
 
-    public EmailController(EmailServiceFactory emailServiceFactory) {
-        this.emailServiceFactory = emailServiceFactory;
+    public EmailController(EmailService<StandardEmail> standardEmailService, EmailService<LinkedEmail> linkedEmailService) {
+
+        this.standardEmailService = standardEmailService;
+        this.linkedEmailService = linkedEmailService;
     }
 
     @PostMapping("/standard")
     public ResponseEntity<ResponseModel<StandardEmail>> sendStandardEmail(@RequestBody @Valid final StandardEmail standardEmail) {
-        EmailService<StandardEmail> standardEmailService = emailServiceFactory.resolveEmailService(StandardEmail.class);
         return ResponseEntity.ok(
                 new ResponseModel.Builder<StandardEmail>(HttpStatus.OK, true)
                         .message(SUCCESSFUL_EMAIL_SENT)
@@ -37,11 +38,10 @@ public class EmailController {
 
     @PostMapping("/linked")
     public ResponseEntity<ResponseModel<LinkedEmail>> sendLinkedEmail(@RequestBody @Valid final LinkedEmail linkedEmail) {
-        EmailService<LinkedEmail> linkedEmailEmailService = emailServiceFactory.resolveEmailService(LinkedEmail.class);
         return ResponseEntity.ok(
                 new ResponseModel.Builder<LinkedEmail>(HttpStatus.OK, true)
                         .message(SUCCESSFUL_EMAIL_SENT)
-                        .body(linkedEmailEmailService.send(linkedEmail))
+                        .body(linkedEmailService.send(linkedEmail))
                         .build()
         );
     }

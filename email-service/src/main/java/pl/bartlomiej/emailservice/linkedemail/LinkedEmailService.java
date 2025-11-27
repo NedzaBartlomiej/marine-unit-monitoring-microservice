@@ -4,13 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import pl.bartlomiej.emailservice.common.service.AbstractEmailService;
-import pl.bartlomiej.emailservice.common.service.EmailServiceImpl;
 import pl.bartlomiej.mumcommons.emailintegration.external.model.LinkedEmail;
 
-@EmailServiceImpl
+@Service
 public class LinkedEmailService extends AbstractEmailService<LinkedEmail> {
 
     private static final Logger log = LoggerFactory.getLogger(LinkedEmailService.class);
