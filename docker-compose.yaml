@@ -8,6 +8,7 @@ services:
       dockerfile: docker-deploy/keycloak/Dockerfile
     ports:
       - "8080:8080"
+      - "8787:8787"
     networks:
       - marine-unit-monitoring-network
       - keycloak-network

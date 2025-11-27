@@ -1,6 +1,7 @@
 package pl.bartlomiej.keycloakspibundle.usercreationauthenticator;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.ws.rs.core.Response;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.AuthenticationFlowError;
 import org.keycloak.authentication.Authenticator;
@@ -91,11 +92,14 @@ public class UserCreationAuthenticator implements Authenticator, HttpDelegatePro
         UserModel keycloakCreatedUser = context.getUser();
         KeycloakSession keycloakSession = context.getSession();
 
+        log.debug("Created keycloak user is being deleted due to error occurred when requesting its creation in the resource server.");
         keycloakSession.users().removeUser(
                 keycloakSession.getContext().getRealm(),
                 keycloakCreatedUser
         );
-        context.failure(AuthenticationFlowError.INTERNAL_ERROR);
+        context.failure(AuthenticationFlowError.INTERNAL_ERROR,
+                context.form().createErrorPage(Response.Status.INTERNAL_SERVER_ERROR)
+        );
     }
 
     private String buildCreationUrl(final AuthenticationFlowContext context) {
