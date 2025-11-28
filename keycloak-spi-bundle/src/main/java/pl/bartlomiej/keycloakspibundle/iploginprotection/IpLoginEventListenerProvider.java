@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import pl.bartlomiej.keycloakspibundle.common.delegateprovider.http.HttpDelegateProvider;
 import pl.bartlomiej.keycloakspibundle.common.delegateprovider.http.HttpDelegateProviderExecutor;
 import pl.bartlomiej.keycloakspibundle.common.delegateprovider.http.MumResponseModelUtil;
-import pl.bartlomiej.keycloakspibundle.common.exception.ProtectionServiceException;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -39,7 +38,10 @@ public class IpLoginEventListenerProvider implements EventListenerProvider, Http
                         event,
                         this.keycloakSession
                 )
-        );
+        ).exceptionally(throwable -> {
+            log.error("An error occurred when handling login event asynchronously", throwable);
+            return null;
+        });
     }
 
     @Override
@@ -81,6 +83,7 @@ public class IpLoginEventListenerProvider implements EventListenerProvider, Http
 
     @Override
     public void handleFailure(JsonNode response, Event context) {
-        throw new ProtectionServiceException("Some error occurred executing protection (from protection-service): " + MumResponseModelUtil.getMessage(response));
+        // todo:
+        //  handle failures and handle incorrect combination of the logging user origin and the used keycloak client case
     }
 }

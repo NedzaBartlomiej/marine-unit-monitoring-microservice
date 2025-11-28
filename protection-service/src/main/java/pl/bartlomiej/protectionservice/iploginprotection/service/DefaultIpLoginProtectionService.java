@@ -1,7 +1,9 @@
 package pl.bartlomiej.protectionservice.iploginprotection.service;
 
+import jakarta.ws.rs.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import pl.bartlomiej.idmservicesreps.IdmServiceRepResolver;
 import pl.bartlomiej.idmservicesreps.IdmServiceRepresentation;
 import pl.bartlomiej.mumcommons.coreutils.model.response.ResponseModel;
@@ -45,32 +47,38 @@ class DefaultIpLoginProtectionService implements IpLoginProtectionService {
         }
         IdmServiceRepresentation idmServiceRepresentation = this.idmServiceRepResolver.resolve(request.clientId());
 
-        ResponseModel<Boolean> verifiedIpResponse = idmServiceHttpService.verifyIp(
-                idmServiceRepresentation.getHostname(),
-                idmServiceRepresentation.getPort(),
-                idmServiceRepresentation.getResourceApiVersion(),
-                idmServiceRepresentation.getIdmResourceIdentifier(),
-                request.uid(),
-                request.ipAddress()
-        );
-        boolean isIpTrusted;
-        if (verifiedIpResponse == null) {
-            log.warn("Received IP address verification is null for the user with id='{}' which logged to the service which 'loginServiceClientId'='{}'; A security alert is sent due to unsuccessful verification.", request.uid(), request.clientId());
-            isIpTrusted = false;
-        } else if (!verifiedIpResponse.isSuccess()) {
-            log.warn("Received an invalid IP address verification response from the IdMService for the user with id='{}' which logged to the service which 'loginServiceClientId'='{}'; response='{}'; A security alert is sent due to unsuccessful verification.", request.uid(), request.clientId(), verifiedIpResponse);
-            isIpTrusted = false;
-        } else {
-            isIpTrusted = verifiedIpResponse.getBody();
-        }
+        try {
+            ResponseModel<Boolean> verifiedIpResponse = idmServiceHttpService.verifyIp(
+                    idmServiceRepresentation.getHostname(),
+                    idmServiceRepresentation.getPort(),
+                    idmServiceRepresentation.getResourceApiVersion(),
+                    idmServiceRepresentation.getIdmResourceIdentifier(),
+                    request.uid(),
+                    request.ipAddress()
+            );
+            boolean isIpTrusted;
+            if (verifiedIpResponse == null) {
+                log.warn("Received IP address verification is null for the user with id='{}' which logged to the service which 'loginServiceClientId'='{}'; A security alert is sent due to unsuccessful verification.", request.uid(), request.clientId());
+                isIpTrusted = false;
+            } else if (!verifiedIpResponse.isSuccess()) {
+                log.warn("Received an unsuccessful IP address verification response from the IdMService for the user with id='{}' which logged to the service which 'loginServiceClientId'='{}'; response='{}'; A security alert is sent due to unsuccessful verification.", request.uid(), request.clientId(), verifiedIpResponse);
+                isIpTrusted = false;
+            } else {
+                isIpTrusted = verifiedIpResponse.getBody();
+            }
 
-        if (!isIpTrusted) {
-            log.trace("The IP address is not trusted by the user with id='{}' which logged to the service which 'loginServiceClientId'='{}'.", request.uid(), request.clientId());
-            this.executeUntrustedIpAction(request, idmServiceRepresentation);
-            return false;
+            if (!isIpTrusted) {
+                log.trace("The IP address is not trusted by the user with id='{}' which logged to the service which 'loginServiceClientId'='{}'.", request.uid(), request.clientId());
+                this.executeUntrustedIpAction(request, idmServiceRepresentation);
+                return false;
+            }
+            log.trace("The IP address is trusted by the user with id='{}' which logged to the service which 'loginServiceClientId'='{}'.", request.uid(), request.clientId());
+            return true;
+        } catch (HttpClientErrorException.NotFound notFound) {
+            // todo:
+            //  handle incorrect combination of the logging user origin and the used keycloak client && there is also possible an internal server error
+            throw new NotFoundException("User not found in the requested resource-server. This is most commonly caused by an incorrect combination of keycloak-client-id and user origin. Please verify the request parameters. If the configuration appears correct, contact the support team as the issue might be caused by an unexpected server-side error.");
         }
-        log.trace("The IP address is trusted by the user with id='{}' which logged to the service which 'loginServiceClientId'='{}'.", request.uid(), request.clientId());
-        return true;
     }
 
     private void executeUntrustedIpAction(final ProtectionServiceRequest request, final IdmServiceRepresentation idmServiceRepresentation) {

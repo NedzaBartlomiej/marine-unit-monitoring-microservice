@@ -10,12 +10,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class MumResponseModelUtil {
     private static final String SUCCESS = "success";
     private static final String MESSAGE = "message";
+    private static final String HTTP_STATUS_CODE = "httpStatusCode";
 
-    public static JsonNode getSuccess(final JsonNode jsonResponse) {
-        return jsonResponse.get(SUCCESS);
+    public static boolean getSuccess(final JsonNode jsonResponse) {
+        return jsonResponse.get(SUCCESS).asBoolean();
     }
 
-    public static JsonNode getMessage(final JsonNode jsonResponse) {
-        return jsonResponse.get(MESSAGE);
+    public static String getMessage(final JsonNode jsonResponse) {
+        return jsonResponse.get(MESSAGE).asText();
+    }
+
+    public static int getHttpStatusCode(final JsonNode jsonResponse) {
+        return jsonResponse.get(HTTP_STATUS_CODE).asInt();
     }
 }

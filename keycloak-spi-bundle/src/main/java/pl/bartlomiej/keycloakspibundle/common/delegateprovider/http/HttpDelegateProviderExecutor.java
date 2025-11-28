@@ -27,7 +27,7 @@ public class HttpDelegateProviderExecutor<ContextType> {
     }
 
     private void handleResponse(HttpDelegateProvider<ContextType> httpDelegateProvider, ContextType context, JsonNode jsonResponse) {
-        if (!MumResponseModelUtil.getSuccess(jsonResponse).asBoolean()) {
+        if (!MumResponseModelUtil.getSuccess(jsonResponse)) {
             httpDelegateProvider.handleFailure(jsonResponse, context);
             return;
         }
